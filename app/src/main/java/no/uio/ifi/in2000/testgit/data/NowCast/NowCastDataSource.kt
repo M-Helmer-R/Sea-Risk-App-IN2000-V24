@@ -1,6 +1,5 @@
-package no.uio.ifi.in2000.testgit.data
+package no.uio.ifi.in2000.testgit.data.NowCast
 
-import android.util.Log
 import com.example.example.NowcastData
 import com.example.example.Timeseries
 import io.ktor.client.HttpClient
@@ -11,7 +10,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.serialization.gson.gson
 
-class DataSourceTest {
+class NowCastDataSource {
     val client = HttpClient() {
         install(ContentNegotiation) {
             gson()
