@@ -1,8 +1,6 @@
 package no.uio.ifi.in2000.testgit
 
-import android.util.Log
-import com.example.example.NowcastData
-import no.uio.ifi.in2000.testgit.data.DataSourceTest
+import no.uio.ifi.in2000.testgit.data.nowcast.DataSourceTest
 
 suspend fun main(){
     val dataSourceTest: DataSourceTest = DataSourceTest()

@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.testgit.data
+package no.uio.ifi.in2000.testgit.data.nowcast
 
 import android.util.Log
 import com.example.example.NowcastData
@@ -26,7 +26,8 @@ class DataSourceTest {
 
 
     suspend fun getData(): Timeseries? {
-        val nowcastOslo = "weatherapi/nowcast/2.0/complete?lat=59.9139&lon=10.7522"
+        //if httpresponse.status == httpresponsecode.ok
+        val nowcastOslo = "zweatherapi/nowcast/2.0/complete?lat=59.9139&lon=10.7522"
         val kallNowcastOslo = client.get(nowcastOslo)
         val dataNowcastOslo = kallNowcastOslo.body<NowcastData>()
         val instantNowcastData = dataNowcastOslo.properties?.timeseries?.get(0)
