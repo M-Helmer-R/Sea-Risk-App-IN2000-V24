@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class Next1Hours (
 
-  @SerializedName("summary" ) var summary : Summary? = Summary(),
-  @SerializedName("details" ) var details : Details? = Details()
+  @SerializedName("summary" ) val summary : Summary? = Summary(),
+  @SerializedName("details" ) val details : Details? = Details()
 
 )

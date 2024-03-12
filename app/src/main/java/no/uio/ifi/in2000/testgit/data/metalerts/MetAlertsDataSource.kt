@@ -1,8 +1,7 @@
-package no.uio.ifi.in2000.testgit.data.nowcast
+package no.uio.ifi.in2000.testgit.data.metalerts
 
-import android.util.Log
-import com.example.example.NowcastData
-import com.example.example.Timeseries
+import com.example.example.AlertFeatures
+import com.example.example.Metalerts
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -11,7 +10,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.serialization.gson.gson
 
-class DataSourceTest {
+class MetAlertsDataSource {
     val client = HttpClient() {
         install(ContentNegotiation) {
             gson()
@@ -25,14 +24,14 @@ class DataSourceTest {
     }
 
 
-    suspend fun getData(): Timeseries? {
+    suspend fun getMetAlerts(): Metalerts {
         //if httpresponse.status == httpresponsecode.ok
-        val nowcastOslo = "zweatherapi/nowcast/2.0/complete?lat=59.9139&lon=10.7522"
-        val kallNowcastOslo = client.get(nowcastOslo)
-        val dataNowcastOslo = kallNowcastOslo.body<NowcastData>()
-        val instantNowcastData = dataNowcastOslo.properties?.timeseries?.get(0)
+        val metAlerts = "weatherapi/metalerts/2.0/current.json"
+        val kallMetAlerts = client.get(metAlerts)
+        val dataMetAlerts = kallMetAlerts.body<Metalerts>()
+        //val currentMetAlerts = dataMetAlerts.features.get(0)
 
-        return instantNowcastData
+        return dataMetAlerts
     }
 
 }
