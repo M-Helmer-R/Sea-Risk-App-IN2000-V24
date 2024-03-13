@@ -1,4 +1,13 @@
 package no.uio.ifi.in2000.testgit.data
 
-class MainRepository {
+import com.example.example.Timeseries
+import no.uio.ifi.in2000.testgit.data.NowCast.NowCastRepository
+
+class MainRepository(
+    private val nowCastRepository: NowCastRepository = NowCastRepository()
+) {
+
+    suspend fun fetchNowCast():Timeseries?{
+        return nowCastRepository.fetchNowCast()
+    }
 }
