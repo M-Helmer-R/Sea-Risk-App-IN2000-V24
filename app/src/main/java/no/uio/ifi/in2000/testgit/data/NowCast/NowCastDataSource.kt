@@ -24,9 +24,9 @@ class NowCastDataSource {
     }
 
 
-    suspend fun getData(): Timeseries? {
+    suspend fun getData(lat: String, lon: String): Timeseries? {
         //if httpresponse.status == httpresponsecode.ok
-        val nowcastOslo = "weatherapi/nowcast/2.0/complete?lat=59.9139&lon=10.7522"
+        val nowcastOslo = "weatherapi/nowcast/2.0/complete?lat=$lat&lon=$lon"
         val kallNowcastOslo = client.get(nowcastOslo)
         val dataNowcastOslo = kallNowcastOslo.body<NowcastData>()
         val instantNowcastData = dataNowcastOslo.Properties?.timeseries?.get(0)
@@ -35,3 +35,4 @@ class NowCastDataSource {
     }
 
 }
+//val nowcastOslo = "weatherapi/nowcast/2.0/complete?lat=59.9139&lon=10.7522"

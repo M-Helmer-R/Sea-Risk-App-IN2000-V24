@@ -10,9 +10,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import no.uio.ifi.in2000.testgit.ui.Activity.ActivityScreen
+import no.uio.ifi.in2000.testgit.ui.Activity.ActivityScreenViewModel
 
 @Composable
-fun Homescreen(){
+fun Homescreen(navController: NavController, homescreenViewModel: HomescreenViewModel = viewModel()){
     Column(
 
 
@@ -24,11 +28,16 @@ fun Homescreen(){
 
 
         ){
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = {
+                navController.navigate("ActivityScreen/Oslo")
+
+            }) {
                 Text("Oslo")
             }
 
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = {
+                navController.navigate("ActivityScreen/Bergen")
+            }) {
                 Text("Bergen")
             }
 
