@@ -7,6 +7,6 @@ data class NowcastData (
 
   @SerializedName("type"       ) var type       : String?     = null,
   //@SerializedName("geometry"   ) var geometry   : Geometry?   = Geometry(),
-  @SerializedName("properties" ) var properties : Properties? = Properties()
+  @SerializedName("properties" ) var Properties : Properties? = Properties()
 
 )
