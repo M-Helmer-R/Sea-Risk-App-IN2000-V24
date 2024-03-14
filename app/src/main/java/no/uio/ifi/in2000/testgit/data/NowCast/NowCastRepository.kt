@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.testgit.data.nowcast
+package no.uio.ifi.in2000.testgit.data.NowCast
 
 import com.example.example.Timeseries
 

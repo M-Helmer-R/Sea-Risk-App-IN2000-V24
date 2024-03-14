@@ -1,5 +1,4 @@
-package no.uio.ifi.in2000.testgit.ui.home
-
+package no.uio.ifi.in2000.testgit.ui.Activity
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.testgit.data.MainRepository
 
-class HomescreenViewModel: ViewModel() {
+class ActivityScreenViewModel: ViewModel() {
     private val repository: MainRepository = MainRepository()
 
     private var _nowCastUIState = MutableStateFlow(NowCastUIState(null))
@@ -31,6 +30,3 @@ class HomescreenViewModel: ViewModel() {
 data class NowCastUIState(
     val nowCastData: Timeseries?
 )
-
-
-
