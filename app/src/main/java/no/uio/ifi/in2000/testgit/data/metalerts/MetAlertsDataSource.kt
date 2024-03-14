@@ -26,7 +26,9 @@ class MetAlertsDataSource {
 
     suspend fun getMetAlerts(): Metalerts {
         //if httpresponse.status == httpresponsecode.ok
-        val metAlerts = "weatherapi/metalerts/2.0/current.json"
+        //val metAlerts = "weatherapi/metalerts/2.0/current.json"
+        val metAlerts = "weatherapi/metalerts/2.0/current.json?lat=59.9&lon=10.74"
+
         val kallMetAlerts = client.get(metAlerts)
         val dataMetAlerts = kallMetAlerts.body<Metalerts>()
         //val currentMetAlerts = dataMetAlerts.features.get(0)
