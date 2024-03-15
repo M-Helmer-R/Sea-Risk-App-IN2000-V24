@@ -27,7 +27,9 @@ class ActivityScreenViewModel(lat: String, lon: String, navn: String): ViewModel
         }
     }
     private suspend fun loadNowCast(lat: String, lon: String){
+        println("RIGHT BEFORE ATTEMPT: ActivityScreenViewModel: repository.fetchNowcast")
         val nowCastData = repository.fetchNowCast(lat, lon)
+        println("ActivityScreenViewModel: repository.fetchNowcast")
         val newNowCastUIState = _nowCastUIState.value.copy(nowCastData = nowCastData)
         _nowCastUIState.value = newNowCastUIState
     }

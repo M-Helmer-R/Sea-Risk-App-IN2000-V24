@@ -47,9 +47,11 @@ fun Navigation() {
             if (cityName.equals("Oslo")) {
                 val lat = "59.9"
                 val lon = "10.7"
-                ActivityScreen(lat, lon, navController, ActivityScreenViewModel(lat, lon, "Oslo"))
+                ActivityScreen(lat, lon, navController)
+                //ActivityScreenViewModel(lat, lon, "Oslo")
             } else{ //bergen
-                ActivityScreen("60.4", "5.32" , navController, ActivityScreenViewModel("60.4", "5.32", "Bergen"))
+                ActivityScreen("60.4", "5.32" , navController)
+                //ActivityScreenViewModel("60.4", "5.32", "Bergen")
             }
 
         }
