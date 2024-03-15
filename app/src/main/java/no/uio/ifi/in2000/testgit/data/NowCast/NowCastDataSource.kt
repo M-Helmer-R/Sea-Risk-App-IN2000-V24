@@ -29,7 +29,6 @@ class NowCastDataSource {
         //if httpresponse.status == httpresponsecode.ok
         val nowcastOslo = "weatherapi/nowcast/2.0/complete?lat=$lat&lon=$lon"
         val kallNowcastOslo = client.get(nowcastOslo)
-        Log.i("Prover nowcast apikall", "Response: ${kallNowcastOslo.status.value}")
         val dataNowcastOslo = kallNowcastOslo.body<NowcastData>()
         val instantNowcastData = dataNowcastOslo.Properties?.timeseries?.get(0)
 
