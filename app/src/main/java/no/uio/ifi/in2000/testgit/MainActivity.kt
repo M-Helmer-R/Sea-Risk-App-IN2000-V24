@@ -46,19 +46,6 @@ fun Navigation() {
         composable("ActivityScreen/{cityName}") {backStackEntry ->
             val cityName = backStackEntry.arguments?.getString("cityName")
                 ?.let { ActivityScreen(navController)}
-            
-            /*
-            if (cityName.equals(CityDatabase.OSLO.cityName)) {
-                val lat = "59.9"
-                val lon = "10.7"
-                ActivityScreen(lat, lon, navController)
-                
-            } else{ //bergen
-                ActivityScreen("60.4", "5.32" , navController)
-                
-            }
-            
-             */
 
         }
     }
