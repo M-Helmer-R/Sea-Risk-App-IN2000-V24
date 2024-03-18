@@ -1,5 +1,7 @@
 package no.uio.ifi.in2000.testgit.ui.Activity
 
+import android.location.Location
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.example.Metalerts
@@ -9,10 +11,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.testgit.data.MainRepository
+import no.uio.ifi.in2000.testgit.model.CityDatabase.CityDatabase
 
 // this viewmodel handles api calls depending on city chosen
 // this viewmodel will be created by pin clicks in HomeScreen
-class ActivityScreenViewModel(lat: String, lon: String, navn: String): ViewModel() {
+class ActivityScreenViewModel(savedStateHandle: SavedStateHandle): ViewModel() {
     private val repository: MainRepository = MainRepository()
 
     private var _nowCastUIState = MutableStateFlow(NowCastUIState(null))
@@ -21,28 +24,39 @@ class ActivityScreenViewModel(lat: String, lon: String, navn: String): ViewModel
     private val _metAlertsUIState = MutableStateFlow(MetAlertsUIState(null))
     val metAlertsUIState: StateFlow<MetAlertsUIState> = _metAlertsUIState.asStateFlow()
 
+    val cityName = checkNotNull(savedStateHandle["cityName"])
+
     init {
         viewModelScope.launch {
-            loadAll(lat, lon)
+            loadNowCast()
         }
     }
-    private suspend fun loadNowCast(lat: String, lon: String){
+    private suspend fun loadNowCast(){
+        val nowCastData = when(cityName) {
+            "Oslo" -> repository.fetchNowCast(CityDatabase.OSLO.lat, CityDatabase.OSLO.lon)
+            else -> null
+        }
+
+
         println("RIGHT BEFORE ATTEMPT: ActivityScreenViewModel: repository.fetchNowcast")
-        val nowCastData = repository.fetchNowCast(lat, lon)
+        //val nowCastData = repository.fetchNowCast(lat, lon)
         println("ActivityScreenViewModel: repository.fetchNowcast")
         val newNowCastUIState = _nowCastUIState.value.copy(nowCastData = nowCastData)
         _nowCastUIState.value = newNowCastUIState
     }
 
-    private suspend fun loadMetAlerts(lat: String, lon: String) {
-        val metAlertsData = repository.fetchMetAlerts(lat, lon)
+    /*
+    private suspend fun loadMetAlerts() {
+        val metAlertsData = repository.fetchMetAlerts()
         val newMetAlertsUIState = _metAlertsUIState.value.copy(metAlertsData = metAlertsData)
         _metAlertsUIState.value = newMetAlertsUIState
     }
 
-    private suspend fun loadAll(lat:String, lon: String){
-        loadNowCast(lat, lon)
-        loadMetAlerts(lat, lon)
+     */
+
+    private suspend fun loadAll(){
+        loadNowCast()
+        //loadMetAlerts()
 
 
     }

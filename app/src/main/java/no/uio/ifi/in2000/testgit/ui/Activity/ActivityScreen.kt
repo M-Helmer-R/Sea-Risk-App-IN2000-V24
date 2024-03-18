@@ -11,17 +11,17 @@ import androidx.navigation.compose.rememberNavController
 
 
 @Composable
-fun ActivityScreen(lat: String, lon: String, navController: NavController){
+fun ActivityScreen( navController: NavController, activityScreenViewModel: ActivityScreenViewModel = viewModel()){
     //activityScreenViewModel: ActivityScreenViewModel = viewModel()
-    /*
+
     val nowCastUIState = activityScreenViewModel.nowCastUIState.collectAsState()
     val metAlertsUIState = activityScreenViewModel.metAlertsUIState.collectAsState()
 
-     */
+    Text("${nowCastUIState.value.nowCastData?.data?.instant?.details?.airTemperature}")
 
 
 
-    Text("Lat: $lat, Lon: $lon")
+
 
 
 
@@ -30,5 +30,4 @@ fun ActivityScreen(lat: String, lon: String, navController: NavController){
 @Composable
 @Preview
 fun ActivityScreenPreview(){
-    ActivityScreen("59", "10", navController = rememberNavController())
 }

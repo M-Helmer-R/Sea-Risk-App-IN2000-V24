@@ -13,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import no.uio.ifi.in2000.testgit.model.CityDatabase.CityDatabase
 import no.uio.ifi.in2000.testgit.ui.Activity.ActivityScreen
 import no.uio.ifi.in2000.testgit.ui.Activity.ActivityScreenViewModel
 import no.uio.ifi.in2000.testgit.ui.home.Homescreen
@@ -44,15 +45,20 @@ fun Navigation() {
 
         composable("ActivityScreen/{cityName}") {backStackEntry ->
             val cityName = backStackEntry.arguments?.getString("cityName")
-            if (cityName.equals("Oslo")) {
+                ?.let { ActivityScreen(navController)}
+            
+            /*
+            if (cityName.equals(CityDatabase.OSLO.cityName)) {
                 val lat = "59.9"
                 val lon = "10.7"
                 ActivityScreen(lat, lon, navController)
-                //ActivityScreenViewModel(lat, lon, "Oslo")
+                
             } else{ //bergen
                 ActivityScreen("60.4", "5.32" , navController)
-                //ActivityScreenViewModel("60.4", "5.32", "Bergen")
+                
             }
+            
+             */
 
         }
     }
