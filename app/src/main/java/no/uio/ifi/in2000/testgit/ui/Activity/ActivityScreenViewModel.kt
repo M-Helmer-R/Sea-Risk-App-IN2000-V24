@@ -34,6 +34,11 @@ class ActivityScreenViewModel(savedStateHandle: SavedStateHandle): ViewModel() {
     private suspend fun loadNowCast(){
         val nowCastData = when(cityName) {
             "Oslo" -> repository.fetchNowCast(CityDatabase.OSLO.lat, CityDatabase.OSLO.lon)
+            "Bergen" -> repository.fetchNowCast(CityDatabase.Bergen.lat, CityDatabase.Bergen.lon)
+            "Kristiansand" -> repository.fetchNowCast(CityDatabase.KRISTIANSAND.lat, CityDatabase.KRISTIANSAND.lon)
+            "Stavanger" -> repository.fetchNowCast(CityDatabase.STAVANGER.lat, CityDatabase.STAVANGER.lon)
+            "Kragerø" -> repository.fetchNowCast(CityDatabase.KRAGERØ.lat, CityDatabase.KRAGERØ.lon)
+            "Arendal" -> repository.fetchNowCast(CityDatabase.ARENDAL.lat, CityDatabase.ARENDAL.lon)
             else -> null
         }
 
