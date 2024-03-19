@@ -32,6 +32,7 @@ class ActivityScreenViewModel(savedStateHandle: SavedStateHandle): ViewModel() {
         }
     }
     private suspend fun loadNowCast(){
+        // prøv å bruke .find, så slipper du en lang when statement
         val nowCastData = when(cityName) {
             "Oslo" -> repository.fetchNowCast(CityDatabase.OSLO.lat, CityDatabase.OSLO.lon)
             "Bergen" -> repository.fetchNowCast(CityDatabase.Bergen.lat, CityDatabase.Bergen.lon)
