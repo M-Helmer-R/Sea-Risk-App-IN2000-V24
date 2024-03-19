@@ -23,46 +23,6 @@ import no.uio.ifi.in2000.testgit.ui.Activity.ActivityScreenViewModel
 
 @Composable
 fun Homescreen(navController: NavController, homescreenViewModel: HomescreenViewModel = viewModel()){
-    Column(
 
-
-    ) {
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(minSize = 200.dp),
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxSize()
-
-
-        ){
-
-            val myCities = CityDatabase.entries.toTypedArray()
-            items(myCities){element ->
-                Button(onClick = {
-                    navController.navigate("ActivityScreen/${element.cityName}")
-                }) {
-                    Text(element.cityName)
-                }
-
-            }
-            /*
-            Button(onClick = {
-                navController.navigate("ActivityScreen/Oslo")
-
-            }) {
-                Text("Oslo")
-            }
-
-            Button(onClick = {
-                navController.navigate("ActivityScreen/Bergen")
-            }) {
-                Text("Bergen")
-            }
-
-             */
-
-
-        }
-    }
 
 }
