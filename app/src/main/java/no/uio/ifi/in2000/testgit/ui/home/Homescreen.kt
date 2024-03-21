@@ -37,11 +37,12 @@ fun Homescreen(navController: NavController, homescreenViewModel: HomescreenView
         ){
 
             val myCities = CityDatabase.entries.toTypedArray()
-            items(myCities){element ->
+            items(myCities){cities ->
                 Button(onClick = {
-                    navController.navigate("ActivityScreen/${element.cityName}")
+                    navController.navigate("ActivityScreen/${cities.cityName}")
+
                 }) {
-                    Text(element.cityName)
+                    Text(cities.cityName)
                 }
 
             }

@@ -9,6 +9,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.http.isSuccess
 import io.ktor.serialization.gson.gson
 
 class NowCastDataSource {
@@ -26,13 +27,16 @@ class NowCastDataSource {
 
 
     suspend fun getData(lat: String, lon: String): Timeseries? {
-        //if httpresponse.status == httpresponsecode.ok
         val nowcastOslo = "weatherapi/nowcast/2.0/complete?lat=$lat&lon=$lon"
-        val kallNowcastOslo = client.get(nowcastOslo)
-        val dataNowcastOslo = kallNowcastOslo.body<NowcastData>()
-        val instantNowcastData = dataNowcastOslo.Properties?.timeseries?.get(0)
+        val callNowcastOslo = client.get(nowcastOslo)
+        // if api call gives a successful response
+        if(callNowcastOslo.status.isSuccess()) {
+            val dataNowcastOslo = callNowcastOslo.body<NowcastData>()
+            return dataNowcastOslo.Properties?.timeseries?.get(0)
+        } else { // if api call fails, return empty timeseries object
+            return Timeseries(time = null, data = null)
+        }
 
-        return instantNowcastData
     }
 
 }
