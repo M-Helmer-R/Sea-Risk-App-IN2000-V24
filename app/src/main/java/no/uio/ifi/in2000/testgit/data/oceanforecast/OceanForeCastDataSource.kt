@@ -11,6 +11,7 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.serialization.gson.gson
+import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanForeCastData
 import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanProperties
 import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanTimeseries
 
@@ -28,13 +29,14 @@ class OceanForeCastDataSource {
 
     }
 
-    suspend fun getData(): OceanTimeseries {
+    suspend fun getData(): OceanTimeseries? {
         val oceanforecastOslo = "weatherapi/oceanforecast/2.0/complete?lat=59.9139&lon=10.7522"
         val kallNowcastOslo = client.get(oceanforecastOslo)
-        val dataNowcastOslo = kallNowcastOslo.body<OceanProperties>()
-        val instantNowcastData = dataNowcastOslo.timeseries[0]
+        print(kallNowcastOslo)
+        val dataNowcastOslo = kallNowcastOslo.body<OceanForeCastData>()
+        //val instantNowcastData = dataNowcastOslo.timeseries[0]
 
 
-        return instantNowcastData
+        return dataNowcastOslo.properties?.timeseries?.get(0)
     }
 }
