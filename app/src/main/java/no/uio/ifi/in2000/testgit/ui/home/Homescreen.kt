@@ -13,9 +13,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
@@ -31,10 +31,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -50,7 +51,8 @@ val cities = listOf(
     CityInfo("Oslo", "500km", listOf(1, 2)),
     CityInfo("Bergen", "300km", listOf(1, 2, 3)),
     CityInfo("Trondheim", "250km", listOf(1)),
-    CityInfo("Stavanger", "450km", listOf(1, 2, 3, 4))
+    CityInfo("Stavanger", "450km", listOf(1, 2, 3, 4)),
+    CityInfo("Sogndal", "0km", listOf(1, 2, 3, 4))
 )
 val DarkBlue = Color(0xFF013749)
 val LightBlue = Color(0xFF0C8891)
@@ -59,18 +61,28 @@ val White = Color(0xFFFFFFFF)
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun Homescreen(navController: NavController?) {
-    Box(modifier = Modifier.fillMaxSize().background(DarkBlue)) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(DarkBlue)) {
         TopAppBar(
-            title = { },
+            title = {
+                Text(text = "Plask", color = Color.White, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+            },
             navigationIcon = {
-                Image(painter = painterResource(id = R.drawable.ikon), contentDescription = "Tilpasset Ikon", modifier = Modifier.size(50.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.ikon),
+                    contentDescription = "Tilpasset Ikon",
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape)
+                )
             },
             actions = {
                 IconButton(onClick = { /* Handling når ikonet klikkes */ }) {
-                    Icon(Icons.Filled.Settings, contentDescription = "Innstillinger", modifier = Modifier.size(50.dp))
+                    Icon(Icons.Filled.Settings, contentDescription = "Innstillinger", modifier = Modifier.size(50.dp), tint= White)
                 }
             },
-            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White)
+            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color(0xFF013749))
         )
         Column(
             modifier = Modifier
