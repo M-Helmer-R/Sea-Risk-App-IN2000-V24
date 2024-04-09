@@ -63,7 +63,6 @@ fun Homescreen(navController: NavController?) {
         TopAppBar(
             title = { },
             navigationIcon = {
-                // Anta at dette er et ikon med kjent god størrelse og oppløsning for å teste
                 Image(painter = painterResource(id = R.drawable.ikon), contentDescription = "Tilpasset Ikon", modifier = Modifier.size(50.dp))
             },
             actions = {
@@ -71,12 +70,12 @@ fun Homescreen(navController: NavController?) {
                     Icon(Icons.Filled.Settings, contentDescription = "Innstillinger", modifier = Modifier.size(50.dp))
                 }
             },
-            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White) // Setter bakgrunnsfargen til hvit
+            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White)
         )
         Column(
             modifier = Modifier
                 .padding(16.dp)
-                .padding(top = 64.dp) // Legger til ekstra padding på toppen for å skyve innholdet nedover
+                .padding(top = 64.dp)
         ) {
             Text(
                 text = "Søkefunksjon incoming?",
