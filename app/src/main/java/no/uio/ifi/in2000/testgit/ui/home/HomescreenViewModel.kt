@@ -1,4 +1,7 @@
 package no.uio.ifi.in2000.testgit.ui.home
 
-class HomescreenViewModel {
+import androidx.lifecycle.ViewModel
+
+class HomescreenViewModel: ViewModel() {
+
 }
