@@ -7,8 +7,6 @@ import androidx.room.Upsert
 
 @Dao
 interface CityDao {
-    val near_dist: Int
-        get() = 50
 
     @Query("SELECT * FROM cities WHERE name == :name")
     fun findByName(name : String) : City
@@ -25,8 +23,9 @@ interface CityDao {
     @Query("SELECT * FROM cities WHERE favorite == 1")
     fun getFavourites() : List<City>
 
-    @Query("SELECT * FROM cities WHERE lattitude < 50 AND longitude < 50 ")
-    fun getNearest() : List<City>
+    @Query("SELECT * FROM cities WHERE lattitude < dist AND longitude < dist ")
+    fun getNearest(dist : Double
+    ) : List<City>
 
     //Set and remove favorites
     //@Query("Update ")
