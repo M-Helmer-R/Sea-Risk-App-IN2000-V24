@@ -9,8 +9,9 @@ import no.uio.ifi.in2000.testgit.data.room.City
 @Entity(tableName = "cities")
 data class City (
     @PrimaryKey(autoGenerate = true) // Default is true
-    val cityId: Int = 0,
+    val cityId: Int = 0, // Autogenerates if null
     @ColumnInfo(name = "name") val name : String,
     @ColumnInfo(name = "longitude") val lon : Double,
     @ColumnInfo(name = "lattitude") val lat : Double,
+    @ColumnInfo(name = "favorite") val favorite : Boolean = false,
      )
