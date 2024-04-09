@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.testgit.R
 
@@ -61,9 +62,59 @@ val White = Color(0xFFFFFFFF)
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun Homescreen(navController: NavController?) {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(DarkBlue)) {
+    Box {
+        LazyColumn(
+            modifier = Modifier
+                .padding(top = 58.dp)
+                .background(DarkBlue)) {
+            item {
+                Spacer(modifier = Modifier.height(58.dp))
+            }
+            item {
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = "Søkefunksjon incoming?",
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            color = White,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Nærmeste aktivitetsplasser:",
+                        style = MaterialTheme.typography.headlineSmall.copy(color = White),
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
+            }
+
+            item {
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(horizontal = 16.dp)) {
+                    items(cities) { city ->
+                        CityCard(city)
+                    }
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+
+            item {
+                Text(
+                    text = "Favoritter:",
+                    style = MaterialTheme.typography.headlineSmall.copy(color = White),
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            }
+
+            items(cities) { city ->
+                CityCard1(city)
+            }
+        }
         TopAppBar(
             title = {
                 Text(text = "Plask", color = Color.White, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
@@ -82,45 +133,12 @@ fun Homescreen(navController: NavController?) {
                     Icon(Icons.Filled.Settings, contentDescription = "Innstillinger", modifier = Modifier.size(50.dp), tint= White)
                 }
             },
-            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color(0xFF013749))
+            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = DarkBlue),
+            modifier = Modifier.zIndex(1f)
         )
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .padding(top = 64.dp)
-        ) {
-            Text(
-                text = "Søkefunksjon incoming?",
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    color = White,
-                    fontWeight = FontWeight.Bold
-                )
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Nærmeste aktivitetsplasser:",
-                style = MaterialTheme.typography.headlineSmall.copy(color = White),
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(cities) { city ->
-                    CityCard(city)
-                }
-            }
-            Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                text = "Favoritter:",
-                style = MaterialTheme.typography.headlineSmall.copy(color = White),
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(cities) { city ->
-                    CityCard1(city)
-                }
-            }
-        }
     }
 }
+
 
 
 @Composable
