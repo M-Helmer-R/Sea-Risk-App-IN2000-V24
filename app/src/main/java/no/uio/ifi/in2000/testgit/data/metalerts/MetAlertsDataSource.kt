@@ -8,6 +8,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.http.isSuccess
 import io.ktor.serialization.gson.gson
 
 class MetAlertsDataSource {
@@ -24,16 +25,30 @@ class MetAlertsDataSource {
     }
 
 
-    suspend fun getMetAlerts(): Metalerts {
-        //if httpresponse.status == httpresponsecode.ok
-        //val metAlerts = "weatherapi/metalerts/2.0/current.json"
-        val metAlerts = "weatherapi/metalerts/2.0/current.json?lat=59.9&lon=10.74"
+    suspend fun getMetAlerts(lat: String, lon: String): AlertFeatures? {
+        val metAlerts = "weatherapi/metalerts/2.0/current.json?lat=$lat&lon=$lon"
+        val callMetAlerts = client.get(metAlerts)
+        val dataMetalerts: Metalerts
+        // if response is successful, complete the apicall and create metalerts objects
 
-        val kallMetAlerts = client.get(metAlerts)
-        val dataMetAlerts = kallMetAlerts.body<Metalerts>()
+
+
+        if(callMetAlerts.status.isSuccess()) {
+            dataMetalerts = callMetAlerts.body<Metalerts>()
+        } else {
+            dataMetalerts = Metalerts(features = emptyList(), lang = null, lastChange = null, type = null)
+        }
+
+        // depending on metalertsobject,
+        if(dataMetalerts.features?.isEmpty() == false) {
+            return dataMetalerts.features[0]
+        } else {
+            return null
+
+        }
         //val currentMetAlerts = dataMetAlerts.features.get(0)
 
-        return dataMetAlerts
+
     }
 
 }

@@ -1,10 +1,9 @@
 package no.uio.ifi.in2000.testgit.ui.Activity
 
-import android.location.Location
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.example.Metalerts
+import com.example.example.AlertFeatures
 import com.example.example.Timeseries
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,7 +27,7 @@ class ActivityScreenViewModel(savedStateHandle: SavedStateHandle): ViewModel() {
 
     init {
         viewModelScope.launch {
-            loadNowCast()
+            loadAll()
         }
     }
     private suspend fun loadNowCast(){
@@ -40,6 +39,7 @@ class ActivityScreenViewModel(savedStateHandle: SavedStateHandle): ViewModel() {
             "Stavanger" -> repository.fetchNowCast(CityDatabase.STAVANGER.lat, CityDatabase.STAVANGER.lon)
             "Kragerø" -> repository.fetchNowCast(CityDatabase.KRAGERØ.lat, CityDatabase.KRAGERØ.lon)
             "Arendal" -> repository.fetchNowCast(CityDatabase.ARENDAL.lat, CityDatabase.ARENDAL.lon)
+            "Rørvik - Støtt" -> repository.fetchNowCast(CityDatabase.FARE.lat, CityDatabase.FARE.lon)
             else -> null
         }
 
@@ -51,18 +51,46 @@ class ActivityScreenViewModel(savedStateHandle: SavedStateHandle): ViewModel() {
         _nowCastUIState.value = newNowCastUIState
     }
 
-    /*
+
     private suspend fun loadMetAlerts() {
-        val metAlertsData = repository.fetchMetAlerts()
+        val metAlertsData = when(cityName) {
+            "Oslo" -> repository.fetchMetAlerts(
+                CityDatabase.OSLO.lat,
+                CityDatabase.OSLO.lon)
+            "Bergen" -> repository.fetchMetAlerts(
+                CityDatabase.Bergen.lat,
+                CityDatabase.Bergen.lon)
+            "Kristiansand" -> repository.fetchMetAlerts(
+                CityDatabase.KRISTIANSAND.lat,
+                CityDatabase.KRISTIANSAND.lon
+            )
+            "Stavanger" -> repository.fetchMetAlerts(
+                CityDatabase.STAVANGER.lat,
+                CityDatabase.STAVANGER.lon
+            )
+            "Kragerø" -> repository.fetchMetAlerts(
+                CityDatabase.KRAGERØ.lat,
+                CityDatabase.KRAGERØ.lon
+            )
+            "Arendal" -> repository.fetchMetAlerts(
+                CityDatabase.ARENDAL.lat,
+                CityDatabase.ARENDAL.lon
+            )
+            "Rørvik - Støtt" -> repository.fetchMetAlerts(
+                CityDatabase.FARE.lat,
+                CityDatabase.FARE.lon
+            )
+            else -> null
+        }
         val newMetAlertsUIState = _metAlertsUIState.value.copy(metAlertsData = metAlertsData)
         _metAlertsUIState.value = newMetAlertsUIState
     }
 
-     */
+
 
     private suspend fun loadAll(){
         loadNowCast()
-        //loadMetAlerts()
+        loadMetAlerts()
 
 
     }
@@ -73,5 +101,5 @@ data class NowCastUIState(
 )
 
 data class MetAlertsUIState(
-    val metAlertsData: Metalerts?
+    val metAlertsData: AlertFeatures?
 )

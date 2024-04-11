@@ -46,7 +46,7 @@ fun Navigation() {
 
         composable("ActivityScreen/{cityName}") {backStackEntry ->
             val cityName = backStackEntry.arguments?.getString("cityName")
-                ?.let { ActivityScreen(navController)}
+                ?.let { ActivityScreen(it, navController)}
 
         }
     }

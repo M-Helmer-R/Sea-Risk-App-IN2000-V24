@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.testgit.data
 
+import com.example.example.AlertFeatures
 import com.example.example.Metalerts
 import com.example.example.Timeseries
 import no.uio.ifi.in2000.testgit.data.metalerts.MetAlertsRepository
@@ -18,8 +19,8 @@ class MainRepository(
 
 
 
-    suspend fun fetchMetAlerts(lat: String, lon: String): Metalerts {
-        return metAlertsRepository.fetchMetAlerts()
+    suspend fun fetchMetAlerts(lat: String, lon: String): AlertFeatures? {
+        return metAlertsRepository.fetchMetAlerts(lat, lon)
     }
 
     suspend fun fetchAll(lat: String, lon: String) {
