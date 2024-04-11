@@ -9,6 +9,7 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
+import no.uio.ifi.in2000.testgit.ui.map.Mapscreen
 
 
 @OptIn(MapboxExperimental::class)
@@ -16,20 +17,7 @@ import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 fun Homescreen(navController: NavController, homescreenViewModel: HomescreenViewModel = viewModel()){
 
 
-    MapboxMap(
-
-        Modifier.fillMaxSize(),
-        mapViewportState = MapViewportState().apply {
-            setCameraOptions {
-                zoom(3.7)
-                center(Point.fromLngLat(11.49537, 64.01487 ))
-                pitch(0.0)
-                bearing(0.0)
-            }
-
-
-        }
-    )
+    Mapscreen()
     //PointAnnotationGroup(annotations = )
 
 
