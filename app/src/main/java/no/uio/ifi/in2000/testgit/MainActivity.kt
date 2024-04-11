@@ -17,6 +17,7 @@ import no.uio.ifi.in2000.testgit.model.CityDatabase.CityDatabase
 import no.uio.ifi.in2000.testgit.ui.Activity.ActivityScreen
 import no.uio.ifi.in2000.testgit.ui.Activity.ActivityScreenViewModel
 import no.uio.ifi.in2000.testgit.ui.home.Homescreen
+import no.uio.ifi.in2000.testgit.ui.map.Mapscreen
 import no.uio.ifi.in2000.testgit.ui.theme.TestGitTheme
 
 class MainActivity : ComponentActivity() {
@@ -30,7 +31,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
-                    Navigation()
+                    Mapscreen()
                 }
             }
         }
