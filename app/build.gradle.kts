@@ -85,4 +85,5 @@ dependencies {
     implementation ("com.google.code.gson:gson:2.10.1")
     implementation("com.mapbox.maps:android:11.2.1")
     implementation("com.mapbox.extension:maps-compose:11.2.1")
+    implementation ("com.mapbox.mapboxsdk:mapbox-sdk-services:6.15.0")
 }
