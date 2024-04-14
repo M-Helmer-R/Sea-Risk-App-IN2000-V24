@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -18,13 +17,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.mapbox.common.LifecycleService
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 
-import com.mapbox.maps.plugin.gestures.OnMapClickListener
 import com.mapbox.api.geocoding.v5.GeocodingCriteria
 import com.mapbox.api.geocoding.v5.MapboxGeocoding
 import com.mapbox.api.geocoding.v5.models.GeocodingResponse
@@ -40,7 +37,7 @@ fun Mapscreen(){
     var lon: Double
     var placeNameDisplay by remember { mutableStateOf("Error") }
 
-    Box() {
+    Box {
         if (isDialogVisible){
             AlertDialogExample(
                 onDismissRequest = { isDialogVisible = false },
@@ -63,7 +60,7 @@ fun Mapscreen(){
 
 
             },
-            onMapClickListener = OnMapClickListener { point ->
+            onMapClickListener =  { point ->
                 lat = point.latitude()
                 lon = point.longitude()
 
@@ -75,7 +72,7 @@ fun Mapscreen(){
 
 
                 reverseGeocode.enqueueCall(object : Callback<GeocodingResponse> {
-                    override fun onResponse(call: retrofit2.Call<GeocodingResponse>, response: Response<GeocodingResponse>) {
+                    override fun onResponse(call: Call<GeocodingResponse>, response: Response<GeocodingResponse>) {
                         val results = response.body()?.features()
                         if (results != null && results.size > 0) {
                             val firstResult = results[0]
@@ -90,7 +87,7 @@ fun Mapscreen(){
                         }
                     }
 
-                    override fun onFailure(call: retrofit2.Call<GeocodingResponse>, throwable: Throwable) {
+                    override fun onFailure(call: Call<GeocodingResponse>, throwable: Throwable) {
                         Log.e("Geocoding", "Error: " + throwable.message)
                     }
                 })
