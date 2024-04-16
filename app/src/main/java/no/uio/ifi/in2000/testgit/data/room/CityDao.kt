@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CityDao {
+    //Repository
 
     //Inserts city
     @Upsert // @Insert (onConflict : Int = OnConflictStrategy.ABORT)
@@ -17,20 +18,28 @@ interface CityDao {
     @Delete
     suspend fun deleteCity(city : City)
 
+    /*
     @Query("SELECT * FROM cities WHERE name == :name")
     fun findByName(name : String) :  Flow<City>
 
     @Query("SELECT * FROM cities WHERE cityId == :id")
     fun findById(id : Int) : Flow<City>
 
+     */
+
+    @Query("SELECT * FROM cities ORDER BY name ASC")
+    fun getAll() : Flow<List<City>>
+
     @Query("SELECT * FROM cities WHERE favorite == 1 ORDER BY name ASC")
     fun getFavourites() : Flow<List<City>>
 
     //finds th
+    /*
     @Query("SELECT * FROM cities WHERE haversine(:lat, :long, lattitude, longitude) <= :max_d ORDER BY haversine(:lat, :long, lattitude, longitude)")
     fun getNearest(long : Double, lat : Double, max_d : Double) : Flow<List<City>>
-
+*/
     //Set and remove favorites
+
     @Query("UPDATE cities SET favorite = 1 WHERE cityId = :id")
     fun setFavoriteByID(id : Int)
 

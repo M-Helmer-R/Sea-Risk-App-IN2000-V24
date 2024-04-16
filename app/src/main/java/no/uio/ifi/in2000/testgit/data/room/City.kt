@@ -12,6 +12,6 @@ data class City (
     val cityId: Int = 0, // Autogenerates if null
     @ColumnInfo(name = "name") val name : String,
     @ColumnInfo(name = "longitude") val lon : Double,
-    @ColumnInfo(name = "lattitude") val lat : Double,
-    @ColumnInfo(name = "favorite") val favorite : Boolean = false,
+    @ColumnInfo(name = "latitude") val lat : Double,
+    @ColumnInfo(name = "favorite") var favorite : Boolean = false,
      )

@@ -10,5 +10,13 @@ import androidx.room.RoomDatabase
 abstract class CityDatabase : RoomDatabase() {
 
     abstract val dao: CityDao
+    /*
+    init {
+        Cities.entries.map {
+            it -> dao.upsertCity(city = City( name = it.name, lon = it.lon, lat = it.lat))
+        }
+    }
+
+     */
 }
 
