@@ -17,7 +17,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,6 +30,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -59,44 +65,44 @@ val DarkBlue = Color(0xFF013749)
 val LightBlue = Color(0xFF0C8891)
 val White = Color(0xFFFFFFFF)
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Homescreen(navController: NavController?) {
-    Box {
+fun Homescreen(navController: NavController?, currentRoute: String) {
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        TopAppBar(
+            title = {
+                Text(text = "Plask", color = Color.White, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+            },
+            navigationIcon = {
+                Image(
+                    painter = painterResource(id = R.drawable.ikon),
+                    contentDescription = "Tilpasset Ikon",
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape)
+                )
+            },
+            actions = {
+                IconButton(onClick = { /* Komme oss inn på søk i kartskjerm */ }) {
+                    Icon(Icons.Filled.Search, contentDescription = "Søk", modifier = Modifier.size(50.dp), tint= White)
+                }
+            },
+            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = DarkBlue),
+            modifier = Modifier.zIndex(1f)
+        )
         LazyColumn(
             modifier = Modifier
-                .padding(top = 58.dp)
-                .background(DarkBlue)) {
+                .weight(1f)
+                .background(DarkBlue)
+        ) {
             item {
                 Spacer(modifier = Modifier.height(58.dp))
             }
-            item {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = "Søkefunksjon incoming?",
-                        style = MaterialTheme.typography.headlineMedium.copy(
-                            color = White,
-                            fontWeight = FontWeight.Bold
-                        )
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "Nærmeste aktivitetsplasser:",
-                        style = MaterialTheme.typography.headlineSmall.copy(color = White),
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-                }
-            }
+
 
             item {
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(horizontal = 16.dp)) {
-                    items(cities) { city ->
-                        CityCard(city)
-                    }
-                }
+                LagHorisontal()
             }
 
             item {
@@ -115,31 +121,24 @@ fun Homescreen(navController: NavController?) {
                 CityCard1(city)
             }
         }
-        TopAppBar(
-            title = {
-                Text(text = "Plask", color = Color.White, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
-            },
-            navigationIcon = {
-                Image(
-                    painter = painterResource(id = R.drawable.ikon),
-                    contentDescription = "Tilpasset Ikon",
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clip(CircleShape)
-                )
-            },
-            actions = {
-                IconButton(onClick = { /* Handling når ikonet klikkes */ }) {
-                    Icon(Icons.Filled.Settings, contentDescription = "Innstillinger", modifier = Modifier.size(50.dp), tint= White)
-                }
-            },
-            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = DarkBlue),
-            modifier = Modifier.zIndex(1f)
-        )
+        BottomBar(navController, currentRoute)
     }
 }
 
+@Composable
+fun LagHorisontal(){
+    Text(
 
+        text = "Nærmeste aktivitetsplasser:",
+        style = MaterialTheme.typography.headlineSmall.copy(color = White),
+        modifier = Modifier.padding(bottom = 16.dp)
+    )
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(horizontal = 16.dp)) {
+        items(cities) { city ->
+            CityCard(city)
+        }
+    }
+}
 
 @Composable
 fun CityCard(city: CityInfo) {
@@ -200,8 +199,29 @@ fun CityCard1(city: CityInfo) {
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun PreviewHomescreen() {
-    Homescreen(navController = null)
+fun BottomBar(navController: NavController?, currentRoute: String) {
+    BottomAppBar(
+        containerColor = DarkBlue,
+        contentColor = Color.White
+    ) {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            val routes = listOf("home" to Icons.Filled.Home, "kart" to Icons.Filled.Place, "innstillinger" to Icons.Filled.Settings)
+            routes.forEach { (route, icon) ->
+                Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                    val iconColor = if (currentRoute == route) LightBlue else Color.White
+                    IconButton(onClick = { navController?.navigate(route) }) {
+                        Icon(icon, contentDescription = route.capitalize(), tint = iconColor)
+                    }
+                }
+            }
+        }
+    }
 }
+
+
+
+
+
+
+
