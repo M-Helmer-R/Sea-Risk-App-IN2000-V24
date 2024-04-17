@@ -11,6 +11,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,27 +28,34 @@ import com.mapbox.api.geocoding.v5.GeocodingCriteria
 import com.mapbox.api.geocoding.v5.MapboxGeocoding
 import com.mapbox.api.geocoding.v5.models.GeocodingResponse
 import no.uio.ifi.in2000.testgit.data.map.GeoCodeDataSource
+import no.uio.ifi.in2000.testgit.data.map.GeoCodeRepository
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Call
 
 @OptIn(MapboxExperimental::class)
 @Composable
-fun Mapscreen(geoCodeDataSource: GeoCodeDataSource = GeoCodeDataSource()){
+fun Mapscreen(mapScreenViewModel: MapScreenViewModel = MapScreenViewModel()){
     var isDialogVisible by remember { mutableStateOf(false) }
     var lat: Double
     var lon: Double
-    var placeNameDisplay by remember { mutableStateOf("Ingen Data") }
+    //var placeNameDisplay by remember { mutableStateOf("Ingen Data") }
+    val locationUiState = mapScreenViewModel.locationUIState.collectAsState()
+    val dialogUIState = mapScreenViewModel.dialogUIState.collectAsState()
+
+
 
     Box {
-        if (isDialogVisible){
-            AlertDialogExample(
-                onDismissRequest = { isDialogVisible = false },
-                onConfirmation = { isDialogVisible = false },
-                dialogTitle = placeNameDisplay,
-                dialogText = "Vil du se mer info om $placeNameDisplay?",
-                icon = Icons.Default.Info
-            )
+        if (dialogUIState.value.isVisible == true){
+
+                AlertDialogExample(
+                    onDismissRequest = {mapScreenViewModel.dismissDialog() },
+                    onConfirmation = { mapScreenViewModel.dismissDialog() },
+                    dialogTitle = locationUiState.value.placeName,
+                    dialogText = "Vil du se mer info om ${locationUiState.value.placeName}?",
+                    icon = Icons.Default.Info
+                )
+
         }
         MapboxMap(
 
@@ -65,18 +73,29 @@ fun Mapscreen(geoCodeDataSource: GeoCodeDataSource = GeoCodeDataSource()){
             onMapClickListener =  { point ->
                 lat = point.latitude()
                 lon = point.longitude()
+                mapScreenViewModel.loadPlaceName(lon, lat)
 
-                geoCodeDataSource.reverseGeoCode(lon, lat, object: ReverseGeocodeCallback{
-                    override fun onSuccess(placeName: String){
-                        placeNameDisplay = placeName
-                    }
+//                geoCodeDataSource.reverseGeoCode(lon, lat, object: ReverseGeocodeCallback{
+//                    override fun onSuccess(placeName: String){
+//                        placeNameDisplay = placeName
+//                    }
+//
+//                    override fun onFailure(placeName: String){
+//                        placeNameDisplay = placeName
+//                    }
+//                })
 
-                    override fun onFailure(placeName: String){
-                        placeNameDisplay = placeName
-                    }
-                })
+//                geoCodeRepository.reverseGeoCode(lon, lat, object: ReverseGeocodeCallback{
+//                    override fun onSuccess(placeName: String) {
+//                        placeNameDisplay = placeName
+//                    }
+//
+//                    override fun onFailure(placeName: String) {
+//                        placeNameDisplay = placeName
+//                    }
+//                } )
 
-                isDialogVisible = true
+                //mapScreenViewModel.getDialog()
 
                 true
             },
