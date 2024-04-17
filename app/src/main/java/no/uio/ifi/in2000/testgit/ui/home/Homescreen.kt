@@ -49,46 +49,49 @@ val DarkBlue = Color(0xFF013749)
 val LightBlue = Color(0xFF0C8891)
 val White = Color(0xFFFFFFFF)
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Homescreen(navController: NavController?, currentRoute: String) {
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize() 
+            .background(DarkBlue)
+    ) {
         TopBar()
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .background(DarkBlue)
-        ) {
-            item {
-                Spacer(modifier = Modifier.height(58.dp))
-            }
-
-
-            item {
-                LagHorisontal()
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(24.dp))
-            }
-
-            item {
-                Text(
-                    text = "Favoritter:",
-                    style = MaterialTheme.typography.headlineSmall.copy(color = White),
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                )
-            }
-
-            items(cities) { city ->
-                CityCard1(city)
-            }
-        }
+        ByggInnhold(modifier = Modifier.weight(1f))
         BottomBar(navController, currentRoute)
     }
 }
 
+
+@Composable
+fun ByggInnhold(modifier: Modifier = Modifier) {
+    LazyColumn(modifier = modifier) {
+        item {
+            Spacer(modifier = Modifier.height(58.dp))
+        }
+
+        item {
+            LagHorisontal()
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+
+        item {
+            Text(
+                text = "Favoritter:",
+                style = MaterialTheme.typography.headlineSmall.copy(color = White),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+        }
+
+        items(cities) { city ->
+            CityCard1(city)
+        }
+    }
+}
 @Composable
 fun LagHorisontal(){
     Text(
