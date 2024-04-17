@@ -34,27 +34,29 @@ class MapScreenViewModel: ViewModel() {
             override fun onSuccess(placeName: String) {
                 val newlocationUIState = _locationUIState.value.copy(placeName = placeName)
                 _locationUIState.value = newlocationUIState
-                getDialog()
+                showDialog()
             }
 
             override fun onFailure(placeName: String) {
                 val newlocationUIState = _locationUIState.value.copy(placeName = placeName)
                 _locationUIState.value = newlocationUIState
+                showDialog()
             }
         } )
 
     }
 
 
-    private suspend fun showDialog(){
+    private fun showDialog(){
         val newdialogUIState = _dialogUIState.value.copy(isVisible = true)
         _dialogUIState.value = newdialogUIState
         println(newdialogUIState)
     }
 
-    private suspend fun hideDialog(){
+    fun hideDialog(){
         val newdialogUIState = _dialogUIState.value.copy(isVisible = false)
         _dialogUIState.value = newdialogUIState
+        println("Dialog hidden")
     }
 
     fun dismissDialog(){

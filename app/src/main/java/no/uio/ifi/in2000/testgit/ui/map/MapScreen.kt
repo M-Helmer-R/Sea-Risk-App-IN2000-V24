@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.MapboxMap
@@ -35,11 +36,9 @@ import retrofit2.Call
 
 @OptIn(MapboxExperimental::class)
 @Composable
-fun Mapscreen(mapScreenViewModel: MapScreenViewModel = MapScreenViewModel()){
-    var isDialogVisible by remember { mutableStateOf(false) }
+fun Mapscreen(mapScreenViewModel: MapScreenViewModel = viewModel()){
     var lat: Double
     var lon: Double
-    //var placeNameDisplay by remember { mutableStateOf("Ingen Data") }
     val locationUiState = mapScreenViewModel.locationUIState.collectAsState()
     val dialogUIState = mapScreenViewModel.dialogUIState.collectAsState()
 
@@ -49,8 +48,8 @@ fun Mapscreen(mapScreenViewModel: MapScreenViewModel = MapScreenViewModel()){
         if (dialogUIState.value.isVisible == true){
 
                 AlertDialogExample(
-                    onDismissRequest = {mapScreenViewModel.dismissDialog() },
-                    onConfirmation = { mapScreenViewModel.dismissDialog() },
+                    onDismissRequest = {mapScreenViewModel.hideDialog() },
+                    onConfirmation = { mapScreenViewModel.hideDialog() },
                     dialogTitle = locationUiState.value.placeName,
                     dialogText = "Vil du se mer info om ${locationUiState.value.placeName}?",
                     icon = Icons.Default.Info
@@ -74,28 +73,6 @@ fun Mapscreen(mapScreenViewModel: MapScreenViewModel = MapScreenViewModel()){
                 lat = point.latitude()
                 lon = point.longitude()
                 mapScreenViewModel.loadPlaceName(lon, lat)
-
-//                geoCodeDataSource.reverseGeoCode(lon, lat, object: ReverseGeocodeCallback{
-//                    override fun onSuccess(placeName: String){
-//                        placeNameDisplay = placeName
-//                    }
-//
-//                    override fun onFailure(placeName: String){
-//                        placeNameDisplay = placeName
-//                    }
-//                })
-
-//                geoCodeRepository.reverseGeoCode(lon, lat, object: ReverseGeocodeCallback{
-//                    override fun onSuccess(placeName: String) {
-//                        placeNameDisplay = placeName
-//                    }
-//
-//                    override fun onFailure(placeName: String) {
-//                        placeNameDisplay = placeName
-//                    }
-//                } )
-
-                //mapScreenViewModel.getDialog()
 
                 true
             },
