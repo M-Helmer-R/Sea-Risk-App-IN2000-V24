@@ -6,8 +6,7 @@ sealed interface CityEvent {
     data class setName(val name : String): CityEvent
     data class setLat(val lat : Double) : CityEvent
     data class setLon(val lon : Double) : CityEvent
-    data class setFavorite(val fave : Boolean) : CityEvent
-    data class removeFavorite(val fave : Boolean) : CityEvent
+    data class updateFavorite(val city : City) : CityEvent
     object showDialog: CityEvent
     object hideDialog: CityEvent
 

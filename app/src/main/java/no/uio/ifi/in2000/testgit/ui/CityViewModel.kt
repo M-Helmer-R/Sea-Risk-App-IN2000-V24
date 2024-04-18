@@ -1,7 +1,9 @@
 package no.uio.ifi.in2000.testgit.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -63,29 +65,39 @@ class CityViewModel (
                 val lat = cityUiState.value.lat
                 val lon = cityUiState.value.lon
 
-                if (name.isBlank()){
+                Log.w("VIEW_MODEL", "Name: $name, Lat: $lat, Lon: $lon" )
+
+                if (name.isBlank() || (lat == -1.0 && lon == -1.0)){
                     return
                 }
 
                 val newCity = City(name = name, lat = lat, lon = lon)
 
+                //Sjekk her
                 viewModelScope.launch {
                     dao.upsertCity(newCity)
+                    Log.w("VIEW_MODEL", "City: ${newCity.lat}" )
                 }
 
                 _cityUiState.update { it.copy(
                     isAddingCity = false,
                     name = "",
-                    lon = 0.0,
-                    lat =0.0,
+                    lon = -1.0,
+                    lat = -1.0,
                 ) }
             }
 
-            is CityEvent.setFavorite -> {
-                //viewModelScope.launch {dao.s(event.city)
-                _cityUiState.update { it.copy(
-                    fave = true
-                ) }
+            is CityEvent.updateFavorite -> {
+
+                viewModelScope.launch(Dispatchers.IO){
+                    if (event.city.favorite) {
+                        dao.removeFavoriteByID(event.city.cityId)
+
+                       // Log.w("VIEW_MODEL", "City: ${city.lat}" )
+                    } else {
+                        dao.setFavoriteByID(event.city.cityId)
+                    }
+                }
             }
 
             is CityEvent.setName -> {
@@ -94,25 +106,23 @@ class CityViewModel (
                 ) }
 
             }
+
             CityEvent.showDialog -> {
                 _cityUiState.update { it.copy( isAddingCity = true
                 ) }
             }
 
-            is CityEvent.removeFavorite -> {
-                _cityUiState.update { it.copy(
-                    fave = false
-                ) }
-            }
             is CityEvent.setLat -> {
                 _cityUiState.update { it.copy(
                     lat = event.lat
                 ) }
             }
+
             is CityEvent.setLon ->  {
                 _cityUiState.update { it.copy(
                     lon = event.lon
                 ) }
+                Log.w("VIEW_MODEL", "Update Lon to ${event.lon}")
             }
         }
     }

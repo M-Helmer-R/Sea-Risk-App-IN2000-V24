@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.testgit.ui
 
-import kotlinx.coroutines.flow.Flow
 import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.data.room.SortType
 
@@ -8,8 +7,8 @@ data class CityUiState(
     //DTO
     val cities: List<City> = emptyList(),
     val name: String = "",
-    val lon: Double = 0.0,
-    val lat: Double = 0.0,
+    val lon: Double = - 1.0,
+    val lat: Double = - 1.0,
     val fave: Boolean = false,
     val isAddingCity: Boolean = false,
     val sortType: SortType = SortType.NAME

@@ -2,9 +2,9 @@
 
 package no.uio.ifi.in2000.testgit.ui
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Button
@@ -27,12 +29,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.data.room.CityEvent
 import no.uio.ifi.in2000.testgit.data.room.SortType
-import no.uio.ifi.in2000.testgit.ui.theme.TestGitTheme
 
 @Composable
 fun CityScreen(
@@ -43,20 +44,25 @@ fun CityScreen(
 
     Scaffold (
         floatingActionButton = {
-            FloatingActionButton(onClick = { onEvent(CityEvent.showDialog)
+            FloatingActionButton(onClick = {
+                onEvent(CityEvent.showDialog)
             }) {
-                Text(text = "Add")
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add contact"
+                )
             }
 
         }
     ){ padding ->
         if (cityUiState.isAddingCity){
-            AddCityDialog(state = cityUiState, onEvent = onEvent)
+            AddCityDialog(onEvent = onEvent)
         }
         LazyColumn(contentPadding = padding,
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+
             item {
                 Row (
                     modifier = Modifier
@@ -82,29 +88,25 @@ fun CityScreen(
                 }
             }
 
+             /*
+
+            items(cityUiState.cities.filter { city -> city.favorite }){ city ->
+                Row (modifier = Modifier.fillMaxSize()
+                ) {
+                    Column {
+                        CityCard(city = city, onEvent)
+                    }
+                }
+            }
+
+
+              */
             items(cityUiState.cities){ city ->
                 Row (modifier = Modifier.fillMaxSize()
                 ) {
-                    Column(
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text(
-                            text = city.name
-                        )
-                        Text(text = "Coordinates: ${city.lat}, ${city.lon}")
+                    Column {
+                        CityCard(city = city, onEvent)
                     }
-                    Row {
-                        /*
-                        Button(onClick = { /*TODO*/ }) {
-                            onEvent(CityEvent.setFavorite(city))
-                        }
-
-                         */
-                        Button(onClick = {}) {
-                            onEvent(CityEvent.DeleteCity(city))
-                        }
-                    }
-
                 }
             }
         }
@@ -114,11 +116,10 @@ fun CityScreen(
 @Composable
 fun CityCard(
     city : City,
-    onClickAction: () -> Unit
+    onEvent: (CityEvent) -> Unit
 ) {
     Card (
         modifier = Modifier.fillMaxWidth(),
-        onClick = onClickAction,
     ){
         Row (
             modifier = Modifier.fillMaxWidth(),
@@ -126,14 +127,38 @@ fun CityCard(
             verticalAlignment = Alignment.CenterVertically
         ){
             Text(text = city.name)
+            Text(text = city.lat.toString())
+            Text(text = city.lon.toString())
+
             Button(
-                onClick = { city.favorite = !city.favorite }
+                onClick = {
+
+                    Log.w("SCREEN", "City: ${city.favorite}" )
+                    onEvent(CityEvent.updateFavorite(city))
+                    Log.w("SCREEN", "City: ${city.favorite}" )
+                }
             ) {
                 if (city.favorite) {
-                    Icon(imageVector = Icons.Filled.Star, contentDescription = "is favorite")
+                    Icon(imageVector = Icons.Filled.Star,
+                        contentDescription = "is favorite",
+                        tint = Color.Yellow
+                    )
+                    Log.w("CITY_SCREEN", "is favorite")
                 } else {
-                    Icon(imageVector = Icons.Outlined.Star, contentDescription = "is favorite")
+                    Icon(imageVector = Icons.Outlined.Star,
+                        contentDescription = "not favorite",
+                    )
+                    Log.w("CITY_SCREEN", "is not favorite")
                 }
+            }
+            Button(
+                onClick = {
+                    onEvent(CityEvent.DeleteCity(city))
+                }
+            ) {
+                Icon(imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete"
+                )
             }
         }
     }
@@ -143,7 +168,7 @@ fun CityCard(
 
 //@Preview
 
-
+/*
 @Preview(
     showBackground = true,
     showSystemUi = true,
@@ -154,10 +179,10 @@ fun CityCard(
 fun GreetingPreview() {
     TestGitTheme {
         val city = City(0, "Oslo", 70.0, 60.0, true)
-       CityCard(city = city) {
-
-       }
+       CityCard(city = city, onEvent = viewModel::onEvent )
     }
 }
 
+
+ */
 
