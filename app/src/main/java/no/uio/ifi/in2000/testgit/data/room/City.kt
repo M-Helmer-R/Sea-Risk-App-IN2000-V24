@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.testgit.data.room
 
-import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
