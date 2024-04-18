@@ -138,7 +138,7 @@ fun CityCard(
                     Log.w("SCREEN", "City: ${city.favorite}" )
                 }
             ) {
-                if (city.favorite) {
+                if (city.favorite == 1) {
                     Icon(imageVector = Icons.Filled.Star,
                         contentDescription = "is favorite",
                         tint = Color.Yellow

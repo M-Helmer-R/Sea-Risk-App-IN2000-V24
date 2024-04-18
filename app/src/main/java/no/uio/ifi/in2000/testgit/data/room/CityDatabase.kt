@@ -6,6 +6,7 @@ import androidx.room.RoomDatabase
 @Database(
     entities = [City::class],
     version = 1,
+    exportSchema = true,
 )
 abstract class CityDatabase : RoomDatabase() {
 

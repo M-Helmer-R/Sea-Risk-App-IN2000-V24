@@ -39,10 +39,6 @@ class CityViewModel (
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), CityUiState())
 
-    /*
-    fun loadCities()
-
-     */
     fun onEvent( event : CityEvent){
         when (event) {
 
@@ -90,10 +86,8 @@ class CityViewModel (
             is CityEvent.updateFavorite -> {
 
                 viewModelScope.launch(Dispatchers.IO){
-                    if (event.city.favorite) {
+                    if (event.city.favorite == 1) {
                         dao.removeFavoriteByID(event.city.cityId)
-
-                       // Log.w("VIEW_MODEL", "City: ${city.lat}" )
                     } else {
                         dao.setFavoriteByID(event.city.cityId)
                     }
