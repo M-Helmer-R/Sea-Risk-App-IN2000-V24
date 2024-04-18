@@ -54,18 +54,18 @@ fun Homescreen(navController: NavController?, currentRoute: String) {
 
     Column(
         modifier = Modifier
-            .fillMaxSize() 
+            .fillMaxSize()
             .background(DarkBlue)
     ) {
         TopBar()
-        ByggInnhold(modifier = Modifier.weight(1f))
+        Innhold(modifier = Modifier.weight(1f))
         BottomBar(navController, currentRoute)
     }
 }
 
 
 @Composable
-fun ByggInnhold(modifier: Modifier = Modifier) {
+fun Innhold(modifier: Modifier = Modifier) {
     LazyColumn(modifier = modifier) {
         item {
             Spacer(modifier = Modifier.height(58.dp))
