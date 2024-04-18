@@ -9,36 +9,20 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
 import no.uio.ifi.in2000.testgit.data.room.CityDatabase
 import no.uio.ifi.in2000.testgit.ui.CityScreen
 import no.uio.ifi.in2000.testgit.ui.CityViewModel
 import no.uio.ifi.in2000.testgit.ui.theme.TestGitTheme
-import java.io.FileOutputStream
 
 class MainActivity : ComponentActivity() {
 
-    /*
     private val db by lazy {
         Room.databaseBuilder(
             applicationContext,
             CityDatabase::class.java,
             "cities.db"
-        ).addCallback(roomCallback)
-            .createFromAsset("database/cities.db")
-            .fallbackToDestructiveMigration()
+        ).createFromAsset("database/cities100.db")
             .build()
-    }
-
-     */
-
-    private val db by lazy {
-        Room.databaseBuilder(
-            applicationContext,
-            CityDatabase::class.java,
-            "cities"
-        ).build()
     }
 
     private val viewModel by viewModels<CityViewModel>(
@@ -73,3 +57,21 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+/*
+@Composable
+fun Greeting(name: String, modifier: Modifier = Modifier) {
+    Text(
+        text = "Hello $name!",
+        modifier = modifier
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GreetingPreview() {
+    TestGitTheme {
+        Greeting("Android")
+    }
+}
+
+ */

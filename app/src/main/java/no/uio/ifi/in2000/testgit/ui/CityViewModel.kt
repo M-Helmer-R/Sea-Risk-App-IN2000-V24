@@ -22,11 +22,12 @@ class CityViewModel (
     private val dao : CityDao
 ) : ViewModel() {
 
-    private val _sortType = MutableStateFlow(SortType.NAME)
+    private val _sortType = MutableStateFlow(SortType.All)
     private val _cities = _sortType.flatMapLatest { it ->
         when (it) {
-            SortType.NAME -> dao.getAll()
-            SortType.FAVE -> dao.getFavourites()
+            SortType.All -> dao.getAll()
+            SortType.Favorites -> dao.getFavourites()
+            SortType.Customs -> dao.getCustoms()
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     }
     private val _cityUiState = MutableStateFlow(CityUiState())
@@ -39,6 +40,10 @@ class CityViewModel (
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), CityUiState())
 
+    /*
+    fun loadCities()
+
+     */
     fun onEvent( event : CityEvent){
         when (event) {
 
@@ -67,7 +72,7 @@ class CityViewModel (
                     return
                 }
 
-                val newCity = City(name = name, lat = lat, lon = lon)
+                val newCity = City(name = name, lat = lat, lon = lon, customized = 1)
 
                 //Sjekk her
                 viewModelScope.launch {
@@ -88,6 +93,8 @@ class CityViewModel (
                 viewModelScope.launch(Dispatchers.IO){
                     if (event.city.favorite == 1) {
                         dao.removeFavoriteByID(event.city.cityId)
+
+                       // Log.w("VIEW_MODEL", "City: ${city.lat}" )
                     } else {
                         dao.setFavoriteByID(event.city.cityId)
                     }

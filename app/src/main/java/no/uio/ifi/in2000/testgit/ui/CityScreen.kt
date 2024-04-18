@@ -7,12 +7,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
@@ -116,10 +118,19 @@ fun CityScreen(
 @Composable
 fun CityCard(
     city : City,
-    onEvent: (CityEvent) -> Unit
+    onEvent: (CityEvent) -> Unit,
 ) {
     Card (
         modifier = Modifier.fillMaxWidth(),
+        /*
+        colors = CardDefaults.cardColors(
+            containerColor = when (city.customized) {
+                1 -> MaterialTheme.colorScheme.surfaceVariant
+                else -> MaterialTheme.colorScheme.Gray
+            },
+        )
+
+         */
     ){
         Row (
             modifier = Modifier.fillMaxWidth(),
@@ -129,10 +140,12 @@ fun CityCard(
             Text(text = city.name)
             Text(text = city.lat.toString())
             Text(text = city.lon.toString())
-
+            if (city.customized == 1) {
+                Icon(imageVector = Icons.Filled.Build, contentDescription ="Custom",
+                    modifier = Modifier.fillMaxHeight())
+            }
             Button(
                 onClick = {
-
                     Log.w("SCREEN", "City: ${city.favorite}" )
                     onEvent(CityEvent.updateFavorite(city))
                     Log.w("SCREEN", "City: ${city.favorite}" )
@@ -151,14 +164,16 @@ fun CityCard(
                     Log.w("CITY_SCREEN", "is not favorite")
                 }
             }
-            Button(
-                onClick = {
-                    onEvent(CityEvent.DeleteCity(city))
+            if (city.customized == 1) {
+                Button(
+                    onClick = {
+                        onEvent(CityEvent.DeleteCity(city))
+                    }
+                ) {
+                    Icon(imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete"
+                    )
                 }
-            ) {
-                Icon(imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete"
-                )
             }
         }
     }

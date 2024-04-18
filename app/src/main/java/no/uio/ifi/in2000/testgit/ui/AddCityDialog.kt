@@ -50,7 +50,7 @@ fun AddCityDialog(
         return when {
             _cord == null -> true
             _cord < 0.0 -> true
-            _cord > 360.0 -> true
+            _cord > 360.0 -> false
             else ->
                 false
         }

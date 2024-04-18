@@ -33,6 +33,9 @@ interface CityDao {
     @Query("SELECT * FROM cities WHERE favorite == 1 ORDER BY name ASC")
     fun getFavourites() : Flow<List<City>>
 
+    @Query("SELECT * FROM cities WHERE customized == 1 ORDER BY name ASC")
+    fun getCustoms() : Flow<List<City>>
+
     //finds th
     /*
     @Query("SELECT * FROM cities WHERE haversine(:lat, :long, lattitude, longitude) <= :max_d ORDER BY haversine(:lat, :long, lattitude, longitude)")

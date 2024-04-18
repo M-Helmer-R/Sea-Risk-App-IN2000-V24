@@ -10,7 +10,7 @@ data class CityUiState(
     val lon: Double = - 1.0,
     val lat: Double = - 1.0,
     val fave: Int = 0,
-    val customized : Int = 1,
+    val custom : Int = 1,
     val isAddingCity: Boolean = false,
-    val sortType: SortType = SortType.NAME
+    val sortType: SortType = SortType.All
 )
