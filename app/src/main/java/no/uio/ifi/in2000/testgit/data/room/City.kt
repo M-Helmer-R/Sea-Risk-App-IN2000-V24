@@ -11,6 +11,6 @@ data class City (
     @ColumnInfo(name = "name") val name : String,
     @ColumnInfo(name = "longitude") val lon : Double,
     @ColumnInfo(name = "latitude") val lat : Double,
-    @ColumnInfo(name = "favorite") var favorite : Boolean = false,
-    @ColumnInfo(name = "customized") var customized : Boolean = false,
+    @ColumnInfo(name = "favorite") var favorite : Int = 0,
+    @ColumnInfo(name = "customized") var customized : Int = 0,
      )
