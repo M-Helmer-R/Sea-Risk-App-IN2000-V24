@@ -41,8 +41,9 @@ fun MapScreen(navController: NavController?, currentRoute: String) {
 }
 @Composable
 fun ShowMap(modifier: Modifier = Modifier) {
+    //Putte kartet frå Kriss her 
     Box(modifier = modifier.fillMaxSize().background(Color.Gray)) {
-        Text("Kart kommer her", color = Color.White, modifier = Modifier.align(Alignment.Center))
+        Text("Kart kommer her", color = White, modifier = Modifier.align(Alignment.Center))
     }
 }
 
@@ -51,7 +52,7 @@ fun ShowMap(modifier: Modifier = Modifier) {
 fun TopBar() {
     TopAppBar(
         title = {
-            Text(text = "Plask", color = Color.White, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+            Text(text = "Plask", color = White, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
         },
         navigationIcon = {
             Image(
