@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
             applicationContext,
             CityDatabase::class.java,
             "cities.db"
-        ).build()
+        ).createFromAsset("database/cities_100.db").build()
     }
 
     private val viewModel by viewModels<CityViewModel>(
