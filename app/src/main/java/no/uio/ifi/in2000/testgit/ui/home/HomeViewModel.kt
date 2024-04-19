@@ -21,15 +21,16 @@ class HomeViewModel (
 ) : ViewModel() {
 
     private val _sortType = MutableStateFlow(SortType.All)
+
     private val _cities = _sortType.flatMapLatest { it ->
         when (it) {
             SortType.All -> dao.getAll()
             SortType.Favorites -> dao.getFavourites()
             SortType.Customs -> dao.getCustoms()
+            SortType.Originals -> dao.getOriginals()
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     }
     private val _cityUiState = MutableStateFlow(HomeUiState())
-    //val cityUiState : StateFlow<CityUiState> = _cityUiState.asStateFlow()
 
     val cityUiState = combine(_cityUiState, _sortType, _cities) { state, sortType, cities ->
         state.copy(

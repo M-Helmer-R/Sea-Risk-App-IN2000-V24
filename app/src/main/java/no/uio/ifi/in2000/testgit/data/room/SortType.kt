@@ -4,4 +4,5 @@ enum class SortType {
     All,
     Favorites,
     Customs,
+    Originals,
 }

@@ -70,10 +70,7 @@ fun HomeScreen(navController : NavController?,
     ) {
         TopBar()
 
-        HorizontalContent(
-            homeUiState,
-            onEvent
-        )
+        HorizontalContent(homeUiState.cities.filter { city -> city.customized == 0 })
 
         MainContent(
             homeUiState = homeUiState,
@@ -92,7 +89,7 @@ fun MainContent(homeUiState : HomeUiState,
                 onEvent: (CityEvent) -> Unit,
             ) {
     Scaffold (
-
+        containerColor = Color.Transparent,
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 onEvent(CityEvent.showDialog)
@@ -105,130 +102,181 @@ fun MainContent(homeUiState : HomeUiState,
         }
 
     ) { padding ->
+
         if (homeUiState.isAddingCity) {
             AddCityDialog(onEvent = onEvent)
         }
+        Column (modifier = Modifier.fillMaxSize()){
+            Text(
+                text = "Dine byer",
+                style = MaterialTheme.typography.headlineSmall.copy(color = White),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
 
-        LazyColumn(
-            modifier = modifier
-            //Add scrollable function #TO_DO
-        ) {
+            LazyColumn(
+                modifier = modifier,
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                //Add scrollable function #TO_DO
+            ) {
 
-            item {
-                Text(
-                    text = "Dine byer",
-                    style = MaterialTheme.typography.headlineSmall.copy(color = White),
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                )
-            }
-
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    SortType.entries.forEach { sortType ->
-                        Row(
-                            modifier = Modifier.clickable {
-                                onEvent(CityEvent.SortCities(sortType))
-                            },
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(selected = homeUiState.sortType == sortType,
-                                onClick = {
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        SortType.entries.forEach { sortType ->
+                            Row(
+                                modifier = Modifier.clickable {
                                     onEvent(CityEvent.SortCities(sortType))
-                                }
-                            )
-                            Text(text = sortType.name)
+                                },
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(selected = homeUiState.sortType == sortType,
+                                    onClick = {
+                                        onEvent(CityEvent.SortCities(sortType))
+                                    }
+                                )
+                                Text(text = sortType.name)
+                            }
                         }
                     }
                 }
-            }
 
-            items(homeUiState.cities) { city ->
-                MainCard(city, onEvent)
+                items(homeUiState.cities) { city ->
+                    MainCard(city, onEvent)
+                }
             }
         }
     }
 }
 @Composable
-fun HorizontalContent(homeUiState: HomeUiState,
-                      onEvent: (CityEvent) -> Unit){
+fun HorizontalContent(originals : List<City>){
     Text(
-
         text = "Nærmeste aktivitetsplasser:",
         style = MaterialTheme.typography.headlineSmall.copy(color = White),
         modifier = Modifier.padding(bottom = 16.dp)
     )
     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(horizontal = 16.dp)) {
-        items(homeUiState.cities) { city ->
-            HorizontalCard(city, onEvent)
+        items(originals) { city ->
+            HorizontalCard(city)
         }
     }
 }
 
 @Composable
-fun HorizontalCard(
+fun MainCard(
     city: City,
     onEvent: (CityEvent) -> Unit
 ) {
     Card(
         modifier = Modifier
-            .size(width = 140.dp, height = 90.dp)
-            .padding(0.dp),
+            .fillMaxSize()
+            //.size(width = 140.dp, height = 90.dp)
+            .padding(12.dp),
         colors = CardDefaults.cardColors(containerColor = LightBlue),
         shape = MaterialTheme.shapes.medium
     ) {
-        Column(
+        Row (
             modifier = Modifier
-                .padding(8.dp)
-                .background(Color.Transparent),
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.Start
-        ) {
-            Text(text = city.name, style = MaterialTheme.typography.titleMedium.copy(color = White))
-            //Text(text = city.distance, style = MaterialTheme.typography.bodySmall.copy(color = White))
-            Row {
-                Text(text = city.lat.toString())
-                Text(text = city.lon.toString())
-            }
-            Row {
+                .padding(6.dp)
+                .background(Color.Transparent)
+                .fillMaxSize(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ){
+            Column(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .background(Color.Transparent)
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = city.name,
+                    style = MaterialTheme.typography.titleMedium.copy(color = White)
+                )
+                //Text(text = city.distance, style = MaterialTheme.typography.bodySmall.copy(color = White))
+                Row (modifier = Modifier
+                    .fillMaxWidth(),){
+
+                    Row(
+                        modifier = Modifier.padding(2.dp)
+                    ){
+                        Text(text = "Lat:",
+                            style = MaterialTheme.typography.titleSmall.copy(color = White)
+                        )
+                        Text(text = city.lat.toString())
+                    }
+
+                    Row(
+                        modifier = Modifier.padding(2.dp)
+                    ) {
+                        Text(
+                            text = "Lon:",
+                            style = MaterialTheme.typography.titleSmall.copy(color = White)
+                        )
+                        Text( text = city.lat.toString(),)
+                    }
+                }
                 /*
+                Row {
+                    /*
                 city.icons.forEach { iconId ->
                     Icon(imageVector = Icons.Filled.Home, contentDescription = null, modifier = Modifier.size(24.dp), tint = White)
                 }
 
                  */
+
+                }
+
+                 */
+            }
+
+            Column (
+                modifier = Modifier
+                    .padding(4.dp)
+                    .background(Color.Transparent)
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.SpaceBetween,
+                //horizontalAlignment = Alignment.End
+            ){
                 Button(
                     onClick = {
-                        Log.w("SCREEN", "City: ${city.favorite}" )
+                        Log.w("SCREEN", "City: ${city.favorite}")
                         onEvent(CityEvent.updateFavorite(city))
-                        Log.w("SCREEN", "City: ${city.favorite}" )
+                        Log.w("SCREEN", "City: ${city.favorite}")
                     }
                 ) {
                     if (city.favorite == 1) {
-                        Icon(imageVector = Icons.Filled.Star,
+                        Icon(
+                            imageVector = Icons.Filled.Star,
                             contentDescription = "is favorite",
                             tint = Color.Yellow
                         )
                         Log.w("CITY_SCREEN", "is favorite")
                     } else {
-                        Icon(imageVector = Icons.Outlined.Star,
+                        Icon(
+                            imageVector = Icons.Outlined.Star,
                             contentDescription = "not favorite",
                         )
                         Log.w("CITY_SCREEN", "is not favorite")
                     }
                 }
+
                 if (city.customized == 1) {
-                    Icon(imageVector = Icons.Filled.Build, contentDescription ="Custom",
-                        modifier = Modifier.fillMaxHeight())
+                    Icon(
+                        imageVector = Icons.Filled.Build, contentDescription = "Custom",
+                        modifier = Modifier.fillMaxHeight()
+                    )
                     Button(
                         onClick = {
                             onEvent(CityEvent.DeleteCity(city))
                         }
                     ) {
-                        Icon(imageVector = Icons.Default.Delete,
+                        Icon(
+                            imageVector = Icons.Default.Delete,
                             contentDescription = "Delete"
                         )
                     }
@@ -239,9 +287,7 @@ fun HorizontalCard(
 }
 
 @Composable
-fun MainCard(city: City,
-             onEvent: (CityEvent) -> Unit
-) {
+fun HorizontalCard(city: City) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
