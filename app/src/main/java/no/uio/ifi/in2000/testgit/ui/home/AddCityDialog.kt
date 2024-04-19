@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.testgit.ui
+package no.uio.ifi.in2000.testgit.ui.home
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement

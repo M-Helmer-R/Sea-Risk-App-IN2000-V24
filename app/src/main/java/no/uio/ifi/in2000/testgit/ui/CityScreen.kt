@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.data.room.CityEvent
 import no.uio.ifi.in2000.testgit.data.room.SortType
+import no.uio.ifi.in2000.testgit.ui.home.AddCityDialog
 
 @Composable
 fun CityScreen(
