@@ -5,26 +5,50 @@ import HomeScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.room.Room
+import no.uio.ifi.in2000.testgit.data.room.CityDatabase
+import no.uio.ifi.in2000.testgit.ui.home.HomeViewModel
 import no.uio.ifi.in2000.testgit.ui.map.MapScreen
 import no.uio.ifi.in2000.testgit.ui.map.TopBar
 
 class MainActivity : ComponentActivity() {
+
+    private val db by lazy {
+        Room.databaseBuilder(
+            applicationContext,
+            CityDatabase::class.java,
+            "cities.db"
+        ).createFromAsset("database/cities100.db")
+            .build()
+    }
+
+    private val viewModel by viewModels<HomeViewModel>(
+        factoryProducer = {
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return HomeViewModel(db.dao) as T
+                }
+            }
+        }
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -32,7 +56,7 @@ class MainActivity : ComponentActivity() {
             NavHost(navController = navController, startDestination = "home") {
                 composable("home") {
                     val state by viewModel.cityUiState.collectAsState()
-                    HomeScreen(navController, "home")
+                    HomeScreen(navController, "home", viewModel, onEvent = viewModel::onEvent)
                 }
                 composable("kart") {
                     MapScreen(navController, "kart")

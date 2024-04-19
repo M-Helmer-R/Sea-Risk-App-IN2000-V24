@@ -44,29 +44,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.testgit.data.room.City
-import no.uio.ifi.in2000.testgit.data.room.CityEvent
+import no.uio.ifi.in2000.testgit.ui.home.CityEvent
 import no.uio.ifi.in2000.testgit.data.room.SortType
 import no.uio.ifi.in2000.testgit.ui.home.AddCityDialog
 import no.uio.ifi.in2000.testgit.ui.home.HomeUiState
 import no.uio.ifi.in2000.testgit.ui.home.HomeViewModel
 import no.uio.ifi.in2000.testgit.ui.map.TopBar
 
-/*
-data class CityInfo(
-    val name: String,
-    val distance: String,
-    val icons: List<Int>
-)
-
-val cities = listOf(
-    CityInfo("Oslo", "500km", listOf(1, 2)),
-    CityInfo("Bergen", "300km", listOf(1, 2, 3)),
-    CityInfo("Trondheim", "250km", listOf(1)),
-    CityInfo("Stavanger", "450km", listOf(1, 2, 3, 4)),
-    CityInfo("Sogndal", "0km", listOf(1, 2, 3, 4))
-)
-
- */
 val DarkBlue = Color(0xFF013749)
 val LightBlue = Color(0xFF0C8891)
 val White = Color(0xFFFFFFFF)
@@ -308,10 +292,3 @@ fun BottomBar(navController: NavController?, currentRoute: String) {
         }
     }
 }
-
-
-
-
-
-
-

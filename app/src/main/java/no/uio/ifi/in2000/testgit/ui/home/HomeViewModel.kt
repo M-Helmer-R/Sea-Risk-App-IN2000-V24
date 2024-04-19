@@ -13,8 +13,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.testgit.data.room.City
-import no.uio.ifi.in2000.testgit.data.room.CityDao
-import no.uio.ifi.in2000.testgit.data.room.CityEvent
 import no.uio.ifi.in2000.testgit.data.room.SortType
 
 @OptIn(ExperimentalCoroutinesApi::class)

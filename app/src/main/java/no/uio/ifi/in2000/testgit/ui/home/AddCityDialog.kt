@@ -12,7 +12,6 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,9 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import no.uio.ifi.in2000.testgit.data.room.CityEvent
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddCityDialog(
     onEvent: (CityEvent) -> Unit,
@@ -81,7 +78,6 @@ fun AddCityDialog(
                                         onEvent(CityEvent.setLat(lat.toDouble()))
                                         onEvent(CityEvent.setLon(lon.toDouble()))
                                         onEvent(CityEvent.saveCity)
-                                        //onEvent(CityEvent.hideDialog)
                                     }
                                 }
                             ) {
