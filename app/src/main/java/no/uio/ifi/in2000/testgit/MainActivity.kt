@@ -1,7 +1,7 @@
 package no.uio.ifi.in2000.testgit
 
 import BottomBar
-import Homescreen
+import HomeScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             NavHost(navController = navController, startDestination = "home") {
                 composable("home") {
-                    Homescreen(navController, "home")
+                    HomeScreen(navController, "home")
                 }
                 composable("kart") {
                     MapScreen(navController, "kart")
