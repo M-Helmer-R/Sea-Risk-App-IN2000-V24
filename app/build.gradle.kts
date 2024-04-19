@@ -1,5 +1,6 @@
 plugins {
     id("com.android.application")
+    id("com.google.devtools.ksp") version "1.9.0-1.0.13"
     id("org.jetbrains.kotlin.android")
 }
 
@@ -61,7 +62,11 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.room:room-common:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     implementation("androidx.navigation:navigation-runtime-ktx:2.7.7")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
 
     // Testing (Espresso, junit, Compose UI Testing)
     testImplementation("junit:junit:4.13.2")
@@ -69,10 +74,6 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-
-    // Compose Debugger
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     // Ktor
     implementation("io.ktor:ktor-client-core:2.3.8")
@@ -84,9 +85,15 @@ dependencies {
     //
     implementation ("com.google.code.gson:gson:2.10.1")
 
-    // NAV
+    //Room
+    
+    implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
+    implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
+    ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
 
-    implementation ("androidx.navigation:navigation-fragment-ktx:2.7.7")
-    implementation ("androidx.navigation:navigation-ui-ktx:2.7.7")
-    implementation ("androidx.navigation:navigation-compose:2.7.7")
+    // Compose Debugger
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+
 }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -70,22 +69,30 @@ fun HomeScreen(navController : NavController?,
             .background(DarkBlue)
     ) {
         TopBar()
-        Content(
+
+        HorizontalContent(
+            homeUiState,
+            onEvent
+        )
+
+        MainContent(
             homeUiState = homeUiState,
             modifier = Modifier.weight(1f),
             onEvent = onEvent,
         )
+
         BottomBar(navController, currentRoute)
     }
 }
 
-
+//Custom
 @Composable
-fun Content(homeUiState : HomeUiState,
-            modifier: Modifier = Modifier,
-            onEvent: (CityEvent) -> Unit,
+fun MainContent(homeUiState : HomeUiState,
+                modifier: Modifier = Modifier,
+                onEvent: (CityEvent) -> Unit,
             ) {
     Scaffold (
+
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 onEvent(CityEvent.showDialog)
@@ -95,8 +102,8 @@ fun Content(homeUiState : HomeUiState,
                     contentDescription = "Add contact"
                 )
             }
-
         }
+
     ) { padding ->
         if (homeUiState.isAddingCity) {
             AddCityDialog(onEvent = onEvent)
@@ -104,19 +111,12 @@ fun Content(homeUiState : HomeUiState,
 
         LazyColumn(
             modifier = modifier
+            //Add scrollable function #TO_DO
         ) {
-            item {
-                Spacer(modifier = Modifier.height(58.dp))
-            }
-            item {
-                LagHorisontal(homeUiState, onEvent)
-            }
-            item {
-                Spacer(modifier = Modifier.height(24.dp))
-            }
+
             item {
                 Text(
-                    text = "Favoritter:",
+                    text = "Dine byer",
                     style = MaterialTheme.typography.headlineSmall.copy(color = White),
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 )
@@ -126,7 +126,6 @@ fun Content(homeUiState : HomeUiState,
                 Row(
                     modifier = Modifier
                         .fillMaxSize(),
-                    //.horizontalScroll(rememberScrollState()),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     SortType.entries.forEach { sortType ->
@@ -148,14 +147,14 @@ fun Content(homeUiState : HomeUiState,
             }
 
             items(homeUiState.cities) { city ->
-                CityCard(city, onEvent)
+                MainCard(city, onEvent)
             }
         }
     }
 }
 @Composable
-fun LagHorisontal(homeUiState: HomeUiState,
-                  onEvent: (CityEvent) -> Unit){
+fun HorizontalContent(homeUiState: HomeUiState,
+                      onEvent: (CityEvent) -> Unit){
     Text(
 
         text = "Nærmeste aktivitetsplasser:",
@@ -164,13 +163,13 @@ fun LagHorisontal(homeUiState: HomeUiState,
     )
     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(horizontal = 16.dp)) {
         items(homeUiState.cities) { city ->
-            CityCard(city, onEvent)
+            HorizontalCard(city, onEvent)
         }
     }
 }
 
 @Composable
-fun CityCard(
+fun HorizontalCard(
     city: City,
     onEvent: (CityEvent) -> Unit
 ) {
@@ -238,9 +237,11 @@ fun CityCard(
         }
     }
 }
-/*
+
 @Composable
-fun CityCard1(city: CityInfo) {
+fun MainCard(city: City,
+             onEvent: (CityEvent) -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -260,18 +261,19 @@ fun CityCard1(city: CityInfo) {
                     .padding(8.dp)
             ) {
                 Text(text = city.name, style = MaterialTheme.typography.titleMedium.copy(color = White))
-                Text(text = city.distance, style = MaterialTheme.typography.bodySmall.copy(color = White))
+                //Text(text = city.distance, style = MaterialTheme.typography.bodySmall.copy(color = White))
             }
+            /*
             Row(modifier = Modifier.padding(8.dp)) {
                 city.icons.forEach { iconId ->
                     Icon(imageVector = Icons.Filled.Place, contentDescription = null, modifier = Modifier.size(24.dp), tint = White)
                 }
             }
+
+             */
         }
     }
 }
-
- */
 
 @Composable
 fun BottomBar(navController: NavController?, currentRoute: String) {
