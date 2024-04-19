@@ -46,7 +46,7 @@ import androidx.navigation.NavController
 import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.data.room.CityEvent
 import no.uio.ifi.in2000.testgit.data.room.SortType
-import no.uio.ifi.in2000.testgit.ui.AddCityDialog
+import no.uio.ifi.in2000.testgit.ui.home.AddCityDialog
 import no.uio.ifi.in2000.testgit.ui.home.HomeUiState
 import no.uio.ifi.in2000.testgit.ui.home.HomeViewModel
 import no.uio.ifi.in2000.testgit.ui.map.TopBar
