@@ -5,15 +5,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.data.room.SortType
+import no.uio.ifi.in2000.testgit.data.room.haversine
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModel (
@@ -21,28 +24,28 @@ class HomeViewModel (
 ) : ViewModel() {
 
     private val _sortType = MutableStateFlow(SortType.All)
+    private val _preloaded = dao.getPreloaded()
 
     private val _cities = _sortType.flatMapLatest { it ->
         when (it) {
             SortType.All -> dao.getAll()
             SortType.Favorites -> dao.getFavourites()
             SortType.Customs -> dao.getCustoms()
-            SortType.Originals -> dao.getOriginals()
+            SortType.Preloaded -> dao.getPreloaded()
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     }
     private val _cityUiState = MutableStateFlow(HomeUiState())
 
-    val cityUiState = combine(_cityUiState, _sortType, _cities) { state, sortType, cities ->
+    val cityUiState = combine(
+        _cityUiState, _sortType, _cities, _preloaded
+    ) { state, sortType, cities, preloaded ->
         state.copy(
             cities = cities,
-            sortType = sortType
+            sortType = sortType,
+            preloaded = preloaded
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeUiState())
 
-    /*
-    fun loadCities()
-
-     */
     fun onEvent( event : CityEvent){
         when (event) {
 
@@ -88,7 +91,6 @@ class HomeViewModel (
             }
 
             is CityEvent.updateFavorite -> {
-
                 viewModelScope.launch(Dispatchers.IO){
                     if (event.city.favorite == 1) {
                         dao.removeFavoriteByID(event.city.cityId)
@@ -126,4 +128,19 @@ class HomeViewModel (
             }
         }
     }
+}
+
+//Fiks denne
+suspend fun getNearestCities(cities : Flow<List<City>>, lon : Double, lat : Double) : Map<City, Double> {
+
+    val citiesDist : MutableMap<City, Double> = mutableMapOf()
+
+    cities.collect { cityList ->
+        cityList.forEach { city ->
+            val distance = haversine(city.lat, city.lon, lat, lon)
+            citiesDist[city] = distance
+        }
+    }
+
+    return citiesDist.toList().sortedBy { it.second }.toMap()
 }
