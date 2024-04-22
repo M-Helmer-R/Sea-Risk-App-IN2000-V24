@@ -1,4 +1,7 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3Api::class
+)
 
 import android.util.Log
 import androidx.compose.foundation.background
@@ -23,6 +26,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
@@ -55,7 +59,8 @@ import androidx.navigation.NavController
 import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.data.room.SortType
 import no.uio.ifi.in2000.testgit.ui.home.AddCityDialog
-import no.uio.ifi.in2000.testgit.ui.home.CityEvent
+import no.uio.ifi.in2000.testgit.ui.home.ChangePositionDialog
+import no.uio.ifi.in2000.testgit.ui.home.HomeEvent
 import no.uio.ifi.in2000.testgit.ui.home.HomeUiState
 import no.uio.ifi.in2000.testgit.ui.home.HomeViewModel
 import no.uio.ifi.in2000.testgit.ui.map.TopBar
@@ -68,7 +73,7 @@ import no.uio.ifi.in2000.testgit.ui.theme.White
 fun HomeScreen(navController : NavController?,
                currentRoute : String,
                homeViewModel : HomeViewModel,
-               onEvent: (CityEvent) -> Unit
+               onEvent: (HomeEvent) -> Unit
 ) {
 
     val homeUiState : HomeUiState by homeViewModel.homeUiState.collectAsState()
@@ -81,7 +86,7 @@ fun HomeScreen(navController : NavController?,
 
         TopBar()
 
-        HorizontalContent(homeUiState.preloaded)
+        HorizontalContent(homeUiState, onEvent)
 
         MainContent(
             homeUiState = homeUiState,
@@ -99,13 +104,13 @@ fun MainContent(homeUiState : HomeUiState,
                 navController : NavController?,
                 currentRoute : String,
                 modifier: Modifier = Modifier,
-                onEvent: (CityEvent) -> Unit,
+                onEvent: (HomeEvent) -> Unit,
             ) {
     Scaffold (
         containerColor = Color.Transparent,
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                onEvent(CityEvent.showDialog)
+                onEvent(HomeEvent.showAddCityDialog)
             }) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -118,6 +123,9 @@ fun MainContent(homeUiState : HomeUiState,
 
         if (homeUiState.isAddingCity) {
             AddCityDialog(onEvent = onEvent)
+        }
+        if (homeUiState.isChangingPosition) {
+            ChangePositionDialog(onEvent = onEvent)
         }
         Column (modifier = Modifier.fillMaxSize()){
             Text(
@@ -135,7 +143,7 @@ fun MainContent(homeUiState : HomeUiState,
             ){
                 SortMenu(onEvent = onEvent)
                 Button(
-                    onClick = { onEvent(CityEvent.updateOrder) }
+                    onClick = { onEvent(HomeEvent.updateOrder) }
                 ) {
                     if (homeUiState.descendingOrder){
                         Text(text = "DESC")
@@ -198,7 +206,7 @@ fun MainContent(homeUiState : HomeUiState,
 
 @Composable
 fun SortMenu(
-    onEvent: (CityEvent) -> Unit
+    onEvent: (HomeEvent) -> Unit
 ){
     var expanded by remember {mutableStateOf(false)}
     val items = SortType.entries
@@ -230,7 +238,7 @@ fun SortMenu(
                     onClick = {
                         selectedOption = item
                         expanded = false
-                        onEvent(CityEvent.SortCities(item))
+                        onEvent(HomeEvent.SortCities(item))
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 )
@@ -240,20 +248,47 @@ fun SortMenu(
 }
 
 @Composable
-fun HorizontalContent(preloaded : List<City>){
+fun HorizontalContent(homeUiState: HomeUiState,
+                      onEvent: (HomeEvent) -> Unit
+){
+    val preloaded : Map<City, Double> = homeUiState.preloaded
+
     Text(
         text = "Nærmeste aktivitetsplasser:",
         style = MaterialTheme.typography.headlineSmall.copy(color = White),
         modifier = Modifier.padding(16.dp)
     )
+
+    Row (
+        modifier = Modifier.padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ){
+
+        Text(text = "Din posisjon: ${homeUiState.userLat}, ${homeUiState.userLon}",
+            style = MaterialTheme.typography.headlineSmall.copy(color = White),
+        )
+
+        Button(
+            onClick = {
+                onEvent(HomeEvent.showPositionDialog)
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Refresh,
+                contentDescription = "Add contact"
+            )
+        }
+    }
+
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         modifier = Modifier
             .padding(horizontal = 16.dp)
             .height(96.dp)
     ){
-        items(preloaded) { city ->
-            HorizontalCard(city)
+
+        items(preloaded.keys.toList()) { city ->
+            HorizontalCard(city, preloaded.getValue(city) )
         }
     }
 }
@@ -261,7 +296,7 @@ fun HorizontalContent(preloaded : List<City>){
 @Composable
 fun MainCard(
     city: City,
-    onEvent: (CityEvent) -> Unit
+    onEvent: (HomeEvent) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -345,7 +380,7 @@ fun MainCard(
                 Button(
                     onClick = {
                         Log.w("SCREEN", "City: ${city.favorite}")
-                        onEvent(CityEvent.updateFavorite(city))
+                        onEvent(HomeEvent.updateFavorite(city))
                         Log.w("SCREEN", "City: ${city.favorite}")
                     }
                 ) {
@@ -368,7 +403,7 @@ fun MainCard(
                 if (city.customized == 1) {
                     Button(
                         onClick = {
-                            onEvent(CityEvent.DeleteCity(city))
+                            onEvent(HomeEvent.DeleteHome(city))
                         }
                     ) {
                         Icon(
@@ -383,7 +418,7 @@ fun MainCard(
 }
 
 @Composable
-fun HorizontalCard(city: City) {
+fun HorizontalCard(city: City, distance : Double) {
     Card(
         modifier = Modifier
             .height(90.dp)
@@ -406,7 +441,7 @@ fun HorizontalCard(city: City) {
                     style = MaterialTheme.typography.titleMedium.copy(color = White)
                 )
 
-                Text(text = "10 km",
+                Text(text = distance.toString(),
                     style = MaterialTheme.typography.bodySmall.copy(color = White)
                 )
             }

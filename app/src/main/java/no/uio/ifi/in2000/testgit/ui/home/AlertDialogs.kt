@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun AddCityDialog(
-    onEvent: (CityEvent) -> Unit,
+    onEvent: (HomeEvent) -> Unit,
     modifier: Modifier = Modifier,
 ){
     var name by remember { mutableStateOf("") }
@@ -42,17 +42,6 @@ fun AddCityDialog(
     var latError by rememberSaveable { mutableStateOf(false) }
     var lonError by rememberSaveable { mutableStateOf(false) }
 
-    fun validateCoordinates(cord : String) : Boolean {
-        val _cord = cord.toDoubleOrNull()
-        return when {
-            _cord == null -> true
-            _cord < 0.0 -> true
-            _cord > 360.0 -> false
-            else ->
-                false
-        }
-    }
-
     fun validateInput(name : String, lat : String, lon : String) {
         Log.w("ADD_CITY_DIALOG", "Validating input")
         nameError = name.isEmpty()
@@ -62,7 +51,7 @@ fun AddCityDialog(
 
     AlertDialog(
         modifier = modifier,
-        onDismissRequest = { onEvent(CityEvent.hideDialog) },
+        onDismissRequest = { onEvent(HomeEvent.hideAddCityDialog) },
         confirmButton = {
                         Box(
                             modifier = Modifier.fillMaxWidth(),
@@ -74,10 +63,9 @@ fun AddCityDialog(
                                     Log.w("ADD_CITY_DIALOG", "Button pressed")
                                     if (!nameError && !latError && !lonError){
                                         Log.w("Add_City", "Latitude: $lat , ${lat.toDouble()}, Longitude: $lon , ${lon.toDouble()}")
-                                        onEvent(CityEvent.setName(name))
-                                        onEvent(CityEvent.setLat(lat.toDouble()))
-                                        onEvent(CityEvent.setLon(lon.toDouble()))
-                                        onEvent(CityEvent.saveCity)
+                                        onEvent(HomeEvent.setName(name))
+                                        onEvent(HomeEvent.setCityPosition(lat.toDouble(), lon.toDouble()))
+                                        onEvent(HomeEvent.saveCity)
                                     }
                                 }
                             ) {
@@ -120,6 +108,81 @@ fun AddCityDialog(
             }
 
 
+        }
+    )
+}
+@Composable
+fun ChangePositionDialog(
+    onEvent: (HomeEvent) -> Unit,
+    modifier: Modifier = Modifier,
+){
+
+    var lat by remember { mutableStateOf("") }
+    var lon by remember { mutableStateOf("") }
+
+    val errorMessage = "Not valid input"
+    var latError by rememberSaveable { mutableStateOf(false) }
+    var lonError by rememberSaveable { mutableStateOf(false) }
+
+    fun validateInput(lat : String, lon : String) {
+        Log.w("ADD_CITY_DIALOG", "Validating input")
+        latError = validateCoordinates(lat)
+        lonError = validateCoordinates(lon)
+    }
+
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = {
+            onEvent(HomeEvent.hidePositionDialog)
+        },
+
+        confirmButton = {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.CenterEnd,
+            ){
+                Button(
+                    onClick = {
+                        validateInput(lat, lon)
+                        Log.w("ADD_CITY_DIALOG", "Button pressed")
+                        if ( !latError && !lonError){
+                            Log.w("Add_City", "Latitude: $lat , ${lat.toDouble()}, Longitude: $lon , ${lon.toDouble()}")
+                            onEvent(HomeEvent.setUserPosition
+                                (lat.toDouble(),
+                                lon.toDouble())
+                            )
+                            onEvent(HomeEvent.updatePreloaded)
+                        }
+                    }
+                ) {
+                    Text(text = "Change")
+                }
+            }
+        },
+        title = { Text(text = "Change position")},
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+
+                DoubleTextField(
+                    title = "Latitude",
+                    placeholder = "Enter the latitude",
+                    text = lat,
+                    onValueChange = {lat = it},
+                    error = latError,
+                    errorMessage = errorMessage
+
+                )
+                DoubleTextField(
+                    title = "Longitude",
+                    placeholder = "Enter the longitude",
+                    text = lon,
+                    onValueChange = {lon = it},
+                    error = lonError,
+                    errorMessage = errorMessage
+                )
+            }
         }
     )
 }
@@ -168,6 +231,7 @@ fun NameField(
         },
     )
 }
+
 @Composable
 fun DoubleTextField(
     title: String,
@@ -213,3 +277,13 @@ fun DoubleTextField(
 
 }
 
+fun validateCoordinates(cord : String) : Boolean {
+    val _cord = cord.toDoubleOrNull()
+    return when {
+        _cord == null -> true
+        _cord < 0.0 -> true
+        _cord > 360.0 -> true
+        else ->
+            false
+    }
+}
