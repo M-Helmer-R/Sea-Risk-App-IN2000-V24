@@ -10,6 +10,8 @@ sealed interface CityEvent {
     data class setLat(val lat : Double) : CityEvent
     data class setLon(val lon : Double) : CityEvent
     data class updateFavorite(val city : City) : CityEvent
+
+    object updateOrder : CityEvent
     object showDialog: CityEvent
     object hideDialog: CityEvent
     data class SortCities(val sortType : SortType) : CityEvent

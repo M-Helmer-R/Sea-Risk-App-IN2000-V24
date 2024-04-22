@@ -29,6 +29,17 @@ interface CityDao {
     @Query("SELECT * FROM cities WHERE customized == 0 ORDER BY name ASC")
     fun getPreloaded() : Flow<List<City>>
 
+    @Query("SELECT * FROM cities ORDER BY name DESC")
+    fun getAllDesc() : Flow<List<City>>
+    @Query("SELECT * FROM cities WHERE favorite == 1 ORDER BY name DESC")
+    fun getFavouritesDesc() : Flow<List<City>>
+
+    @Query("SELECT * FROM cities WHERE customized == 1 ORDER BY name DESC")
+    fun getCustomsDesc() : Flow<List<City>>
+
+    @Query("SELECT * FROM cities WHERE customized == 0 ORDER BY name DESC")
+    fun getPreloadedDesc() : Flow<List<City>>
+
     @Query("UPDATE cities SET favorite = 1 WHERE cityId = :id")
     fun setFavoriteByID(id : Int)
 

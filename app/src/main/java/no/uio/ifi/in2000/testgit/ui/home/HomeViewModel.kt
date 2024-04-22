@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.testgit.data.room.City
@@ -26,23 +25,76 @@ class HomeViewModel (
     private val _sortType = MutableStateFlow(SortType.All)
     private val _preloaded = dao.getPreloaded()
 
+    private val _citiesDesc = _sortType.flatMapLatest { it ->
+        when (it) {
+            SortType.All -> dao.getAllDesc()
+            SortType.Favorites -> dao.getFavouritesDesc()
+            SortType.Customs -> dao.getCustomsDesc()
+            SortType.Preloaded -> dao.getPreloadedDesc()
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
     private val _cities = _sortType.flatMapLatest { it ->
         when (it) {
             SortType.All -> dao.getAll()
             SortType.Favorites -> dao.getFavourites()
             SortType.Customs -> dao.getCustoms()
             SortType.Preloaded -> dao.getPreloaded()
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
-    }
-    private val _cityUiState = MutableStateFlow(HomeUiState())
+            /*
+        if (_descendingOrder){
+            when (it) {
+                SortType.All -> dao.getAll()
+                SortType.Favorites -> dao.getFavourites()
+                SortType.Customs -> dao.getCustoms()
+                SortType.Preloaded -> dao.getPreloaded()
+            }
+        } else {
+            when (it) {
+                SortType.All -> dao.getAll()
+                SortType.Favorites -> dao.getFavourites()
+                SortType.Customs -> dao.getCustoms()
+                SortType.Preloaded -> dao.getPreloaded()
+            }
+        }
 
-    val cityUiState = combine(
-        _cityUiState, _sortType, _cities, _preloaded
-    ) { state, sortType, cities, preloaded ->
+        when (it) {
+            SortType.All -> if (_descendingOrder) dao.getAllDesc() else dao.getAll()
+            SortType.Favorites -> if (_descendingOrder) dao.getFavouritesDesc() else dao.getFavourites()
+            SortType.Customs -> if (_descendingOrder) dao.getCustomsDesc() else dao.getCustoms()
+            SortType.Preloaded -> if (_descendingOrder) dao.getPreloadedDesc() else dao.getPreloaded()
+        }
+
+         */
+            /*
+            if (_ascendingOrder) {
+                when (it) {
+                    (SortType.All && _ascendingOrder) -> dao.getAll()
+                    SortType.Favorites -> dao.getFavourites()
+                    SortType.Customs -> dao.getCustoms()
+                    SortType.Preloaded -> dao.getPreloaded()
+                }
+            } else {
+                when (it) {
+                    SortType.All -> dao.getAllDesc()
+                    SortType.Favorites -> dao.getFavouritesDesc()
+                    SortType.Customs -> dao.getCustomsDesc()
+                    SortType.Preloaded -> dao.getPreloadedDesc()
+                }
+            }
+
+          */
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
+    private val _homeUiState = MutableStateFlow(HomeUiState())
+
+    val homeUiState = combine(_homeUiState, _sortType, _cities, _citiesDesc, _preloaded,
+    ) { state, sortType, cities, citiesDesc, preloaded ->
         state.copy(
             cities = cities,
+            citiesDesc = citiesDesc,
             sortType = sortType,
-            preloaded = preloaded
+            preloaded = preloaded,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeUiState())
 
@@ -59,14 +111,19 @@ class HomeViewModel (
             }
 
             CityEvent.hideDialog -> {
-                _cityUiState.update { it.copy( isAddingCity = false
+                _homeUiState.update { it.copy( isAddingCity = false
                 ) }
             }
 
+            CityEvent.updateOrder -> {
+                _homeUiState.update { it.copy( descendingOrder = !it.descendingOrder)
+                }
+            }
+
             CityEvent.saveCity -> {
-                val name = cityUiState.value.name
-                val lat = cityUiState.value.lat
-                val lon = cityUiState.value.lon
+                val name = homeUiState.value.name
+                val lat = homeUiState.value.lat
+                val lon = homeUiState.value.lon
 
                 Log.w("VIEW_MODEL", "Name: $name, Lat: $lat, Lon: $lon" )
 
@@ -82,7 +139,7 @@ class HomeViewModel (
                     Log.w("VIEW_MODEL", "City: ${newCity.lat}" )
                 }
 
-                _cityUiState.update { it.copy(
+                _homeUiState.update { it.copy(
                     isAddingCity = false,
                     name = "",
                     lon = -1.0,
@@ -103,25 +160,25 @@ class HomeViewModel (
             }
 
             is CityEvent.setName -> {
-                _cityUiState.update { it.copy(
+                _homeUiState.update { it.copy(
                     name = event.name
                 ) }
 
             }
 
             CityEvent.showDialog -> {
-                _cityUiState.update { it.copy( isAddingCity = true
+                _homeUiState.update { it.copy( isAddingCity = true
                 ) }
             }
 
             is CityEvent.setLat -> {
-                _cityUiState.update { it.copy(
+                _homeUiState.update { it.copy(
                     lat = event.lat
                 ) }
             }
 
             is CityEvent.setLon ->  {
-                _cityUiState.update { it.copy(
+                _homeUiState.update { it.copy(
                     lon = event.lon
                 ) }
                 Log.w("VIEW_MODEL", "Update Lon to ${event.lon}")

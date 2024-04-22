@@ -6,7 +6,9 @@ import no.uio.ifi.in2000.testgit.data.room.SortType
 data class HomeUiState(
     //DTO
     val cities: List<City> = emptyList(),
+    val citiesDesc : List<City> = emptyList(),
     val preloaded : List<City> = emptyList(),
+    val descendingOrder : Boolean = true,
     val name: String = "",
     val lon: Double = - 1.0,
     val lat: Double = - 1.0,

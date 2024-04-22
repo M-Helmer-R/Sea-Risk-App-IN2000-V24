@@ -1,6 +1,7 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
@@ -27,54 +30,39 @@ import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.testgit.data.room.City
-import no.uio.ifi.in2000.testgit.ui.home.CityEvent
 import no.uio.ifi.in2000.testgit.data.room.SortType
 import no.uio.ifi.in2000.testgit.ui.home.AddCityDialog
+import no.uio.ifi.in2000.testgit.ui.home.CityEvent
 import no.uio.ifi.in2000.testgit.ui.home.HomeUiState
 import no.uio.ifi.in2000.testgit.ui.home.HomeViewModel
 import no.uio.ifi.in2000.testgit.ui.map.TopBar
-
-val DarkBlue = Color(0xFF013749)
-val LightBlue = Color(0xFF0C8891)
-val White = Color(0xFFFFFFFF)
-
-val DarkBlueShade1 = Color(0xFF012A3C)
-val DarkBlueShade2 = Color(0xFF011E2F)
-val DarkBlueShade3 = Color(0xFF010F17)
-
-val LightBlueShade1 = Color(0xFF0B7780)
-val LightBlueShade2 = Color(0xFF0A666F)
-val LightBlueShade3 = Color(0xFF09555F)
-
-val LightGray = Color(0xFFF5F5F5)
-val MediumGray = Color(0xFFCCCCCC)
-val DarkGray = Color(0xFF666666)
-
-val Yellow = Color(0xFFFFFFD700)
-val Orange = Color(0xFFFFA500)
-val Green = Color(0xFF00FF00)
-val Purple = Color(0xFF800080)
-
-val Black = Color(0xFF000000)
-val OffWhite = Color(0xFFF9F9F9)
-val Beige = Color(0xFFF5F5DC)
-val Brown = Color(0xFF8B4513)
+import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
+import no.uio.ifi.in2000.testgit.ui.theme.LightBlue
+import no.uio.ifi.in2000.testgit.ui.theme.LightBlueShade1
+import no.uio.ifi.in2000.testgit.ui.theme.White
 
 @Composable
 fun HomeScreen(navController : NavController?,
@@ -83,7 +71,7 @@ fun HomeScreen(navController : NavController?,
                onEvent: (CityEvent) -> Unit
 ) {
 
-    val homeUiState : HomeUiState by homeViewModel.cityUiState.collectAsState()
+    val homeUiState : HomeUiState by homeViewModel.homeUiState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -137,33 +125,35 @@ fun MainContent(homeUiState : HomeUiState,
                 style = MaterialTheme.typography.headlineSmall.copy(color = White),
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
-            /*
-            Row(
+
+            Row (
                 modifier = Modifier
-                    .fillMaxSize(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                SortType.entries.forEach { sortType ->
-                    Row(
-                        modifier = Modifier.clickable {
-                            onEvent(CityEvent.SortCities(sortType))
-                        },
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(selected = homeUiState.sortType == sortType,
-                            onClick = {
-                                onEvent(CityEvent.SortCities(sortType))
-                            }
-                        )
-                        Text(text = sortType.name,
-                            style = MaterialTheme.typography.titleSmall.copy(color = White)
-                        )
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceAround
+            ){
+                SortMenu(onEvent = onEvent)
+                Button(
+                    onClick = { onEvent(CityEvent.updateOrder) }
+                ) {
+                    if (homeUiState.descendingOrder){
+                        Text(text = "DESC")
+                        Icon(
+                            imageVector = Icons.Filled.KeyboardArrowDown,
+                            contentDescription = "Descending")
+                    } else {
+                        Text(text = "ASC")
+                        Icon(
+                            imageVector = Icons.Filled.KeyboardArrowUp,
+                            contentDescription = "Descending")
                     }
+
                 }
+
             }
 
-             */
-            Row {
+                /*
                 SortType.entries.forEach { sortType ->
                     Row(
                         modifier = Modifier.clickable {
@@ -183,40 +173,72 @@ fun MainContent(homeUiState : HomeUiState,
                     }
                 }
             }
+
+             */
+
             LazyColumn(
                 modifier = modifier,
                  horizontalAlignment = Alignment.CenterHorizontally,
                 //Add scrollable function #TO_DO
             ) {
-                /*
-                item {
-                    SortType.entries.forEach { sortType ->
-                        Row(
-                            modifier = Modifier.clickable {
-                                onEvent(CityEvent.SortCities(sortType))
-                            },
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(selected = homeUiState.sortType == sortType,
-                                onClick = {
-                                    onEvent(CityEvent.SortCities(sortType))
-                                }
-                            )
-                            Text(text = sortType.name,
-                                style = MaterialTheme.typography.titleSmall.copy(color = White)
-                            )
-                        }
+                if (homeUiState.descendingOrder){
+                    items(homeUiState.citiesDesc) { city ->
+                        MainCard(city, onEvent)
+                    }
+                } else {
+                    items(homeUiState.cities) { city ->
+                        MainCard(city, onEvent)
                     }
                 }
+            }
 
-                 */
-                items(homeUiState.cities) { city ->
-                    MainCard(city, onEvent)
-                }
+        }
+    }
+}
+
+@Composable
+fun SortMenu(
+    onEvent: (CityEvent) -> Unit
+){
+    var expanded by remember {mutableStateOf(false)}
+    val items = SortType.entries
+    var selectedOption by remember { mutableStateOf(SortType.All) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = {expanded = it },
+    ) {
+        TextField(
+            modifier = Modifier.menuAnchor(),
+            readOnly = true,
+            value = selectedOption.name,
+            onValueChange = {},
+            label = { Text(text = "Sorting") },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
+            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            items.forEach{ item ->
+                DropdownMenuItem(
+                    text = { Text(item.name) },
+                    onClick = {
+                        selectedOption = item
+                        expanded = false
+                        onEvent(CityEvent.SortCities(item))
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                )
             }
         }
     }
 }
+
 @Composable
 fun HorizontalContent(preloaded : List<City>){
     Text(

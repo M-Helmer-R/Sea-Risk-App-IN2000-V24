@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.testgit.ui.map
 
 import BottomBar
-import DarkBlue
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -31,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.testgit.R
+import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 
 @Composable
 fun MapScreen(navController: NavController?, currentRoute: String) {

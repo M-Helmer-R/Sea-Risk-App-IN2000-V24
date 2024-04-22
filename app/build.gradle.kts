@@ -86,7 +86,6 @@ dependencies {
     implementation ("com.google.code.gson:gson:2.10.1")
 
     //Room
-    
     implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
     implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
     ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")

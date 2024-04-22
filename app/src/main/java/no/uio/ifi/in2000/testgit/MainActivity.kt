@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             NavHost(navController = navController, startDestination = "home") {
                 composable("home") {
-                    val state by viewModel.cityUiState.collectAsState()
+                    val state by viewModel.homeUiState.collectAsState()
                     HomeScreen(navController, "home", viewModel, onEvent = viewModel::onEvent)
                 }
                 composable("kart") {
