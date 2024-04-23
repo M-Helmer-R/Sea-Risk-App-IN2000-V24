@@ -37,7 +37,13 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import no.uio.ifi.in2000.testgit.R
 
-
+/*
+TO DO
+- navigasjon logikk mellom activities og visningstype
+- home navigasjon med topbar backbutton (er popbackstack feil hvis vi kan ha
+  mer navigasjon mellom
+- avrundet bar over bottombar
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActivityScreen(chosenCity: String, navController: NavController, activityScreenViewModel: ActivityScreenViewModel = viewModel()){
@@ -46,12 +52,14 @@ fun ActivityScreen(chosenCity: String, navController: NavController, activityScr
     val metAlertsUIState = activityScreenViewModel.metAlertsUIState.collectAsState()
     val activities = listOf("sailing", "surfing", "swimming", "kayaking")
     var selectedButton by remember { mutableStateOf(activities[0]) }
+    // trenger aa lage en liten bar over bottombar
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(text = "${chosenCity}") },
                 navigationIcon = {
+                    // trenger denne aa vaere elevated?
                     ElevatedButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -90,7 +98,7 @@ fun ActivityScreen(chosenCity: String, navController: NavController, activityScr
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.surfingicon),
-                            contentDescription = "sailboat"
+                            contentDescription = "surfing"
                         )
 
                     }
@@ -112,7 +120,7 @@ fun ActivityScreen(chosenCity: String, navController: NavController, activityScr
                     ElevatedButton(onClick = { /*TODO*/ }) {
                         Icon(
                             painter = painterResource(R.drawable.kayakicon),
-                            contentDescription = "sailboat"
+                            contentDescription = "kayak"
                         )
 
                     }
@@ -149,4 +157,6 @@ fun ActivityScreen(chosenCity: String, navController: NavController, activityScr
 @Composable
 @Preview
 fun ActivityScreenPreview(){
+    val navController = rememberNavController()
+    ActivityScreen(chosenCity = "Oslo", navController = navController)
 }
