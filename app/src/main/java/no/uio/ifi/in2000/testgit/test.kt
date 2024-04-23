@@ -19,7 +19,7 @@ suspend fun main() {
     val metAlertsDataSource: MetAlertsDataSource = MetAlertsDataSource()
     val metAlertsData = metAlertsDataSource.getMetAlerts(lat, lon)
     val oceanForeCastDataSource: OceanForeCastDataSource = OceanForeCastDataSource()
-    val oceanForeCastData = oceanForeCastDataSource.getData()
+    val oceanForeCastData = oceanForeCastDataSource.getData(lat, lon)
     if (oceanForeCastData != null) {
         print(oceanForeCastData.data?.instant?.details?.seaWaterSpeed)
     }

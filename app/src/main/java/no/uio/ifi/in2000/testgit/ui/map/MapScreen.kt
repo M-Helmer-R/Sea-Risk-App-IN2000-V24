@@ -41,12 +41,13 @@ fun Mapscreen(mapScreenViewModel: MapScreenViewModel = viewModel()){
     var lon: Double
     val locationUiState = mapScreenViewModel.locationUIState.collectAsState()
     val dialogUIState = mapScreenViewModel.dialogUIState.collectAsState()
+    val oceanForeCastUIState = mapScreenViewModel.oceanForeCastUIState.collectAsState()
 
 
 
     Box {
         if (dialogUIState.value.isVisible == true){
-
+            if (oceanForeCastUIState.value.oceanDetails != null){
                 AlertDialogExample(
                     onDismissRequest = {mapScreenViewModel.hideDialog() },
                     onConfirmation = { mapScreenViewModel.hideDialog() },
@@ -54,6 +55,18 @@ fun Mapscreen(mapScreenViewModel: MapScreenViewModel = viewModel()){
                     dialogText = "Vil du se mer info om ${locationUiState.value.placeName}?",
                     icon = Icons.Default.Info
                 )
+            }
+
+            else{
+                AlertDialogExample(
+                    onDismissRequest = {mapScreenViewModel.hideDialog() },
+                    onConfirmation = { mapScreenViewModel.hideDialog() },
+                    dialogTitle = "Ingen data",
+                    dialogText = "",
+                    icon = Icons.Default.Info
+                )
+            }
+
 
         }
         MapboxMap(

@@ -9,10 +9,17 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.testgit.data.MainRepository
 import no.uio.ifi.in2000.testgit.data.map.GeoCodeRepository
 import no.uio.ifi.in2000.testgit.data.map.ReverseGeocodeCallback
+import no.uio.ifi.in2000.testgit.data.oceanforecast.OceanForeCastRepository
+import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanDetails
+import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanTimeseries
 import no.uio.ifi.in2000.testgit.ui.Activity.NowCastUIState
 
 data class LocationUIState(
     var placeName: String
+)
+
+data class OceanForeCastUIState(
+    var oceanDetails: OceanTimeseries?
 )
 
 data class DialogUIState(
@@ -20,6 +27,7 @@ data class DialogUIState(
 )
 class MapScreenViewModel: ViewModel() {
     private val repository: GeoCodeRepository = GeoCodeRepository()
+    private val oceanRepository: OceanForeCastRepository = OceanForeCastRepository()
 
     private var _locationUIState = MutableStateFlow(LocationUIState("Ingen data"))
     var locationUIState: StateFlow<LocationUIState> = _locationUIState.asStateFlow()
@@ -27,19 +35,34 @@ class MapScreenViewModel: ViewModel() {
     private var _dialogUIState = MutableStateFlow(DialogUIState(false))
     var dialogUIState: StateFlow<DialogUIState> = _dialogUIState.asStateFlow()
 
+    private var _oceanForeCastUIState = MutableStateFlow(OceanForeCastUIState(null))
+    var oceanForeCastUIState: StateFlow<OceanForeCastUIState> = _oceanForeCastUIState.asStateFlow()
 
+
+    fun loadOceanForeCast(lat: String, lon: String){
+        viewModelScope.launch {
+            val oceanDetails = oceanRepository.fetchOceanForeCast(lat, lon)
+
+            val newOceanForeCastUIState = _oceanForeCastUIState.value.copy(oceanDetails = oceanDetails)
+            _oceanForeCastUIState.value = newOceanForeCastUIState
+        }
+
+
+    }
     fun loadPlaceName(lon: Double, lat: Double){
 
         repository.reverseGeoCode(lon, lat, object: ReverseGeocodeCallback {
             override fun onSuccess(placeName: String) {
                 val newlocationUIState = _locationUIState.value.copy(placeName = placeName)
                 _locationUIState.value = newlocationUIState
+                loadOceanForeCast(lat.toString(), lon.toString())
                 showDialog()
             }
 
             override fun onFailure(placeName: String) {
                 val newlocationUIState = _locationUIState.value.copy(placeName = placeName)
                 _locationUIState.value = newlocationUIState
+                loadOceanForeCast(lat.toString(), lon.toString())
                 showDialog()
             }
         } )

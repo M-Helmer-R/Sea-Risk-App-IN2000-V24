@@ -29,14 +29,21 @@ class OceanForeCastDataSource {
 
     }
 
-    suspend fun getData(): OceanTimeseries? {
-        val oceanforecastOslo = "weatherapi/oceanforecast/2.0/complete?lat=59.9139&lon=10.7522"
-        val kallNowcastOslo = client.get(oceanforecastOslo)
-        print(kallNowcastOslo)
-        val dataNowcastOslo = kallNowcastOslo.body<OceanForeCastData>()
-        //val instantNowcastData = dataNowcastOslo.timeseries[0]
+    suspend fun getData(lat: String, lon: String): OceanTimeseries? {
+        try {
+            val oceanforecastOslo = "weatherapi/oceanforecast/2.0/complete?lat=$lat&lon=$lon"
+            val kallNowcastOslo = client.get(oceanforecastOslo)
+            print(kallNowcastOslo)
+            val dataNowcastOslo = kallNowcastOslo.body<OceanForeCastData>()
+            //val instantNowcastData = dataNowcastOslo.timeseries[0]
 
 
-        return dataNowcastOslo.properties?.timeseries?.get(0)
+            return dataNowcastOslo.properties?.timeseries?.get(0)
+        }
+
+        catch (e: Exception){
+            return null
+        }
+
     }
 }
