@@ -65,6 +65,7 @@ fun Mapscreen(mapScreenViewModel: MapScreenViewModel = viewModel()){
             }
 
             else{
+                //Lage en annen popup her
                 AlertDialogExample(
                     onDismissRequest = {mapScreenViewModel.hideDialog() },
                     onConfirmation = { mapScreenViewModel.hideDialog() },

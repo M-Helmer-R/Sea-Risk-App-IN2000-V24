@@ -53,6 +53,11 @@ class MapScreenViewModel: ViewModel() {
                 _dialogUIState.value = newDialogUiState
             }
 
+            else{
+                val newDialogUiState = _dialogUIState.value.copy(oceanLoaded = false)
+                _dialogUIState.value = newDialogUiState
+            }
+
             val newOceanForeCastUIState = _oceanForeCastUIState.value.copy(oceanDetails = oceanDetails)
             _oceanForeCastUIState.value = newOceanForeCastUIState
         }
@@ -95,22 +100,5 @@ class MapScreenViewModel: ViewModel() {
         println("Dialog hidden")
     }
 
-    fun dismissDialog(){
-        print("Dialog dismissed")
-        viewModelScope.launch {
-            hideDialog()
-        }
-    }
 
-    fun getDialog(){
-        viewModelScope.launch {
-            showDialog()
-        }
-    }
-
-    private suspend fun handleLoadPlace(lon: Double, lat: Double){
-        viewModelScope.launch {
-            loadPlaceName(lon, lat)
-        }
-    }
 }
