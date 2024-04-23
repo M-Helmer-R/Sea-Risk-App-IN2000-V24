@@ -1,6 +1,7 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
     ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3Api::class
+    ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class
 )
 
 import android.util.Log
@@ -70,13 +71,15 @@ import no.uio.ifi.in2000.testgit.ui.theme.LightBlueShade1
 import no.uio.ifi.in2000.testgit.ui.theme.White
 
 @Composable
-fun HomeScreen(navController : NavController?,
-               currentRoute : String,
-               homeViewModel : HomeViewModel,
-               onEvent: (HomeEvent) -> Unit
+fun HomeScreen(
+    navController : NavController?,
+    currentRoute : String,
+    homeViewModel : HomeViewModel,
+    onEvent: (HomeEvent) -> Unit
 ) {
 
     val homeUiState : HomeUiState by homeViewModel.homeUiState.collectAsState()
+    val citites : List<City> = homeUiState.cities
 
     Column(
         modifier = Modifier
@@ -84,21 +87,68 @@ fun HomeScreen(navController : NavController?,
             .background(DarkBlue)
     ) {
 
-        TopBar()
+        val modifier : Modifier = Modifier.fillMaxWidth().padding(16.dp)
 
-        HorizontalContent(homeUiState, onEvent)
+        TopBar()
 
         MainContent(
             homeUiState = homeUiState,
             navController = navController,
             currentRoute = currentRoute,
-            modifier = Modifier.weight(1f),
+            modifier = modifier,
             onEvent = onEvent,
         )
     }
 }
 
-//Custom
+@Composable
+fun HorizontalContent(
+    homeUiState: HomeUiState,
+    onEvent: (HomeEvent) -> Unit,
+
+){
+    val preloaded : Map<City, Double> = homeUiState.preloaded
+
+    Text(
+        text = "Nærmeste aktivitetsplasser:",
+        style = MaterialTheme.typography.headlineSmall.copy(color = White)
+    )
+
+    Row (
+        modifier = Modifier.padding(4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ){
+
+        Text(
+            text = "Din posisjon: ${homeUiState.userLat}, ${homeUiState.userLon}",
+            style = MaterialTheme.typography.headlineSmall.copy(color = White),
+        )
+
+        Button(
+            onClick = {
+                onEvent(HomeEvent.showPositionDialog)
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Refresh,
+                contentDescription = "Refresh position"
+            )
+        }
+    }
+
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+    ){
+
+        items(preloaded.keys.toList()) { city ->
+            HorizontalCard(city, preloaded.getValue(city) )
+        }
+    }
+}
+
 @Composable
 fun MainContent(homeUiState : HomeUiState,
                 navController : NavController?,
@@ -118,85 +168,35 @@ fun MainContent(homeUiState : HomeUiState,
                 )
             }
         },
-        bottomBar = {BottomBar(navController = navController, currentRoute = currentRoute)}
-    ) { padding ->
+        bottomBar = {
+            BottomBar(navController = navController, currentRoute = currentRoute)
+        },
+    ) { _ ->
 
         if (homeUiState.isAddingCity) {
             AddCityDialog(onEvent = onEvent)
         }
+
         if (homeUiState.isChangingPosition) {
             ChangePositionDialog(onEvent = onEvent)
         }
-        Column (modifier = Modifier.fillMaxSize()){
+
+        Column {
+            HorizontalContent(
+                homeUiState,
+                onEvent
+            )
+
             Text(
                 text = "Dine byer",
-                style = MaterialTheme.typography.headlineSmall.copy(color = White),
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                style = MaterialTheme.typography.headlineSmall.copy(color = White)
             )
-
-            Row (
-                modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceAround
-            ){
-                SortMenu(onEvent = onEvent)
-                Button(
-                    onClick = { onEvent(HomeEvent.updateOrder) }
-                ) {
-                    if (homeUiState.descendingOrder){
-                        Text(text = "DESC")
-                        Icon(
-                            imageVector = Icons.Filled.KeyboardArrowDown,
-                            contentDescription = "Descending")
-                    } else {
-                        Text(text = "ASC")
-                        Icon(
-                            imageVector = Icons.Filled.KeyboardArrowUp,
-                            contentDescription = "Descending")
-                    }
-
-                }
-
-            }
-
-                /*
-                SortType.entries.forEach { sortType ->
-                    Row(
-                        modifier = Modifier.clickable {
-                            onEvent(CityEvent.SortCities(sortType))
-                        },
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(selected = homeUiState.sortType == sortType,
-                            onClick = {
-                                onEvent(CityEvent.SortCities(sortType))
-                            }
-                        )
-                        Text(
-                            text = sortType.name,
-                            style = MaterialTheme.typography.titleSmall.copy(color = White)
-                        )
-                    }
-                }
-            }
-
-             */
 
             LazyColumn(
-                modifier = modifier,
                  horizontalAlignment = Alignment.CenterHorizontally,
-                //Add scrollable function #TO_DO
             ) {
-                if (homeUiState.descendingOrder){
-                    items(homeUiState.citiesDesc) { city ->
-                        MainCard(city, onEvent)
-                    }
-                } else {
-                    items(homeUiState.cities) { city ->
-                        MainCard(city, onEvent)
-                    }
+                items(homeUiState.cities) { city ->
+                    MainCard(city, onEvent)
                 }
             }
 
@@ -204,94 +204,6 @@ fun MainContent(homeUiState : HomeUiState,
     }
 }
 
-@Composable
-fun SortMenu(
-    onEvent: (HomeEvent) -> Unit
-){
-    var expanded by remember {mutableStateOf(false)}
-    val items = SortType.entries
-    var selectedOption by remember { mutableStateOf(SortType.All) }
-
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = {expanded = it },
-    ) {
-        TextField(
-            modifier = Modifier.menuAnchor(),
-            readOnly = true,
-            value = selectedOption.name,
-            onValueChange = {},
-            label = { Text(text = "Sorting") },
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-            },
-            colors = ExposedDropdownMenuDefaults.textFieldColors(),
-        )
-
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-        ) {
-            items.forEach{ item ->
-                DropdownMenuItem(
-                    text = { Text(item.name) },
-                    onClick = {
-                        selectedOption = item
-                        expanded = false
-                        onEvent(HomeEvent.SortCities(item))
-                    },
-                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun HorizontalContent(homeUiState: HomeUiState,
-                      onEvent: (HomeEvent) -> Unit
-){
-    val preloaded : Map<City, Double> = homeUiState.preloaded
-
-    Text(
-        text = "Nærmeste aktivitetsplasser:",
-        style = MaterialTheme.typography.headlineSmall.copy(color = White),
-        modifier = Modifier.padding(16.dp)
-    )
-
-    Row (
-        modifier = Modifier.padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ){
-
-        Text(text = "Din posisjon: ${homeUiState.userLat}, ${homeUiState.userLon}",
-            style = MaterialTheme.typography.headlineSmall.copy(color = White),
-        )
-
-        Button(
-            onClick = {
-                onEvent(HomeEvent.showPositionDialog)
-            }
-        ) {
-            Icon(
-                imageVector = Icons.Default.Refresh,
-                contentDescription = "Add contact"
-            )
-        }
-    }
-
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .height(96.dp)
-    ){
-
-        items(preloaded.keys.toList()) { city ->
-            HorizontalCard(city, preloaded.getValue(city) )
-        }
-    }
-}
 
 @Composable
 fun MainCard(

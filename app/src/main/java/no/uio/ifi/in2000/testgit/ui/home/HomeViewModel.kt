@@ -23,75 +23,26 @@ class HomeViewModel (
 
     private val _sortType = MutableStateFlow(SortType.All)
     private val _preloaded = dao.getPreloaded()
-
-    private val _citiesDesc = _sortType.flatMapLatest { it ->
-        when (it) {
-            SortType.All -> dao.getAllDesc()
-            SortType.Favorites -> dao.getFavouritesDesc()
-            SortType.Customs -> dao.getCustomsDesc()
-            SortType.Preloaded -> dao.getPreloadedDesc()
-        }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
-
+    private val _cities = dao.getFavourites()
+    /*
     private val _cities = _sortType.flatMapLatest { it ->
         when (it) {
             SortType.All -> dao.getAll()
             SortType.Favorites -> dao.getFavourites()
             SortType.Customs -> dao.getCustoms()
             SortType.Preloaded -> dao.getPreloaded()
-            /*
-        if (_descendingOrder){
-            when (it) {
-                SortType.All -> dao.getAll()
-                SortType.Favorites -> dao.getFavourites()
-                SortType.Customs -> dao.getCustoms()
-                SortType.Preloaded -> dao.getPreloaded()
-            }
-        } else {
-            when (it) {
-                SortType.All -> dao.getAll()
-                SortType.Favorites -> dao.getFavourites()
-                SortType.Customs -> dao.getCustoms()
-                SortType.Preloaded -> dao.getPreloaded()
-            }
-        }
-
-        when (it) {
-            SortType.All -> if (_descendingOrder) dao.getAllDesc() else dao.getAll()
-            SortType.Favorites -> if (_descendingOrder) dao.getFavouritesDesc() else dao.getFavourites()
-            SortType.Customs -> if (_descendingOrder) dao.getCustomsDesc() else dao.getCustoms()
-            SortType.Preloaded -> if (_descendingOrder) dao.getPreloadedDesc() else dao.getPreloaded()
-        }
-
-         */
-            /*
-            if (_ascendingOrder) {
-                when (it) {
-                    (SortType.All && _ascendingOrder) -> dao.getAll()
-                    SortType.Favorites -> dao.getFavourites()
-                    SortType.Customs -> dao.getCustoms()
-                    SortType.Preloaded -> dao.getPreloaded()
-                }
-            } else {
-                when (it) {
-                    SortType.All -> dao.getAllDesc()
-                    SortType.Favorites -> dao.getFavouritesDesc()
-                    SortType.Customs -> dao.getCustomsDesc()
-                    SortType.Preloaded -> dao.getPreloadedDesc()
-                }
-            }
-
-          */
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
+
+     */
+
     private val _homeUiState = MutableStateFlow(HomeUiState())
 
-    val homeUiState = combine(_homeUiState, _sortType, _cities, _citiesDesc, _preloaded,
-    ) { state, sortType, cities, citiesDesc, preloaded ->
+    val homeUiState = combine(_homeUiState, _sortType, _cities, _preloaded,
+    ) { state, sortType, cities, preloaded ->
         state.copy(
             cities = cities,
-            citiesDesc = citiesDesc,
             sortType = sortType,
             preloaded = getNearestCities(preloaded, state.userLon, state.userLat),
         )

@@ -9,7 +9,6 @@ data class HomeUiState(
 
     //Main
     val cities: List<City> = emptyList(),
-    val citiesDesc : List<City> = emptyList(),
     val preloaded : Map<City, Double> = emptyMap(),
     val descendingOrder : Boolean = true,
 
