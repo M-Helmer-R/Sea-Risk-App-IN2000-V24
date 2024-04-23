@@ -19,7 +19,7 @@ class GeoCodeDataSource {
         val reverseGeocode = MapboxGeocoding.builder()
             .accessToken("sk.eyJ1IjoiYmpvaG9sbW0iLCJhIjoiY2x0eWVwZHp5MGRmaTJrcGpueG8zcTR1MCJ9.zal9bJ3fdxMij0MJB-GvUQ")
             .query(Point.fromLngLat(lon, lat))
-            .geocodingTypes(GeocodingCriteria.TYPE_ADDRESS)
+            //.geocodingTypes(GeocodingCriteria.TYPE_ADDRESS)
             .build()
 
 

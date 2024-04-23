@@ -15,7 +15,10 @@ import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanForeCastData
 import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanProperties
 import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanTimeseries
 
-
+interface OceanForeCastCallBack {
+    fun onSuccess(placeName: String)
+    fun onFailure(placeName: String)
+}
 class OceanForeCastDataSource {
     val client = HttpClient() {
         install(ContentNegotiation) {

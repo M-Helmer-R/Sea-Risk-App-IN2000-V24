@@ -34,6 +34,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Call
 
+
+
 @OptIn(MapboxExperimental::class)
 @Composable
 fun Mapscreen(mapScreenViewModel: MapScreenViewModel = viewModel()){
@@ -46,11 +48,16 @@ fun Mapscreen(mapScreenViewModel: MapScreenViewModel = viewModel()){
 
 
     Box {
-        if (dialogUIState.value.isVisible == true){
-            if (oceanForeCastUIState.value.oceanDetails != null){
+        if (dialogUIState.value.isVisible == true && dialogUIState.value.oceanLoaded != null){
+
+            if (dialogUIState.value.oceanLoaded == true){
+
+
+
                 AlertDialogExample(
                     onDismissRequest = {mapScreenViewModel.hideDialog() },
                     onConfirmation = { mapScreenViewModel.hideDialog() },
+
                     dialogTitle = locationUiState.value.placeName,
                     dialogText = "Vil du se mer info om ${locationUiState.value.placeName}?",
                     icon = Icons.Default.Info

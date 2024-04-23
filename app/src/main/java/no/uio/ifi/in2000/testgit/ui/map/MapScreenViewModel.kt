@@ -15,6 +15,7 @@ import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanTimeseries
 import no.uio.ifi.in2000.testgit.ui.Activity.NowCastUIState
 
 data class LocationUIState(
+
     var placeName: String
 )
 
@@ -23,25 +24,34 @@ data class OceanForeCastUIState(
 )
 
 data class DialogUIState(
-    var isVisible: Boolean?
+    var isVisible: Boolean?,
+    var oceanLoaded: Boolean?
 )
 class MapScreenViewModel: ViewModel() {
     private val repository: GeoCodeRepository = GeoCodeRepository()
     private val oceanRepository: OceanForeCastRepository = OceanForeCastRepository()
 
-    private var _locationUIState = MutableStateFlow(LocationUIState("Ingen data"))
+    private var _locationUIState = MutableStateFlow(LocationUIState(placeName = "Ingen data"))
     var locationUIState: StateFlow<LocationUIState> = _locationUIState.asStateFlow()
 
-    private var _dialogUIState = MutableStateFlow(DialogUIState(false))
+    private var _dialogUIState = MutableStateFlow(DialogUIState(isVisible = false, null))
     var dialogUIState: StateFlow<DialogUIState> = _dialogUIState.asStateFlow()
 
     private var _oceanForeCastUIState = MutableStateFlow(OceanForeCastUIState(null))
     var oceanForeCastUIState: StateFlow<OceanForeCastUIState> = _oceanForeCastUIState.asStateFlow()
 
 
+
     fun loadOceanForeCast(lat: String, lon: String){
         viewModelScope.launch {
             val oceanDetails = oceanRepository.fetchOceanForeCast(lat, lon)
+            println("Oceandetails: ")
+            println(oceanDetails)
+
+            if (oceanDetails != null){
+                val newDialogUiState = _dialogUIState.value.copy(oceanLoaded = true)
+                _dialogUIState.value = newDialogUiState
+            }
 
             val newOceanForeCastUIState = _oceanForeCastUIState.value.copy(oceanDetails = oceanDetails)
             _oceanForeCastUIState.value = newOceanForeCastUIState
@@ -63,7 +73,7 @@ class MapScreenViewModel: ViewModel() {
                 val newlocationUIState = _locationUIState.value.copy(placeName = placeName)
                 _locationUIState.value = newlocationUIState
                 loadOceanForeCast(lat.toString(), lon.toString())
-                showDialog()
+                //showDialog()
             }
         } )
 
@@ -79,6 +89,9 @@ class MapScreenViewModel: ViewModel() {
     fun hideDialog(){
         val newdialogUIState = _dialogUIState.value.copy(isVisible = false)
         _dialogUIState.value = newdialogUIState
+
+        dialogUIState.value.oceanLoaded = null
+
         println("Dialog hidden")
     }
 
