@@ -14,7 +14,7 @@ data class HomeUiState(
 
     val isAddingCity: Boolean = false,
     val isChangingPosition: Boolean = false,
-    val sortType: SortType = SortType.All,
+    val sortType: SortType = SortType.Favorites,
 
     //Positon dialogs
     var userLat : Double = 0.0,

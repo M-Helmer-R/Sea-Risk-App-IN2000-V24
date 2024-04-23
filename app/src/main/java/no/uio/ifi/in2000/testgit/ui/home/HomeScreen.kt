@@ -79,7 +79,7 @@ fun HomeScreen(
 ) {
 
     val homeUiState : HomeUiState by homeViewModel.homeUiState.collectAsState()
-    val citites : List<City> = homeUiState.cities
+    //val citites : List<City> = homeUiState.cities
 
     Column(
         modifier = Modifier

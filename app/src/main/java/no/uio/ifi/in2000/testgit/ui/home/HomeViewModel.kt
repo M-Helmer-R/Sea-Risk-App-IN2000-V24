@@ -21,10 +21,10 @@ class HomeViewModel (
     private val dao : CityDao
 ) : ViewModel() {
 
-    private val _sortType = MutableStateFlow(SortType.All)
+    private val _sortType = MutableStateFlow(SortType.Favorites)
     private val _preloaded = dao.getPreloaded()
-    private val _cities = dao.getFavourites()
-    /*
+    //private val _cities = dao.getFavourites()
+
     private val _cities = _sortType.flatMapLatest { it ->
         when (it) {
             SortType.All -> dao.getAll()
@@ -35,7 +35,6 @@ class HomeViewModel (
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
 
-     */
 
     private val _homeUiState = MutableStateFlow(HomeUiState())
 
