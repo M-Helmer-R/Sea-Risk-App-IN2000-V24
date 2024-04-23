@@ -25,7 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import no.uio.ifi.in2000.testgit.data.room.CityDatabase
 import no.uio.ifi.in2000.testgit.ui.home.HomeViewModel
-import no.uio.ifi.in2000.testgit.ui.map.MapScreen
+import no.uio.ifi.in2000.testgit.ui.map.MapScreenMain
 import no.uio.ifi.in2000.testgit.ui.map.TopBar
 
 class MainActivity : ComponentActivity() {
@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
                     HomeScreen(navController, "home", viewModel, onEvent = viewModel::onEvent)
                 }
                 composable("kart") {
-                    MapScreen(navController, "kart")
+                    MapScreenMain(navController, "kart")
                 }
                 composable("innstillinger") {
                     InnstillingerScreen(navController, "innstillinger")

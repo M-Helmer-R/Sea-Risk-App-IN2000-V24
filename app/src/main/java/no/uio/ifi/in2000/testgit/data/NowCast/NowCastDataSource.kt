@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.testgit.data.nowcast
 
+import android.util.Log
 import com.example.example.NowcastData
 import com.example.example.Timeseries
 import io.ktor.client.HttpClient
@@ -8,6 +9,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.http.isSuccess
 import io.ktor.serialization.gson.gson
 
 class NowCastDataSource {
@@ -24,14 +26,19 @@ class NowCastDataSource {
     }
 
 
-    suspend fun getData(): Timeseries? {
-        //if httpresponse.status == httpresponsecode.ok
-        val nowcastOslo = "weatherapi/nowcast/2.0/complete?lat=59.9139&lon=10.7522"
-        val kallNowcastOslo = client.get(nowcastOslo)
-        val dataNowcastOslo = kallNowcastOslo.body<NowcastData>()
-        val instantNowcastData = dataNowcastOslo.Properties?.timeseries?.get(0)
+    suspend fun getData(lat: String, lon: String): Timeseries? {
+        val nowcastOslo = "weatherapi/nowcast/2.0/complete?lat=$lat&lon=$lon"
+        val callNowcastOslo = client.get(nowcastOslo)
+        // if api call gives a successful response
+        if(callNowcastOslo.status.isSuccess()) {
+            val dataNowcastOslo = callNowcastOslo.body<NowcastData>()
+            return dataNowcastOslo.Properties?.timeseries?.get(0)
+        } else { // if api call fails, return empty timeseries object
+            return Timeseries(time = null, data = null)
+        }
 
-        return instantNowcastData
     }
 
 }
+//val nowcastOslo = "weatherapi/nowcast/2.0/complete?lat=59.9139&lon=10.7522"
+

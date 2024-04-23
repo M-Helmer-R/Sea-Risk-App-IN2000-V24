@@ -33,7 +33,7 @@ import no.uio.ifi.in2000.testgit.R
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 
 @Composable
-fun MapScreen(navController: NavController?, currentRoute: String) {
+fun MapScreenMain(navController: NavController?, currentRoute: String) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar()
         ShowMap(modifier = Modifier.weight(1f))
@@ -43,8 +43,9 @@ fun MapScreen(navController: NavController?, currentRoute: String) {
 @Composable
 fun ShowMap(modifier: Modifier = Modifier) {
     //Putte kartet frå Kriss her 
-    Box(modifier = modifier.fillMaxSize().background(Color.Gray)) {
-        Text("Kart kommer her", color = White, modifier = Modifier.align(Alignment.Center))
+    Box(modifier = modifier.fillMaxSize().background(Color.Red)) {
+        //Text("Kart kommer her", color = White, modifier = Modifier.align(Alignment.Center))
+        Mapscreen(MapScreenViewModel())
     }
 }
 
