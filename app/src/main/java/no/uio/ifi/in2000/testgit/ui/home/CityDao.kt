@@ -17,7 +17,7 @@ interface CityDao {
     @Delete
     suspend fun deleteCity(city : City)
 
-    @Query("SELECT * FROM cities ORDER BY name ASC LIMIT 5")
+    @Query("SELECT * FROM cities ORDER BY name ASC")
     fun getAll() : Flow<List<City>>
 
     @Query("SELECT * FROM cities WHERE favorite == 1 ORDER BY name ASC")
@@ -26,9 +26,10 @@ interface CityDao {
     @Query("SELECT * FROM cities WHERE customized == 1 ORDER BY name ASC")
     fun getCustoms() : Flow<List<City>>
 
-    @Query("SELECT * FROM cities WHERE customized == 0 ORDER BY name ASC LIMIT 5")
+    @Query("SELECT * FROM cities WHERE customized == 0 ORDER BY name ASC")
     fun getPreloaded() : Flow<List<City>>
 
+    /*
     @Query("SELECT * FROM cities ORDER BY name DESC")
     fun getAllDesc() : Flow<List<City>>
     @Query("SELECT * FROM cities WHERE favorite == 1 ORDER BY name DESC")
@@ -39,6 +40,7 @@ interface CityDao {
 
     @Query("SELECT * FROM cities WHERE customized == 0 ORDER BY name DESC")
     fun getPreloadedDesc() : Flow<List<City>>
+     */
 
     @Query("UPDATE cities SET favorite = 1 WHERE cityId = :id")
     fun setFavoriteByID(id : Int)

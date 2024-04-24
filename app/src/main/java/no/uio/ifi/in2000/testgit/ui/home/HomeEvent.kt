@@ -6,7 +6,7 @@ import no.uio.ifi.in2000.testgit.data.room.SortType
 sealed interface HomeEvent {
     //DTO
     object saveCity : HomeEvent
-    object updatePreloaded : HomeEvent
+    object updateNearest : HomeEvent
     object updateOrder : HomeEvent
     object showAddCityDialog: HomeEvent
     object hideAddCityDialog: HomeEvent

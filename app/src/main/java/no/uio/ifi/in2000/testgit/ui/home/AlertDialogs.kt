@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import kotlin.math.log
 
 @Composable
 fun AddCityDialog(
@@ -144,14 +145,84 @@ fun ChangePositionDialog(
                 Button(
                     onClick = {
                         validateInput(lat, lon)
-                        Log.w("ADD_CITY_DIALOG", "Button pressed")
+                        Log.w("Change_Positoon", "Button pressed")
                         if ( !latError && !lonError){
-                            Log.w("Add_City", "Latitude: $lat , ${lat.toDouble()}, Longitude: $lon , ${lon.toDouble()}")
-                            onEvent(HomeEvent.setUserPosition
-                                (lat.toDouble(),
-                                lon.toDouble())
-                            )
-                            onEvent(HomeEvent.updatePreloaded)
+                            Log.w("Change position", "Latitude: $lat , ${lat.toDouble()}, Longitude: $lon , ${lon.toDouble()}")
+                            onEvent(HomeEvent.setUserPosition(lat.toDouble(), lon.toDouble()) )
+                            onEvent(HomeEvent.updateNearest)
+                        }
+                    }
+                ) {
+                    Text(text = "Change")
+                }
+            }
+        },
+        title = { Text(text = "Change position")},
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+
+                DoubleTextField(
+                    title = "Latitude",
+                    placeholder = "Enter the latitude",
+                    text = lat,
+                    onValueChange = {lat = it},
+                    error = latError,
+                    errorMessage = errorMessage
+
+                )
+                DoubleTextField(
+                    title = "Longitude",
+                    placeholder = "Enter the longitude",
+                    text = lon,
+                    onValueChange = {lon = it},
+                    error = lonError,
+                    errorMessage = errorMessage
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun LocationDialog(
+    onEvent: (HomeEvent) -> Unit,
+    modifier: Modifier = Modifier,
+){
+
+    var lat by remember { mutableStateOf("") }
+    var lon by remember { mutableStateOf("") }
+
+    val errorMessage = "Not valid input"
+    var latError by rememberSaveable { mutableStateOf(false) }
+    var lonError by rememberSaveable { mutableStateOf(false) }
+
+    fun validateInput(lat : String, lon : String) {
+        Log.w("ADD_CITY_DIALOG", "Validating input")
+        latError = validateCoordinates(lat)
+        lonError = validateCoordinates(lon)
+    }
+
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = {
+            onEvent(HomeEvent.hidePositionDialog)
+        },
+
+        confirmButton = {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.CenterEnd,
+            ){
+                Button(
+                    onClick = {
+                        validateInput(lat, lon)
+                        Log.w("Change_Positoon", "Button pressed")
+                        if ( !latError && !lonError){
+                            Log.w("Change position", "Latitude: $lat , ${lat.toDouble()}, Longitude: $lon , ${lon.toDouble()}")
+                            onEvent(HomeEvent.setUserPosition(lat.toDouble(), lon.toDouble()) )
+                            onEvent(HomeEvent.updateNearest)
                         }
                     }
                 ) {
