@@ -36,7 +36,7 @@ class OceanForeCastDataSource {
         try {
             val oceanforecastOslo = "weatherapi/oceanforecast/2.0/complete?lat=$lat&lon=$lon"
             val kallNowcastOslo = client.get(oceanforecastOslo)
-            print(kallNowcastOslo)
+
             val dataNowcastOslo = kallNowcastOslo.body<OceanForeCastData>()
             //val instantNowcastData = dataNowcastOslo.timeseries[0]
 
