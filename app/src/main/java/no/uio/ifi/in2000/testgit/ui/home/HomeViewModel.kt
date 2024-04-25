@@ -8,7 +8,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -22,34 +21,28 @@ class HomeViewModel (
 ) : ViewModel() {
 
     private val _sortType = MutableStateFlow(SortType.Favorites)
-    private val _preloaded = dao.getPreloaded()
-    //private val _cities = dao.getFavourites()
-
-    private val _cities = _sortType.flatMapLatest { it ->
-        when (it) {
-            SortType.All -> dao.getAll()
-            SortType.Favorites -> dao.getFavourites()
-            SortType.Customs -> dao.getCustoms()
-            SortType.Preloaded -> dao.getPreloaded()
-        }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
-
-
+    private val _allCities = dao.getAll().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+    private val _preloaded = dao.getPreloaded().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+    private val _favorites = dao.getFavourites().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+    private val _userLon = MutableStateFlow(0.0)
+    private val _userLat = MutableStateFlow(0.0)
 
     private val _homeUiState = MutableStateFlow(HomeUiState())
 
-    val homeUiState = combine(_homeUiState, _sortType, _cities, _preloaded,
-    ) { state, sortType, cities, preloaded ->
+    val homeUiState = combine(
+        _homeUiState, _favorites, _preloaded, _userLon, _userLat
+    ) { state , cities, preloaded, userLon, userLat ->
         state.copy(
-            cities = cities,
-            sortType = sortType,
-            preloaded = getNearestCities(preloaded, state.userLon, state.userLat),
+            favorites = cities,
+            preloaded = preloaded,
+            userLon = userLon,
+            userLat = userLat,
+            nearestCities = getNearestCities(preloaded, userLon, userLat)
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeUiState())
 
     fun onEvent( event : HomeEvent){
         when (event) {
-
             is HomeEvent.DeleteHome -> {
                 viewModelScope.launch {dao.deleteCity(event.city)
                 }
@@ -80,7 +73,7 @@ class HomeViewModel (
                     return
                 }
 
-                val newCity = City(name = name, lat = lat, lon = lon, customized = 1)
+                val newCity = City(name = name, lat = lat, lon = lon, customized = 1, favorite = 1)
 
                 //Sjekk her
                 viewModelScope.launch {
@@ -101,7 +94,6 @@ class HomeViewModel (
                     if (event.city.favorite == 1) {
                         dao.removeFavoriteByID(event.city.cityId)
 
-                       // Log.w("VIEW_MODEL", "City: ${city.lat}" )
                     } else {
                         dao.setFavoriteByID(event.city.cityId)
                     }
@@ -109,59 +101,92 @@ class HomeViewModel (
             }
 
             is HomeEvent.setName -> {
-                _homeUiState.update { it.copy(
-                    cityName = event.name
-                ) }
+                _homeUiState.update {
+                    it.copy(
+                        cityName = event.name
+                    )
+                }
 
             }
 
             HomeEvent.showAddCityDialog -> {
-                _homeUiState.update { it.copy( isAddingCity = true
-                ) }
+                _homeUiState.update {
+                    it.copy( isAddingCity = true
+                    )
+                }
             }
 
             is HomeEvent.setCityPosition -> {
-                _homeUiState.update { it.copy(
-                    cityLat = event.lat,
-                    cityLon = event.lon
-                ) }
+                _homeUiState.update {
+                    it.copy(
+                        cityLat = event.lat,
+                        cityLon = event.lon
+                    )
+                }
             }
 
-            is HomeEvent.setUserPosition ->
-                _homeUiState.update { it.copy(
-                    cityLon = event.lon,
-                    cityLat = event.lat,
-                ) }
+            is HomeEvent.setUserPosition -> {
+                _userLon.value = event.lon
+                _userLat.value = event.lat
+            }
 
-            HomeEvent.updatePreloaded ->
-                _homeUiState.update {it.copy(
-                    preloaded = getNearestCities(
-                    it.preloaded.keys.toList(),
-                    it.userLat,
-                    it.userLon
-                    ),
-                    isChangingPosition = false,
-                    ) }
+            HomeEvent.updateNearest ->   {
+                _homeUiState.update {
+                    it.copy(
+                        nearestCities =
+                        getNearestCities(
+                            homeUiState.value.preloaded,
+                            homeUiState.value.userLon,
+                            homeUiState.value.userLat,
+                            ),
+                        deniedPermission = false,
+                        )
+                }
+            }
 
-            HomeEvent.hidePositionDialog ->
-                _homeUiState.update { it.copy( isChangingPosition = false
-            ) }
+            HomeEvent.hideDeniedPermissionDialog -> {
+                _homeUiState.update {
+                    it.copy(
+                        deniedPermission = false
+                    )
+                }
+            }
 
-            HomeEvent.showPositionDialog ->
-                _homeUiState.update { it.copy( isChangingPosition = true
-            ) }
+            HomeEvent.showDeniedPermissionDialog -> {
+                _homeUiState.update {
+                    it.copy(
+                        deniedPermission = true
+                    )
+                }
+            }
+
+            HomeEvent.hidePermissionDialog -> {
+                _homeUiState.update {
+                    it.copy(
+                        askingPermission = false
+                    )
+                }
+            }
+
+            HomeEvent.showPermissionDialog -> {
+                _homeUiState.update {
+                    it.copy(
+                        askingPermission = true
+                    )
+                }
+            }
         }
+    }
+    fun getNearestCities(cities : List<City>, lon : Double, lat : Double) : Map<City, Double> {
+
+        val citiesDist : MutableMap<City, Double> = mutableMapOf<City, Double>()
+
+        for (city in cities) {
+            citiesDist.put(city, haversine(city.lat, city.lon, lat, lon))
+        }
+
+        return citiesDist.toList().sortedBy { it.second }.take(5).toMap()
     }
 }
 
 //Fiks denne
-fun getNearestCities(cities : List<City>, lon : Double, lat : Double) : Map<City, Double> {
-
-    val citiesDist : MutableMap<City, Double> = mutableMapOf<City, Double>()
-
-    for (city in cities) {
-        citiesDist.put(city, haversine(city.lat, city.lon, lat, lon))
-    }
-
-    return citiesDist.toList().sortedBy { it.second }.toMap()
-}

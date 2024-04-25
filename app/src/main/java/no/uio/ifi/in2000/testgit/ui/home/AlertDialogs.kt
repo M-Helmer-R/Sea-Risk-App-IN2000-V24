@@ -4,12 +4,15 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -111,8 +114,9 @@ fun AddCityDialog(
         }
     )
 }
+
 @Composable
-fun ChangePositionDialog(
+fun DeniedPermissionDialog(
     onEvent: (HomeEvent) -> Unit,
     modifier: Modifier = Modifier,
 ){
@@ -133,33 +137,38 @@ fun ChangePositionDialog(
     AlertDialog(
         modifier = modifier,
         onDismissRequest = {
-            onEvent(HomeEvent.hidePositionDialog)
+            onEvent(HomeEvent.hideDeniedPermissionDialog)
         },
 
         confirmButton = {
-            Box(
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.CenterEnd,
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
             ){
                 Button(
                     onClick = {
+                        onEvent(HomeEvent.hideDeniedPermissionDialog)
+                    }
+                ) {
+                    Text(text = "Avbryt")
+                }
+
+                Button(
+                    onClick = {
                         validateInput(lat, lon)
-                        Log.w("ADD_CITY_DIALOG", "Button pressed")
                         if ( !latError && !lonError){
-                            Log.w("Add_City", "Latitude: $lat , ${lat.toDouble()}, Longitude: $lon , ${lon.toDouble()}")
-                            onEvent(HomeEvent.setUserPosition
-                                (lat.toDouble(),
-                                lon.toDouble())
-                            )
-                            onEvent(HomeEvent.updatePreloaded)
+                            onEvent(HomeEvent.setUserPosition(lon.toDouble(), lat.toDouble()) )
+                            onEvent(HomeEvent.updateNearest)
                         }
                     }
                 ) {
-                    Text(text = "Change")
+                    Text(text = "Set position")
                 }
+
             }
         },
-        title = { Text(text = "Change position")},
+        title = { Text(text = "Set position manually")},
         text = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -182,6 +191,75 @@ fun ChangePositionDialog(
                     error = lonError,
                     errorMessage = errorMessage
                 )
+            }
+        }
+    )
+}
+
+@Composable
+fun PermissionDialog(
+    onEvent: (HomeEvent) -> Unit,
+    modifier: Modifier = Modifier,
+){
+
+    var lat by remember { mutableStateOf("") }
+    var lon by remember { mutableStateOf("") }
+
+    val errorMessage = "Not valid input"
+    var latError by rememberSaveable { mutableStateOf(false) }
+    var lonError by rememberSaveable { mutableStateOf(false) }
+
+    fun validateInput(lat : String, lon : String) {
+        Log.w("ADD_CITY_DIALOG", "Validating input")
+        latError = validateCoordinates(lat)
+        lonError = validateCoordinates(lon)
+    }
+
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = {
+            onEvent(HomeEvent.hideDeniedPermissionDialog)
+        },
+        confirmButton = {
+            Row (
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ){
+                Button(
+                    onClick = {
+                        onEvent(HomeEvent.hidePermissionDialog)
+                        onEvent(HomeEvent.showDeniedPermissionDialog)
+                    }
+                )
+                {
+                    Text(text = "Deny")
+                }
+
+                Button(
+                    onClick = { /*TODO*/ })
+                {
+                    Text(text = "Accept")
+                }
+
+            }
+        },
+        title = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.LocationOn,
+                    contentDescription = "Location Icon"
+                )
+                Text( text = "Location permission")
+            }
+                },
+        text = {
+            Box(
+                modifier = Modifier.fillMaxWidth()
+            ){
+
             }
         }
     )
