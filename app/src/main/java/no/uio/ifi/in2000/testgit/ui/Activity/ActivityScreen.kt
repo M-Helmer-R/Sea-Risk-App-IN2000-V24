@@ -1,5 +1,11 @@
 package no.uio.ifi.in2000.testgit.ui.Activity
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,7 +21,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
@@ -36,11 +44,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
@@ -57,30 +69,35 @@ TO DO
   mer navigasjon mellom
 - avrundet bar over bottombar
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActivityScreen(chosenCity: String, navController: NavController) {
     //val nowCastUIState = activityScreenViewModel.nowCastUIState.collectAsState()
     //val metAlertsUIState = activityScreenViewModel.metAlertsUIState.collectAsState()
 
-
     val activities = listOf("sailing", "surfing", "swimming", "kayaking")
     var selectedButton by remember { mutableStateOf(activities[0]) }
+
 
     Column(modifier = Modifier
         .fillMaxSize()
         .background(DarkBlue)) {
         TopBarBy(navController)
-        Row(modifier = Modifier.fillMaxSize()) {
+        Row(modifier = Modifier.fillMaxWidth()) {
             GenerellInfo(chosenCity)
             Spacer(modifier = Modifier.weight(1f))
             ColorBar(value = 10)
-            Spacer(modifier = Modifier.width(40.dp))
         }
-        ExpandableIconButton(activities, selectedButton) { selectedButton = it }
+
+
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+            contentAlignment = Alignment.BottomStart
+        ) {
+            ExpandableIconButton(activities, selectedButton) { selectedButton = it }
+        }
     }
 }
-
 
 
 @Composable
@@ -225,6 +242,7 @@ fun InfoPopUp(onDismissRequest: () -> Unit) {
         }
     }
 }
+
 @Composable
 fun ExpandableIconButton(
     activities: List<String>,
@@ -232,43 +250,78 @@ fun ExpandableIconButton(
     onSelectedActivityChanged: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val iconSize: Dp = 60.dp
+    val totalWidth = with(LocalDensity.current) {
+        (activities.size - 1) * (iconSize.toPx() + 20.dp.toPx())
+    }
 
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        // Hovedikonet som viser gjeldende aktivitet og kan ekspandere
-        IconButton(onClick = { expanded = !expanded }) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.clipToBounds()
+    ) {
+        IconButton(
+            onClick = { expanded = !expanded },
+            modifier = Modifier
+                .size(iconSize)
+                .clip(RoundedCornerShape(20.dp))
+                .background(color = LightBlue)
+                .zIndex(1f)
+        ) {
             Icon(
                 imageVector = getResourceId(selectedActivity),
-                contentDescription = "Valgt aktivitet",
-                tint = Color.White
+                contentDescription = selectedActivity,
+                tint = Color.White,
+                modifier = Modifier.size(36.dp)
             )
         }
 
-        // Viser ekstra ikoner når ekspandert
-        if (expanded) {
-            activities.forEach { activity ->
-                IconButton(onClick = {
-                    onSelectedActivityChanged(activity)
-                    expanded = false
-                }) {
-                    Icon(
-                        imageVector = getResourceId(activity),
-                        contentDescription = activity,
-                        tint = Color.White
-                    )
+        AnimatedVisibility(
+            visible = expanded,
+            enter = slideInHorizontally(
+                initialOffsetX = { -totalWidth.toInt() },
+                animationSpec = tween(300)
+            ),
+            exit = slideOutHorizontally(
+                targetOffsetX = { -totalWidth.toInt() },
+                animationSpec = tween(300)
+            )
+        ) {
+            Row {
+                Spacer(modifier = Modifier.width(30.dp))
+                activities.filter { it != selectedActivity }.forEachIndexed { index, activity ->
+                    IconButton(
+                        onClick = {
+                            onSelectedActivityChanged(activity)
+                            expanded = false
+                        },
+                        modifier = Modifier
+                            .size(iconSize)
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(color = LightBlue)
+                    ) {
+                        Icon(
+                            imageVector = getResourceId(activity),
+                            contentDescription = activity,
+                            tint = Color.White,
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
+                    if (index < activities.size - 2) {
+                        Spacer(modifier = Modifier.width(30.dp))
+                    }
                 }
             }
         }
     }
 }
 
-// En hjelpefunksjon for å hente ikon basert på aktivitetens navn
 fun getResourceId(activityName: String): ImageVector {
     return when (activityName) {
-        "sailing" -> Icons.Filled.Info // Anta at dette er ikonet for seiling
-        "surfing" -> Icons.Filled.Star // Anta at dette er ikonet for surfing
-        "swimming" -> Icons.Filled.CheckCircle // Anta at dette er ikonet for svømming
-        "kayaking" -> Icons.Filled.Info // Anta at dette er ikonet for kajakk
-        else -> Icons.Filled.Info // Standard ikon
+        "sailing" -> Icons.Filled.Info
+        "surfing" -> Icons.Filled.Star
+        "swimming" -> Icons.Filled.CheckCircle
+        "kayaking" -> Icons.Filled.Build
+        else -> Icons.Filled.Home
     }
 }
 

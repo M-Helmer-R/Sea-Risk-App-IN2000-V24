@@ -24,6 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import no.uio.ifi.in2000.testgit.data.room.CityDatabase
+import no.uio.ifi.in2000.testgit.ui.Activity.ActivityScreen
 import no.uio.ifi.in2000.testgit.ui.home.HomeViewModel
 import no.uio.ifi.in2000.testgit.ui.map.MapScreenMain
 import no.uio.ifi.in2000.testgit.ui.map.TopBar
@@ -62,7 +63,7 @@ class MainActivity : ComponentActivity() {
                     MapScreenMain(navController, "kart")
                 }
                 composable("innstillinger") {
-                    InnstillingerScreen(navController, "innstillinger")
+                    ActivityScreen("Oslo",navController)
                 }
             }
         }
