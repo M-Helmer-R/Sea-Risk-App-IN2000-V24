@@ -47,7 +47,9 @@ class MapScreenViewModel: ViewModel() {
     private var _searchUIState = MutableStateFlow(SearchUIState(null))
     var searchUIState: StateFlow<SearchUIState> = _searchUIState.asStateFlow()
 
-
+    fun unloadSearchUIState(){
+        searchUIState.value.geocodingPlacesResponse = null
+    }
     fun loadSearchUIState(searchString: String){
         viewModelScope.launch {
             val geocodingPlacesResponse = repository.searchGeoCode(searchString)

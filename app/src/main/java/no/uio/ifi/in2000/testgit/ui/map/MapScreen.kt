@@ -48,6 +48,7 @@ fun SearchBar(searchUIState: SearchUIState, mapScreenViewModel: MapScreenViewMod
 
                 else {
                     expanded = false
+                    mapScreenViewModel.unloadSearchUIState()
                 }
                             },
             label = {Text("Søk etter sted")}
@@ -55,6 +56,7 @@ fun SearchBar(searchUIState: SearchUIState, mapScreenViewModel: MapScreenViewMod
 
         if (expanded && searchUIState.geocodingPlacesResponse != null){
             LazyColumn {
+                //To be replaced with clickable card which navigates
                 items(searchUIState.geocodingPlacesResponse!!.features){
                     Text(it.properties.name)
                 }
