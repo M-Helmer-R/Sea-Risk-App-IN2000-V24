@@ -1,18 +1,16 @@
 package no.uio.ifi.in2000.testgit.ui.map
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.testgit.data.MainRepository
 import no.uio.ifi.in2000.testgit.data.map.GeoCodeRepository
 import no.uio.ifi.in2000.testgit.data.map.ReverseGeocodeCallback
 import no.uio.ifi.in2000.testgit.data.oceanforecast.OceanForeCastRepository
-import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanDetails
 import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanTimeseries
-import no.uio.ifi.in2000.testgit.ui.Activity.NowCastUIState
 
 data class LocationUIState(
 
@@ -31,17 +29,36 @@ class MapScreenViewModel: ViewModel() {
     private val repository: GeoCodeRepository = GeoCodeRepository()
     private val oceanRepository: OceanForeCastRepository = OceanForeCastRepository()
 
+    //Locationuistate for clicking a point on map
     private var _locationUIState = MutableStateFlow(LocationUIState(placeName = "Ingen data"))
     var locationUIState: StateFlow<LocationUIState> = _locationUIState.asStateFlow()
 
+
+    //Dialoguistate
     private var _dialogUIState = MutableStateFlow(DialogUIState(isVisible = false, null))
     var dialogUIState: StateFlow<DialogUIState> = _dialogUIState.asStateFlow()
 
+    //Oceanforecast uistate
     private var _oceanForeCastUIState = MutableStateFlow(OceanForeCastUIState(null))
     var oceanForeCastUIState: StateFlow<OceanForeCastUIState> = _oceanForeCastUIState.asStateFlow()
 
 
+    //Locationuistate for search
+    private var _searchUIState = MutableStateFlow(SearchUIState(null))
+    var searchUIState: StateFlow<SearchUIState> = _searchUIState.asStateFlow()
 
+
+    fun loadSearchUIState(searchString: String){
+        viewModelScope.launch {
+            val geocodingPlacesResponse = repository.searchGeoCode(searchString)
+            Log.i("Mapscreenviewmodel", "Loaduistate called")
+            if (geocodingPlacesResponse != null){
+                Log.i("MapscreenViewModel", "geocodingplaceresponse is not null")
+                val newSearchUIState = _searchUIState.value.copy(geocodingPlacesResponse = geocodingPlacesResponse)
+                _searchUIState.value = newSearchUIState
+            }
+        }
+    }
     fun loadOceanForeCast(lat: String, lon: String){
         viewModelScope.launch {
             val oceanDetails = oceanRepository.fetchOceanForeCast(lat, lon)

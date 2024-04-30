@@ -34,6 +34,7 @@ import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 
 @Composable
 fun MapScreenMain(navController: NavController?, currentRoute: String) {
+
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar()
         ShowMap(modifier = Modifier.weight(1f))

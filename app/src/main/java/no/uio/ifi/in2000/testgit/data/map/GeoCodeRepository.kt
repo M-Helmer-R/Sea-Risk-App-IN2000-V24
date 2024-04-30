@@ -1,5 +1,7 @@
 package no.uio.ifi.in2000.testgit.data.map
 
+import android.util.Log
+
 class GeoCodeRepository {
     val geoCodeDataSource: GeoCodeDataSource = GeoCodeDataSource()
 
@@ -15,6 +17,12 @@ class GeoCodeRepository {
             }
         })
 
+
+    }
+
+    suspend fun searchGeoCode(searchString: String): GeocodingPlacesResponse? {
+        Log.i("GeoCodeRepository", "searchGeoCode called")
+        return geoCodeDataSource.searchGeoCode(searchString)
 
     }
 }
