@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
@@ -21,6 +23,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapboxExperimental
@@ -32,14 +37,20 @@ import no.uio.ifi.in2000.testgit.data.map.GeocodingPlacesResponse
 data class SearchUIState(var geocodingPlacesResponse: GeocodingPlacesResponse?)
 
 @Composable
-fun SearchBar(searchUIState: SearchUIState, mapScreenViewModel: MapScreenViewModel){
+fun SearchBar(searchUIState: SearchUIState, mapScreenViewModel: MapScreenViewModel, keyboardController: SoftwareKeyboardController?){
     var text by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
 
+
     Column(){
         TextField(
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = { keyboardController?.hide() }
+            ),
             value = text,
             onValueChange = {
+
                 text = it
                 if (text.isNotEmpty()) {
                     expanded = true
@@ -70,6 +81,7 @@ fun SearchBar(searchUIState: SearchUIState, mapScreenViewModel: MapScreenViewMod
 @OptIn(MapboxExperimental::class)
 @Composable
 fun Mapscreen(mapScreenViewModel: MapScreenViewModel = viewModel()){
+    val keyboardController = LocalSoftwareKeyboardController.current
     var lat: Double
     var lon: Double
     val locationUiState = mapScreenViewModel.locationUIState.collectAsState()
@@ -80,7 +92,7 @@ fun Mapscreen(mapScreenViewModel: MapScreenViewModel = viewModel()){
 
     Column(modifier = Modifier.fillMaxSize()) {
         //SearchBar(searchUIState.value, mapScreenViewModel)
-        SearchBar(searchUIState.value, mapScreenViewModel)
+        SearchBar(searchUIState.value, mapScreenViewModel, keyboardController)
         Box {
 
             if (dialogUIState.value.isVisible == true && dialogUIState.value.oceanLoaded != null){
@@ -129,6 +141,7 @@ fun Mapscreen(mapScreenViewModel: MapScreenViewModel = viewModel()){
                     lat = point.latitude()
                     lon = point.longitude()
                     mapScreenViewModel.loadPlaceName(lon, lat)
+                    keyboardController?.hide()
 
                     true
                 },
