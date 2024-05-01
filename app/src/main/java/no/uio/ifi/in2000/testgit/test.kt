@@ -2,13 +2,14 @@ package no.uio.ifi.in2000.testgit
 
 
 
+import no.uio.ifi.in2000.testgit.data.map.GeoCodeDataSource
 import no.uio.ifi.in2000.testgit.data.metalerts.MetAlertsDataSource
 import no.uio.ifi.in2000.testgit.data.nowcast.*
 import no.uio.ifi.in2000.testgit.data.oceanforecast.OceanForeCastDataSource
 import no.uio.ifi.in2000.testgit.model.CityDatabase.CityDatabase
 
 
-suspend fun main() {
+suspend fun main1() {
     val lat = "65.5899"
     val lon = "11.9876"
     val oslolat = CityDatabase.OSLO.lat
@@ -43,3 +44,8 @@ suspend fun main() {
      */
 }
 
+suspend fun main(){
+    val geoCastDataSource = GeoCodeDataSource()
+
+    geoCastDataSource.searchGeoCode("be")
+}
