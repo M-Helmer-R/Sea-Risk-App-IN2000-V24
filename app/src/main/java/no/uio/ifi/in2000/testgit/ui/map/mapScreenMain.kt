@@ -35,6 +35,7 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.testgit.R
+import no.uio.ifi.in2000.testgit.data.map.GeocodingPlacesResponse
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 
 @Composable
@@ -48,17 +49,27 @@ fun MapScreenMain(navController: NavController?, currentRoute: String, mapScreen
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar()
-        SearchBar(searchUIState.value, mapScreenViewModel, keyboardController = keyboardController)
-        ShowMap(modifier = Modifier.weight(1f), mapScreenViewModel, locationUiState, dialogUIState, searchUIState, oceanForeCastUIState, keyboardController)
+        //SearchBar(searchUIState.value, mapScreenViewModel, keyboardController = keyboardController)
+        ShowMap(modifier = Modifier.weight(1f), mapScreenViewModel, locationUiState, dialogUIState, searchUIState, oceanForeCastUIState, keyboardController, navController)
         BottomBar(navController, currentRoute)
     }
 }
 @Composable
-fun ShowMap(modifier: Modifier = Modifier, mapScreenViewModel: MapScreenViewModel, locationUIState: State<LocationUIState>, dialogUIState: State<DialogUIState>, searchUIState: State<SearchUIState>, oceanForeCastUIState: State<OceanForeCastUIState>, keyboardController: SoftwareKeyboardController?) {
+fun ShowMap(modifier: Modifier = Modifier, mapScreenViewModel: MapScreenViewModel, locationUIState: State<LocationUIState>, dialogUIState: State<DialogUIState>, searchUIState: State<SearchUIState>, oceanForeCastUIState: State<OceanForeCastUIState>, keyboardController: SoftwareKeyboardController?, navController: NavController?) {
     //Putte kartet frå Kriss her 
-    Box(modifier = modifier.fillMaxSize().background(Color.Red)) {
-        //Text("Kart kommer her", color = White, modifier = Modifier.align(Alignment.Center))
-        Mapscreen(mapScreenViewModel = mapScreenViewModel, locationUIState = locationUIState, dialogUIState = dialogUIState, searchUIState = searchUIState, oceanForeCastUIState = oceanForeCastUIState, keyboardController )
+    Box(modifier = modifier
+        .fillMaxSize()
+        .background(Color.Red)) {
+
+        //SearchBar(searchUIState.value, mapScreenViewModel, keyboardController = keyboardController)
+        Mapscreen(mapScreenViewModel = mapScreenViewModel, locationUIState = locationUIState, dialogUIState = dialogUIState, searchUIState = searchUIState, oceanForeCastUIState = oceanForeCastUIState, keyboardController, navController )
+
+        Box(
+            modifier = Modifier.align(Alignment.TopCenter),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            SearchBar(searchUIState = searchUIState.value, mapScreenViewModel = mapScreenViewModel, keyboardController = keyboardController, navController )
+        }
     }
 }
 
@@ -84,7 +95,10 @@ fun TopBar() {
             }
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = DarkBlue),
-        modifier = Modifier.zIndex(1f).padding(4.dp)
+        modifier = Modifier
+            .zIndex(1f)
+            .padding(4.dp)
     )
 }
 
+data class SearchUIState(var geocodingPlacesResponse: GeocodingPlacesResponse?)

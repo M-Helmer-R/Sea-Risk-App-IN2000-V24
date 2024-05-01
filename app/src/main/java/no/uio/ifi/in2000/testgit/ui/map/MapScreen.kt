@@ -4,12 +4,17 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -21,12 +26,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.MapboxMap
@@ -34,10 +42,18 @@ import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 
 import no.uio.ifi.in2000.testgit.data.map.GeocodingPlacesResponse
 
-data class SearchUIState(var geocodingPlacesResponse: GeocodingPlacesResponse?)
+@Composable
+fun LocationSuggestionCardClickable(lat: Double, lon: Double, place: String, navController: NavController?){
+    Card(
+        onClick = {navController?.navigate("innstillinger") }
+    ){
+        Text(place)
+
+    }
+}
 
 @Composable
-fun SearchBar(searchUIState: SearchUIState, mapScreenViewModel: MapScreenViewModel, keyboardController: SoftwareKeyboardController?){
+fun SearchBar(searchUIState: SearchUIState, mapScreenViewModel: MapScreenViewModel, keyboardController: SoftwareKeyboardController?, navController: NavController?){
     var text by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
 
@@ -62,14 +78,20 @@ fun SearchBar(searchUIState: SearchUIState, mapScreenViewModel: MapScreenViewMod
                     mapScreenViewModel.unloadSearchUIState()
                 }
                             },
-            label = {Text("Søk etter sted")}
+            label = {Text("Søk etter sted")},
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier
+                .width(200.dp)
+                .height(56.dp)
+
         )
 
         if (expanded && searchUIState.geocodingPlacesResponse != null){
             LazyColumn {
                 //To be replaced with clickable card which navigates
                 items(searchUIState.geocodingPlacesResponse!!.features){
-                    Text(it.properties.name)
+                    //Text(it.properties.name)
+                    LocationSuggestionCardClickable(lat = it.properties.coordinates.lat, lon = it.properties.coordinates.lon, place = it.properties.name, navController)
                 }
             }
         }
@@ -86,7 +108,8 @@ fun Mapscreen(
     dialogUIState: State<DialogUIState>,
     searchUIState: State<SearchUIState>,
     oceanForeCastUIState: State<OceanForeCastUIState>,
-    keyboardController: SoftwareKeyboardController?
+    keyboardController: SoftwareKeyboardController?,
+    navController: NavController?
 ){
 
     var lat: Double
@@ -98,6 +121,8 @@ fun Mapscreen(
         //SearchBar(searchUIState.value, mapScreenViewModel)
         //SearchBar(searchUIState.value, mapScreenViewModel, keyboardController)
         Box {
+
+            Text("Test")
 
             if (dialogUIState.value.isVisible == true && dialogUIState.value.oceanLoaded != null){
 
@@ -153,6 +178,8 @@ fun Mapscreen(
                 ) {
 
             }
+
+
         }
     }
     /*Box {
