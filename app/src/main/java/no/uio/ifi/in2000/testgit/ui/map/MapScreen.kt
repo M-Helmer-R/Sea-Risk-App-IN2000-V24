@@ -80,19 +80,23 @@ fun SearchBar(searchUIState: SearchUIState, mapScreenViewModel: MapScreenViewMod
 
 @OptIn(MapboxExperimental::class)
 @Composable
-fun Mapscreen(mapScreenViewModel: MapScreenViewModel = viewModel()){
-    val keyboardController = LocalSoftwareKeyboardController.current
+fun Mapscreen(
+    mapScreenViewModel: MapScreenViewModel,
+    locationUIState: State<LocationUIState>,
+    dialogUIState: State<DialogUIState>,
+    searchUIState: State<SearchUIState>,
+    oceanForeCastUIState: State<OceanForeCastUIState>,
+    keyboardController: SoftwareKeyboardController?
+){
+
     var lat: Double
     var lon: Double
-    val locationUiState = mapScreenViewModel.locationUIState.collectAsState()
-    val dialogUIState = mapScreenViewModel.dialogUIState.collectAsState()
-    val searchUIState = mapScreenViewModel.searchUIState.collectAsState()
-    val oceanForeCastUIState = mapScreenViewModel.oceanForeCastUIState.collectAsState()
+
 
 
     Column(modifier = Modifier.fillMaxSize()) {
         //SearchBar(searchUIState.value, mapScreenViewModel)
-        SearchBar(searchUIState.value, mapScreenViewModel, keyboardController)
+        //SearchBar(searchUIState.value, mapScreenViewModel, keyboardController)
         Box {
 
             if (dialogUIState.value.isVisible == true && dialogUIState.value.oceanLoaded != null){
@@ -105,8 +109,8 @@ fun Mapscreen(mapScreenViewModel: MapScreenViewModel = viewModel()){
                         onDismissRequest = {mapScreenViewModel.hideDialog() },
                         onConfirmation = { mapScreenViewModel.hideDialog() },
 
-                        dialogTitle = locationUiState.value.placeName,
-                        dialogText = "Vil du se mer info om ${locationUiState.value.placeName}?",
+                        dialogTitle = locationUIState.value.placeName,
+                        dialogText = "Vil du se mer info om ${locationUIState.value.placeName}?",
                         icon = Icons.Default.Info
                     )
                 }

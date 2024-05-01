@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.testgit.ui.map
 
+import androidx.compose.runtime.State
 import BottomBar
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,34 +20,45 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.testgit.R
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 
 @Composable
-fun MapScreenMain(navController: NavController?, currentRoute: String) {
+fun MapScreenMain(navController: NavController?, currentRoute: String, mapScreenViewModel: MapScreenViewModel = viewModel()) {
+
+    val locationUiState = mapScreenViewModel.locationUIState.collectAsState()
+    val dialogUIState = mapScreenViewModel.dialogUIState.collectAsState()
+    val searchUIState = mapScreenViewModel.searchUIState.collectAsState()
+    val oceanForeCastUIState = mapScreenViewModel.oceanForeCastUIState.collectAsState()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar()
-        ShowMap(modifier = Modifier.weight(1f))
+        SearchBar(searchUIState.value, mapScreenViewModel, keyboardController = keyboardController)
+        ShowMap(modifier = Modifier.weight(1f), mapScreenViewModel, locationUiState, dialogUIState, searchUIState, oceanForeCastUIState, keyboardController)
         BottomBar(navController, currentRoute)
     }
 }
 @Composable
-fun ShowMap(modifier: Modifier = Modifier) {
+fun ShowMap(modifier: Modifier = Modifier, mapScreenViewModel: MapScreenViewModel, locationUIState: State<LocationUIState>, dialogUIState: State<DialogUIState>, searchUIState: State<SearchUIState>, oceanForeCastUIState: State<OceanForeCastUIState>, keyboardController: SoftwareKeyboardController?) {
     //Putte kartet frå Kriss her 
     Box(modifier = modifier.fillMaxSize().background(Color.Red)) {
         //Text("Kart kommer her", color = White, modifier = Modifier.align(Alignment.Center))
-        Mapscreen(MapScreenViewModel())
+        Mapscreen(mapScreenViewModel = mapScreenViewModel, locationUIState = locationUIState, dialogUIState = dialogUIState, searchUIState = searchUIState, oceanForeCastUIState = oceanForeCastUIState, keyboardController )
     }
 }
 
