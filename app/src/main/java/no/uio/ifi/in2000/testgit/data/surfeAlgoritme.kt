@@ -57,5 +57,5 @@ fun surfeAlgoritme(by: By): Double {
     }
     // adding the results to return a value between 1 and 100
     else
-        waterTempResult + airTempResult
+        waterTempResult + airTempResult + waveHeightResult + windSpeedResult
 }
