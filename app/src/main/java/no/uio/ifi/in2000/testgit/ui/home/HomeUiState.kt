@@ -18,6 +18,9 @@ data class HomeUiState(
     val deniedPermission: Boolean = false,
     val askingPermission: Boolean = false,
 
+    val rememberPermission : Boolean = false,
+    val locationPermission : Boolean = false,
+
     //Positon dialogs
     var userLat : Double = 59.56374,
     var userLon : Double = 10.43067,

@@ -71,7 +71,7 @@ fun TopBar() {
             }
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = DarkBlue),
-        modifier = Modifier.zIndex(1f).padding(4.dp)
+        modifier = Modifier.zIndex(1f)
     )
 }
 

@@ -175,6 +175,10 @@ class HomeViewModel (
                     )
                 }
             }
+
+            is HomeEvent.OpenActivity -> {
+                TODO()
+            }
         }
     }
     fun getNearestCities(cities : List<City>, lon : Double, lat : Double) : Map<City, Double> {

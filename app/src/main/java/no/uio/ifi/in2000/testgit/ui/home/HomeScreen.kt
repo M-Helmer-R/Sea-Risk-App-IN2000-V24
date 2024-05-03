@@ -5,11 +5,14 @@
 )
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +23,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Build
@@ -27,6 +31,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
@@ -39,15 +44,28 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
+import no.uio.ifi.in2000.testgit.R
 import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.ui.home.AddCityDialog
 import no.uio.ifi.in2000.testgit.ui.home.DeniedPermissionDialog
@@ -69,131 +87,112 @@ fun HomeScreen(
     onEvent: (HomeEvent) -> Unit
 ) {
 
-    val homeUiState : HomeUiState by homeViewModel.homeUiState.collectAsState()
-    //val citites : List<City> = homeUiState.cities
+    val homeUiState: HomeUiState by homeViewModel.homeUiState.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(DarkBlue)
-    ) {
+    val containerModifier: Modifier = Modifier
+        .background(DarkBlue)
+        .fillMaxSize()
+        .padding(8.dp)
 
-        val modifier : Modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
 
-        TopBar()
-
-        MainContent(
-            homeUiState = homeUiState,
-            navController = navController,
-            currentRoute = currentRoute,
-            modifier = modifier,
-            onEvent = onEvent,
-        )
-
-    }
-}
-
-@Composable
-fun HomeScreen2(
-    navController : NavController?,
-    currentRoute : String,
-    homeViewModel : HomeViewModel,
-    onEvent: (HomeEvent) -> Unit
-) {
-
-    val homeUiState : HomeUiState by homeViewModel.homeUiState.collectAsState()
-    //val citites : List<City> = homeUiState.cities
-
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(DarkBlue)
-    ) {
-
-        item{
+    Scaffold(
+        containerColor = DarkBlue,
+        topBar = {
             TopBar()
-            MainContent2(
-                homeUiState = homeUiState,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                onEvent = onEvent,
+        },
+        bottomBar = {
+            BottomBar(
+                navController = navController,
+                currentRoute = currentRoute
             )
-            BottomBar(navController = navController, currentRoute = currentRoute)
+        },
+
+        ) { innerPadding -> Surface (
+            modifier = Modifier.padding(innerPadding).background(DarkBlue)
+        ) {
+            MainContent(homeUiState, onEvent, containerModifier)
+        }
+    }
+
+
+}
+@Composable
+fun MainContent(
+    homeUiState: HomeUiState,
+    onEvent: (HomeEvent) -> Unit,
+    modifier : Modifier
+){
+    LazyColumn{
+        item {
+            HorizontalContent(homeUiState, onEvent, modifier)
+        }
+        item {
+            FavoriteContent(homeUiState, onEvent, modifier)
         }
     }
 }
-
 @Composable
 fun HorizontalContent(
     homeUiState: HomeUiState,
     onEvent: (HomeEvent) -> Unit,
     modifier: Modifier,
-
     ){
-    Text(
+
+    Column (
         modifier = modifier,
-        text = "Nærmeste aktivitetsplasser:",
-        style = MaterialTheme.typography.headlineSmall.copy(color = White)
-    )
-
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
     ){
-
-        items(homeUiState.nearestCities.keys.toList()) { city ->
-            HorizontalCard(city, homeUiState.nearestCities.getValue(city) )
-        }
-    }
-
-    Row (
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ){
-
         Text(
-            text = "Din posisjon: ${homeUiState.userLat}, ${homeUiState.userLon}",
-            style = MaterialTheme.typography.labelSmall.copy(color = White)
+            modifier = Modifier.padding(8.dp),
+            text = "Nærmeste aktivitetsplasser:",
+            style = MaterialTheme.typography.headlineSmall.copy(color = White)
         )
-
-        Button(
-            //modifier = Modifier.size(64.dp),
-            onClick = {
-                Log.w("Home_SCREEN: ", "Before ${homeUiState.userLat}")
-                onEvent(HomeEvent.showPermissionDialog)
-                Log.w("Home_SCREEN", "After ${homeUiState.userLat}")
-            }
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Icon(
-                //modifier = Modifier.size(8.dp),
-                imageVector = Icons.Default.Refresh,
-                contentDescription = "Refresh position"
+
+            items(homeUiState.nearestCities.keys.toList()) { city ->
+                HorizontalCard(city, homeUiState.nearestCities.getValue(city), onEvent)
+            }
+        }
+
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+
+            Text(
+                text = "Din posisjon: ${homeUiState.userLat}, ${homeUiState.userLon}",
+                style = MaterialTheme.typography.labelSmall.copy(color = White)
             )
+            Button(
+                //modifier = Modifier.size(64.dp),
+                onClick = {
+                    Log.w("Home_SCREEN: ", "Before ${homeUiState.userLat}")
+                    onEvent(HomeEvent.showPermissionDialog)
+                    Log.w("Home_SCREEN", "After ${homeUiState.userLat}")
+                }
+            ) {
+                Icon(
+                    //modifier = Modifier.size(8.dp),
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = "Refresh position"
+                )
+            }
         }
     }
 }
 
 
 @Composable
-fun MainContent(
+fun FavoriteContent(
     homeUiState : HomeUiState,
-    navController : NavController?,
-    currentRoute : String,
-    modifier: Modifier = Modifier,
     onEvent: (HomeEvent) -> Unit,
+    modifier: Modifier,
 ) {
-    Scaffold (
-        containerColor = Color.Transparent,
-        bottomBar = {
-            BottomBar(navController = navController, currentRoute = currentRoute)
-        },
-    ) { _ ->
-
+    Column (
+        modifier = modifier
+    ){
         if (homeUiState.isAddingCity) {
             AddCityDialog(onEvent = onEvent)
         }
@@ -206,84 +205,20 @@ fun MainContent(
             DeniedPermissionDialog(onEvent = onEvent)
         }
 
-        LazyColumn{
-            item {
-                HorizontalContent(
-                    homeUiState,
-                    onEvent,
-                    modifier
-                )
-            }
-            item{
-                Text(
-                    modifier = modifier,
-                    text = "Favoritter",
-                    style = MaterialTheme.typography.headlineSmall.copy(color = White)
-                )
-            }
+        Text(
+            modifier = Modifier.padding(8.dp),
+            text = "Favoritter",
+            style = MaterialTheme.typography.headlineSmall.copy(color = White)
+        )
 
-            items(homeUiState.favorites) { city ->
-                MainCard(city, onEvent)
-            }
-
-            item {
-                AddCityCard(onEvent)
-            }
-        }
-    }
-}
-
-
-@Composable
-fun MainContent2(
-    homeUiState : HomeUiState,
-    modifier: Modifier = Modifier,
-    onEvent: (HomeEvent) -> Unit,
-) {
-    LazyColumn (
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Transparent),
-
-        ) {
-        item {
-            if (homeUiState.isAddingCity) {
-                AddCityDialog(onEvent = onEvent)
-            }
-
-            if (homeUiState.deniedPermission) {
-                DeniedPermissionDialog(onEvent = onEvent)
-            }
+        homeUiState.preloaded.map { city ->
+            MainCard(city = city, onEvent = onEvent)
         }
 
-        item {
-            HorizontalContent(
-                homeUiState,
-                onEvent,
-                modifier
-            )
-        }
-
-        item{
-            Text(
-                modifier = modifier,
-                text = "Favoritter",
-                style = MaterialTheme.typography.headlineSmall.copy(color = White)
-            )
-        }
-
-        items(homeUiState.favorites) { city ->
-            MainCard(city, onEvent)
-        }
-        item {
-            AddCityCard(onEvent)
-        }
-
+        AddCityCard(onEvent)
 
     }
 }
-
-
 
 @Composable
 fun MainCard(
@@ -293,34 +228,30 @@ fun MainCard(
     Card(
         modifier = Modifier
             .fillMaxSize()
-            //.size(width = 140.dp, height = 90.dp)
-            .padding(12.dp),
-        colors = when (city.favorite) {
-            1 -> CardDefaults.cardColors(containerColor = LightBlueShade1)
-            else -> CardDefaults.cardColors(containerColor = LightBlue)
-        },
-        shape = MaterialTheme.shapes.medium
+            .padding(8.dp),
+        colors =  CardDefaults.cardColors(containerColor = LightBlue),
+        shape = MaterialTheme.shapes.medium,
+        onClick = {
+            //Legg inn navigasjon her
+            TODO()
+            //onEvent(HomeEvent.OpenActivity(city))
+        }
     ) {
         Row (
             modifier = Modifier
-                .padding(6.dp)
-                .background(Color.Transparent)
-                .fillMaxSize(),
+                .padding(6.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ){
             Column(
                 modifier = Modifier
-                    .padding(4.dp)
-                    .background(Color.Transparent)
-                    .fillMaxHeight(),
+                    .padding(8.dp),
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
                 Row (
                     verticalAlignment = Alignment.CenterVertically,
                 ){
                     Text(
-                        modifier = Modifier.padding(2.dp),
                         text = city.name,
                         style = MaterialTheme.typography.titleMedium.copy(color = White)
                     )
@@ -333,108 +264,77 @@ fun MainCard(
                         )
                     }
                 }
-
-                //Text(text = city.distance, style = MaterialTheme.typography.bodySmall.copy(color = White))
-                Row (modifier = Modifier,
-                    verticalAlignment = Alignment.CenterVertically,
-                ){
-                    Row(
-                        modifier = Modifier.padding(2.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ){
-                        Text(text = "Lat: ",
-                            style = MaterialTheme.typography.titleSmall.copy(color = White)
-                        )
-                        Text(text = city.lat.toString())
-                    }
-                    Row(
-                        modifier = Modifier.padding(2.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = "Lon: ",
-                            style = MaterialTheme.typography.titleSmall.copy(color = White)
-                        )
-                        Text( text = city.lat.toString(),)
-                    }
-                }
-            }
-
-            Column (
-                modifier = Modifier
-                    .padding(4.dp)
-                    .background(Color.Transparent),
-                //.fillMaxHeight(),
-                verticalArrangement = Arrangement.SpaceBetween,
-            ){
-                Button(
-                    onClick = {
-                        onEvent(HomeEvent.updateFavorite(city))
-                    }
-                ) {
-                    if (city.favorite == 1) {
-                        Icon(
-                            imageVector = Icons.Filled.Star,
-                            contentDescription = "is favorite",
-                            tint = Color.Yellow
-                        )
-                        Log.w("CITY_SCREEN", "is favorite")
-                    } else {
-                        Icon(
-                            imageVector = Icons.Outlined.Star,
-                            contentDescription = "not favorite",
-                        )
-                        Log.w("CITY_SCREEN", "is not favorite")
-                    }
-                }
-
-                if (city.customized == 1) {
-                    Button(
-                        onClick = {
-                            onEvent(HomeEvent.DeleteHome(city))
+                Text(
+                    buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, color = Color.White)
+                        ) {
+                            append("Lon: ")
                         }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete",
-                        )
+                        append("${city.lon} ")
+                        append("   ")
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, color = Color.White)
+                        ) {
+                            append("Lat: ")
+                        }
+                        append("${city.lat} ")
                     }
-                }
+                )
             }
+
+            //Kart
         }
     }
 }
 
 @Composable
-fun HorizontalCard(city: City, distance : Double) {
+fun HorizontalCard(
+    city: City,
+    distance : Double,
+    onEvent: (HomeEvent) -> Unit
+) {
     Card(
         modifier = Modifier
-            .height(90.dp)
-            .width(128.dp)
-            .padding(4.dp),
+            //.width(196.dp)
+            .fillMaxSize()
+            .padding(8.dp),
         colors = CardDefaults.cardColors(containerColor = LightBlue),
         shape = MaterialTheme.shapes.medium,
+        onClick = {
+            //Legg inn navigasjon her
+            TODO()
+            //onEvent(HomeEvent.OpenActivity(city))
+        }
     ) {
-        Column(
+        Row (
             modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+                .padding(6.dp)
+                .fillMaxSize(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = city.name,
-                style = MaterialTheme.typography.titleMedium.copy(color = White)
-            )
+            Column(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                Text(
+                    text = city.name,
+                    style = MaterialTheme.typography.titleMedium.copy(color = White)
+                )
 
-            Text(text = String.format("%.2f", distance) + " km",
-                style = MaterialTheme.typography.bodySmall.copy(color = White)
-            )
-            /*
+                Text(
+                    text = String.format("%.2f", distance) + " km",
+                    style = MaterialTheme.typography.bodySmall.copy(color = White)
+                )
+                /*
             Row(modifier = Modifier.padding(8.dp)) {
                 city.icons.forEach { iconId ->
                     Icon(imageVector = Icons.Filled.Place, contentDescription = null, modifier = Modifier.size(24.dp), tint = White)
                 }
             }
              */
+            }
         }
     }
 }

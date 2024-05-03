@@ -202,23 +202,10 @@ fun PermissionDialog(
     modifier: Modifier = Modifier,
 ){
 
-    var lat by remember { mutableStateOf("") }
-    var lon by remember { mutableStateOf("") }
-
-    val errorMessage = "Not valid input"
-    var latError by rememberSaveable { mutableStateOf(false) }
-    var lonError by rememberSaveable { mutableStateOf(false) }
-
-    fun validateInput(lat : String, lon : String) {
-        Log.w("ADD_CITY_DIALOG", "Validating input")
-        latError = validateCoordinates(lat)
-        lonError = validateCoordinates(lon)
-    }
-
     AlertDialog(
         modifier = modifier,
         onDismissRequest = {
-            onEvent(HomeEvent.hideDeniedPermissionDialog)
+            onEvent(HomeEvent.hidePermissionDialog)
         },
         confirmButton = {
             Row (
@@ -232,15 +219,26 @@ fun PermissionDialog(
                     }
                 )
                 {
-                    Text(text = "Deny")
+                    Text(text = "Set manually")
                 }
 
                 Button(
                     onClick = { /*TODO*/ })
                 {
-                    Text(text = "Accept")
+                    Text(text = "Accept - Only this time")
                 }
-
+                Button(
+                    onClick = { /*TODO*/ })
+                {
+                    Text(text = "Accept - Remember")
+                }
+                Button(
+                    onClick = {
+                        onEvent(HomeEvent.hidePermissionDialog)
+                    })
+                {
+                    Text(text = "Deny")
+                }
             }
         },
         title = {

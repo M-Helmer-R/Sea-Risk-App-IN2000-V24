@@ -12,6 +12,8 @@ sealed interface HomeEvent {
     data class setUserPosition(val lon : Double, val lat: Double) : HomeEvent
     data class SortCities(val sortType : SortType) : HomeEvent
     data class DeleteHome(val city: City) : HomeEvent
+
+    data class OpenActivity(val city : City) : HomeEvent
     object updateNearest : HomeEvent
     object updateOrder : HomeEvent
     object showAddCityDialog: HomeEvent
