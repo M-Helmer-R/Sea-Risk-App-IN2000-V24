@@ -14,7 +14,9 @@ import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanTimeseries
 
 data class LocationUIState(
 
-    var placeName: String
+    var placeName: String,
+    var lon: String,
+    var lat: String
 )
 
 data class OceanForeCastUIState(
@@ -30,7 +32,7 @@ class MapScreenViewModel: ViewModel() {
     private val oceanRepository: OceanForeCastRepository = OceanForeCastRepository()
 
     //Locationuistate for clicking a point on map
-    private var _locationUIState = MutableStateFlow(LocationUIState(placeName = "Ingen data"))
+    private var _locationUIState = MutableStateFlow(LocationUIState(placeName = "Ingen data", lat = "0", lon = "0"))
     var locationUIState: StateFlow<LocationUIState> = _locationUIState.asStateFlow()
 
 
@@ -87,7 +89,7 @@ class MapScreenViewModel: ViewModel() {
 
         repository.reverseGeoCode(lon, lat, object: ReverseGeocodeCallback {
             override fun onSuccess(placeName: String) {
-                val newlocationUIState = _locationUIState.value.copy(placeName = placeName)
+                val newlocationUIState = _locationUIState.value.copy(placeName = placeName, lat = lat.toString(), lon = lon.toString())
                 _locationUIState.value = newlocationUIState
                 loadOceanForeCast(lat.toString(), lon.toString())
                 showDialog()

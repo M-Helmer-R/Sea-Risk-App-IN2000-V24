@@ -45,7 +45,8 @@ import no.uio.ifi.in2000.testgit.data.map.GeocodingPlacesResponse
 @Composable
 fun LocationSuggestionCardClickable(lat: Double, lon: Double, place: String, navController: NavController){
     Card(
-        onClick = {navController.navigate("innstillinger") }
+        // hvorfor er det navigation til instillinger her?
+        onClick = {navController.navigate("ActivityScreen/${place}") }
     ){
         Text(place)
 
@@ -112,8 +113,9 @@ fun Mapscreen(
     navController: NavController
 ){
 
-    var lat: Double
-    var lon: Double
+    // er lat og lon her fylt inn allerede
+    var lat: Double = 7.0
+    var lon: Double = 8.0
 
 
 
@@ -134,7 +136,8 @@ fun Mapscreen(
                         onDismissRequest = {mapScreenViewModel.hideDialog() },
 
                         onConfirmation = { mapScreenViewModel.hideDialog()
-                            navController.navigate("ActivityScreen/${locationUIState.value.placeName}")},
+                            navController.navigate(
+                                "ActivityScreen/${locationUIState.value.placeName}/${locationUIState.value.lat}/${locationUIState.value.lon}")},
                         // forstaa hvorfor det ligger en nav til instillinger her
                         //onConfirmation = {navController?.navigate("innstillinger"); mapScreenViewModel.hideDialog() },
 

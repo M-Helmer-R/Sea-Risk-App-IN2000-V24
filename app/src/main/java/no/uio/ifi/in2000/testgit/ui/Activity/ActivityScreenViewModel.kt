@@ -24,6 +24,9 @@ class ActivityScreenViewModel(savedStateHandle: SavedStateHandle): ViewModel() {
     val metAlertsUIState: StateFlow<MetAlertsUIState> = _metAlertsUIState.asStateFlow()
 
     val cityName = checkNotNull(savedStateHandle["stedsnavn"])
+    val lat = checkNotNull(savedStateHandle["lat"])
+    val lon = checkNotNull(savedStateHandle["lon"])
+
 
     init {
         viewModelScope.launch {

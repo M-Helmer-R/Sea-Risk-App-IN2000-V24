@@ -63,11 +63,12 @@ class MainActivity : ComponentActivity() {
                     MapScreenMain(navController, "kart")
                 }
                 composable("innstillinger") {
-                    ActivityScreen("Oslo",navController)
                 }
-                composable("ActivityScreen/{stedsnavn}") { backStackEntry ->
-                    backStackEntry.arguments?.getString("stedsnavn")
-                        ?.let { ActivityScreen(chosenCity = it, navController = navController)}
+                composable("ActivityScreen/{stedsnavn}/{lat}/{lon}") { backStackEntry ->
+                    val stedsnavn = backStackEntry.arguments?.getString("stedsnavn")
+                    val lat = backStackEntry.arguments?.getString("lat")
+                    val lon = backStackEntry.arguments?.getString("lon")
+                    stedsnavn ?.let { ActivityScreen(chosenCity = stedsnavn, lat, lon, navController = navController)}
                 }
             }
         }

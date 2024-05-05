@@ -70,7 +70,7 @@ TO DO
 - avrundet bar over bottombar
  */
 @Composable
-fun ActivityScreen(chosenCity: String, navController: NavController) {
+fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController: NavController) {
     //val nowCastUIState = activityScreenViewModel.nowCastUIState.collectAsState()
     //val metAlertsUIState = activityScreenViewModel.metAlertsUIState.collectAsState()
 
@@ -83,7 +83,7 @@ fun ActivityScreen(chosenCity: String, navController: NavController) {
         .background(DarkBlue)) {
         TopBarBy(navController, chosenCity)
         Row(modifier = Modifier.fillMaxWidth()) {
-            GenerellInfo(chosenCity)
+            GenerellInfo(chosenCity, lat, lon)
             Spacer(modifier = Modifier.weight(1f))
             ColorBar(value = 1)
         }
@@ -101,11 +101,11 @@ fun ActivityScreen(chosenCity: String, navController: NavController) {
 
 
 @Composable
-fun GenerellInfo(bynavn: String) {
+fun GenerellInfo(bynavn: String, lat: String?, lon: String?) {
     Column(modifier = Modifier.padding(16.dp)) {
         Text(text = "By: $bynavn", color = Color.White)
-        Text(text = "Linje 2", color = Color.White)
-        Text(text = "Linje 3", color = Color.White)
+        Text(text = "$lat", color = Color.White)
+        Text(text = "$lon", color = Color.White)
         Text(text = "Linje 4", color = Color.White)
         Text(text = "Linje 5", color = Color.White)
         Text(text = "Linje 6", color = Color.White)
