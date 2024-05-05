@@ -72,7 +72,7 @@ import no.uio.ifi.in2000.testgit.ui.theme.White
 
 @Composable
 fun HomeScreen(
-    navController : NavController?,
+    navController : NavController,
     currentRoute : String,
     homeViewModel : HomeViewModel,
     onEvent: (HomeEvent) -> Unit
@@ -105,6 +105,7 @@ fun HomeScreen(
 fun HorizontalContent(
     homeUiState: HomeUiState,
     onEvent: (HomeEvent) -> Unit,
+    navController: NavController
 
 ){
     val preloaded : Map<City, Double> = homeUiState.preloaded
@@ -144,14 +145,14 @@ fun HorizontalContent(
     ){
 
         items(preloaded.keys.toList()) { city ->
-            HorizontalCard(city, preloaded.getValue(city) )
+            HorizontalCard(city, preloaded.getValue(city), navController )
         }
     }
 }
 
 @Composable
 fun MainContent(homeUiState : HomeUiState,
-                navController : NavController?,
+                navController : NavController,
                 currentRoute : String,
                 modifier: Modifier = Modifier,
                 onEvent: (HomeEvent) -> Unit,
@@ -184,7 +185,8 @@ fun MainContent(homeUiState : HomeUiState,
         Column {
             HorizontalContent(
                 homeUiState,
-                onEvent
+                onEvent,
+                navController
             )
 
             Text(
@@ -330,13 +332,15 @@ fun MainCard(
 }
 
 @Composable
-fun HorizontalCard(city: City, distance : Double) {
+fun HorizontalCard(city: City, distance : Double, navController: NavController) {
     Card(
         modifier = Modifier
             .height(90.dp)
             .padding(4.dp),
         colors = CardDefaults.cardColors(containerColor = LightBlue),
-        shape = MaterialTheme.shapes.medium
+        shape = MaterialTheme.shapes.medium,
+        onClick = {navController.navigate("ActivityScreen/${city.name}/${city.lat}/${city.lon}")}
+
     ) {
         Row(
             modifier = Modifier

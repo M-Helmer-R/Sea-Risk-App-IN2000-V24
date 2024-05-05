@@ -46,7 +46,7 @@ import no.uio.ifi.in2000.testgit.data.map.GeocodingPlacesResponse
 fun LocationSuggestionCardClickable(lat: Double, lon: Double, place: String, navController: NavController){
     Card(
         // hvorfor er det navigation til instillinger her?
-        onClick = {navController.navigate("ActivityScreen/${place}") }
+        onClick = {navController.navigate("ActivityScreen/${place}/${lat}/${lon}") }
     ){
         Text(place)
 
