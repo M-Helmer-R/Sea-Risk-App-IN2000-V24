@@ -81,7 +81,7 @@ fun ActivityScreen(chosenCity: String, navController: NavController) {
     Column(modifier = Modifier
         .fillMaxSize()
         .background(DarkBlue)) {
-        TopBarBy(navController)
+        TopBarBy(navController, chosenCity)
         Row(modifier = Modifier.fillMaxWidth()) {
             GenerellInfo(chosenCity)
             Spacer(modifier = Modifier.weight(1f))
@@ -113,10 +113,10 @@ fun GenerellInfo(bynavn: String) {
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBarBy(navController: NavController) {
+fun TopBarBy(navController: NavController, bynavn: String) {
     TopAppBar(
         title = {
-            Text(text = "Bynavn", color = Color.White, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+            Text(text = bynavn, color = Color.White, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
         },
         navigationIcon = {
             IconButton(onClick = { navController.popBackStack() }) {

@@ -43,9 +43,9 @@ import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import no.uio.ifi.in2000.testgit.data.map.GeocodingPlacesResponse
 
 @Composable
-fun LocationSuggestionCardClickable(lat: Double, lon: Double, place: String, navController: NavController?){
+fun LocationSuggestionCardClickable(lat: Double, lon: Double, place: String, navController: NavController){
     Card(
-        onClick = {navController?.navigate("innstillinger") }
+        onClick = {navController.navigate("innstillinger") }
     ){
         Text(place)
 
@@ -53,7 +53,7 @@ fun LocationSuggestionCardClickable(lat: Double, lon: Double, place: String, nav
 }
 
 @Composable
-fun SearchBar(searchUIState: SearchUIState, mapScreenViewModel: MapScreenViewModel, keyboardController: SoftwareKeyboardController?, navController: NavController?){
+fun SearchBar(searchUIState: SearchUIState, mapScreenViewModel: MapScreenViewModel, keyboardController: SoftwareKeyboardController?, navController: NavController){
     var text by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
 
@@ -109,7 +109,7 @@ fun Mapscreen(
     searchUIState: State<SearchUIState>,
     oceanForeCastUIState: State<OceanForeCastUIState>,
     keyboardController: SoftwareKeyboardController?,
-    navController: NavController?
+    navController: NavController
 ){
 
     var lat: Double
@@ -132,7 +132,8 @@ fun Mapscreen(
 
                     AlertDialogExample(
                         onDismissRequest = {mapScreenViewModel.hideDialog() },
-                        onConfirmation = { mapScreenViewModel.hideDialog() },
+                        onConfirmation = { mapScreenViewModel.hideDialog()
+                            navController.navigate("ActivityScreen/${locationUIState.value.placeName}")},
 
                         dialogTitle = locationUIState.value.placeName,
                         dialogText = "Vil du se mer info om ${locationUIState.value.placeName}?",
@@ -144,7 +145,10 @@ fun Mapscreen(
                     //Lage en annen popup her
                     AlertDialogExample(
                         onDismissRequest = {mapScreenViewModel.hideDialog() },
-                        onConfirmation = { mapScreenViewModel.hideDialog() },
+                        onConfirmation = {
+                            mapScreenViewModel.hideDialog()
+
+                                         },
                         dialogTitle = "Ingen data",
                         dialogText = "",
                         icon = Icons.Default.Info

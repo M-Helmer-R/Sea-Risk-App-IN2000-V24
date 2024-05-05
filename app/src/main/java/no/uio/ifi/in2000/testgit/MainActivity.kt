@@ -65,6 +65,10 @@ class MainActivity : ComponentActivity() {
                 composable("innstillinger") {
                     ActivityScreen("Oslo",navController)
                 }
+                composable("ActivityScreen/{stedsnavn}") { backStackEntry ->
+                    backStackEntry.arguments?.getString("stedsnavn")
+                        ?.let { ActivityScreen(chosenCity = it, navController = navController)}
+                }
             }
         }
     }

@@ -23,7 +23,7 @@ class ActivityScreenViewModel(savedStateHandle: SavedStateHandle): ViewModel() {
     private val _metAlertsUIState = MutableStateFlow(MetAlertsUIState(null))
     val metAlertsUIState: StateFlow<MetAlertsUIState> = _metAlertsUIState.asStateFlow()
 
-    val cityName = checkNotNull(savedStateHandle["cityName"])
+    val cityName = checkNotNull(savedStateHandle["stedsnavn"])
 
     init {
         viewModelScope.launch {

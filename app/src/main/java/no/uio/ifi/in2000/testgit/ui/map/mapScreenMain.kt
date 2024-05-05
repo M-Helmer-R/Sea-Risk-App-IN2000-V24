@@ -39,7 +39,7 @@ import no.uio.ifi.in2000.testgit.data.map.GeocodingPlacesResponse
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 
 @Composable
-fun MapScreenMain(navController: NavController?, currentRoute: String, mapScreenViewModel: MapScreenViewModel = viewModel()) {
+fun MapScreenMain(navController: NavController, currentRoute: String, mapScreenViewModel: MapScreenViewModel = viewModel()) {
 
     val locationUiState = mapScreenViewModel.locationUIState.collectAsState()
     val dialogUIState = mapScreenViewModel.dialogUIState.collectAsState()
@@ -55,7 +55,7 @@ fun MapScreenMain(navController: NavController?, currentRoute: String, mapScreen
     }
 }
 @Composable
-fun ShowMap(modifier: Modifier = Modifier, mapScreenViewModel: MapScreenViewModel, locationUIState: State<LocationUIState>, dialogUIState: State<DialogUIState>, searchUIState: State<SearchUIState>, oceanForeCastUIState: State<OceanForeCastUIState>, keyboardController: SoftwareKeyboardController?, navController: NavController?) {
+fun ShowMap(modifier: Modifier = Modifier, mapScreenViewModel: MapScreenViewModel, locationUIState: State<LocationUIState>, dialogUIState: State<DialogUIState>, searchUIState: State<SearchUIState>, oceanForeCastUIState: State<OceanForeCastUIState>, keyboardController: SoftwareKeyboardController?, navController: NavController) {
     //Putte kartet frå Kriss her 
     Box(modifier = modifier
         .fillMaxSize()
