@@ -2,6 +2,8 @@ plugins {
     id("com.android.application")
     id("com.google.devtools.ksp") version "1.9.0-1.0.13"
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -105,6 +107,14 @@ dependencies {
 
 
     //mapbox search
+
+
+    //Dagger - Hilt
+    implementation ("com.google.dagger:hilt-android:2.40.5")
+    kapt("com.google.dagger:hilt-android-compiler:2.40.5")
+    implementation ("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
+    kapt("androidx.hilt:hilt-compiler:1.2.0")
+    implementation ("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     
 

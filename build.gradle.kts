@@ -4,6 +4,11 @@ buildscript {
         set("nav_version", "2.5.3")
         set("room_version", "2.5.2")
     }
+    dependencies {
+        classpath("com.google.dagger:hilt-android-gradle-plugin:2.40.5")
+    }
+
+
 }
 plugins {
     id("com.android.application") version "8.2.1" apply false
@@ -11,3 +16,4 @@ plugins {
     id("org.jetbrains.kotlin.android") version "1.9.0" apply false
     //id("com.google.devtools.ksp")
 }
+
