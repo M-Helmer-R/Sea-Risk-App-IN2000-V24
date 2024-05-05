@@ -272,7 +272,8 @@ fun ExpandableIconButton(
                 .zIndex(1f)
         ) {
             Icon(
-                imageVector = getResourceId(selectedActivity),
+                painter = painterResource(
+                    getResourceId(selectedActivity)),
                 contentDescription = selectedActivity,
                 tint = Color.White,
                 modifier = Modifier.size(36.dp)
@@ -304,7 +305,7 @@ fun ExpandableIconButton(
                             .background(color = LightBlue)
                     ) {
                         Icon(
-                            imageVector = getResourceId(activity),
+                            painter = painterResource(getResourceId(activity)),
                             contentDescription = activity,
                             tint = Color.White,
                             modifier = Modifier.size(36.dp)
@@ -319,13 +320,13 @@ fun ExpandableIconButton(
     }
 }
 
-fun getResourceId(activityName: String): ImageVector {
+fun getResourceId(activityName: String): Int {
     return when (activityName) {
-        "sailing" -> Icons.Filled.Info
-        "surfing" -> Icons.Filled.Star
-        "swimming" -> Icons.Filled.CheckCircle
-        "kayaking" -> Icons.Filled.Build
-        else -> Icons.Filled.Home
+        "sailing" ->  R.drawable.sailboaticon
+        "surfing" -> R.drawable.surfingicon
+        "swimming" -> R.drawable.swimmingicon
+        "kayaking" -> R.drawable.kayakicon
+        else -> 0
     }
 }
 
