@@ -2,8 +2,7 @@ package no.uio.ifi.in2000.testgit.data.oceanforecast
 
 
 
-import com.example.example.NowcastData
-import com.example.example.Timeseries
+import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -11,8 +10,8 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.serialization.gson.gson
+import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanDetails
 import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanForeCastData
-import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanProperties
 import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanTimeseries
 
 interface OceanForeCastCallBack {
@@ -32,19 +31,21 @@ class OceanForeCastDataSource {
 
     }
 
-    suspend fun getData(lat: String, lon: String): OceanTimeseries? {
+    suspend fun getData(lat: String, lon: String): OceanDetails? {
         try {
             val oceanforecastOslo = "weatherapi/oceanforecast/2.0/complete?lat=$lat&lon=$lon"
-            val kallNowcastOslo = client.get(oceanforecastOslo)
+            val oceanForecastResponse = client.get(oceanforecastOslo)
 
-            val dataNowcastOslo = kallNowcastOslo.body<OceanForeCastData>()
+            val oceanForecastData = oceanForecastResponse.body<OceanForeCastData>()
             //val instantNowcastData = dataNowcastOslo.timeseries[0]
 
+            Log.i("Oceanforecastdatasource", "Api call success")
+            return oceanForecastData.properties?.timeseries?.get(0)?.data?.instant?.details
 
-            return dataNowcastOslo.properties?.timeseries?.get(0)
         }
 
         catch (e: Exception){
+            Log.i("OceanForecastDataSource", "ApiCall failed")
             return null
         }
 

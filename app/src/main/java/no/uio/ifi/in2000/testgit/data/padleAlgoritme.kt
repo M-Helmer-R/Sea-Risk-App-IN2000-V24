@@ -1,8 +1,12 @@
 package no.uio.ifi.in2000.testgit.data
 
+import no.uio.ifi.in2000.testgit.ui.Activity.NowCastUIState
+import no.uio.ifi.in2000.testgit.ui.map.OceanForeCastUIState
+import kotlin.math.roundToInt
+
 
 // maa denne vaere suspend for aa sikre at den ikke fryser resten av appen
-fun padleAlgoritme(by: By, wind: Double, wave: Double): Double {
+suspend fun padleAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUIState: NowCastUIState): Int {
     // How much weight each variable gives to the end result
     // Sum should be 1.0
     val windSpeedWeight = 0.4
@@ -10,38 +14,47 @@ fun padleAlgoritme(by: By, wind: Double, wave: Double): Double {
     val airTempWeight = 0.15
     val waterTempWeight = 0.15
 
+    //Weather variables
+    val oceanTemp = oceanForeCastUIState.oceanDetails?.seaWaterTemperature
+
+    val airTemp = nowCastUIState.nowCastData?.airTemperature
+
+    val windSpeed = nowCastUIState.nowCastData?.windSpeed
+
+    val waveHeight = oceanForeCastUIState.oceanDetails?.seaSurfaceWaveHeight
+
     // swimming in too hot water can cause dehydration, hence the OR in the last two calculations
     val waterTempResult = when  {
-        (by.waterTemp >= 20) && (by.waterTemp < 30) -> 100.0 * waterTempWeight
-        (by.waterTemp >= 17) && (by.waterTemp < 20) -> 75.0 * waterTempWeight
-        ((by.waterTemp >= 15) && (by.waterTemp < 17)) || ((by.waterTemp >= 30) && (by.waterTemp < 33)) -> 50.0 * waterTempWeight
-        ((by.waterTemp >= 10) && (by.waterTemp < 15)) || (by.waterTemp >= 33) -> 25.0 * waterTempWeight
+        (oceanTemp !!>= 20) && (oceanTemp < 30) -> 100.0 * waterTempWeight
+        (oceanTemp >= 17) && (oceanTemp < 20) -> 75.0 * waterTempWeight
+        ((oceanTemp >= 15) && (oceanTemp < 17)) || ((oceanTemp >= 30) && (oceanTemp < 33)) -> 50.0 * waterTempWeight
+        ((oceanTemp >= 10) && (oceanTemp < 15)) || (oceanTemp >= 33) -> 25.0 * waterTempWeight
         else -> 0.0
     }
 
     val airTempResult = when  {
-        (by.airTemp >= 25) -> 100.0 * airTempWeight
-        (by.airTemp >= 20) && (by.airTemp < 25) -> 75.0 * airTempWeight
-        (by.airTemp >= 15) && (by.airTemp < 20) -> 50.0 * airTempWeight
-        (by.airTemp >= 10) && (by.airTemp < 15) -> 25.0 * airTempWeight
+        (airTemp !! >= 25) -> 100.0 * airTempWeight
+        (airTemp  >= 20) && (airTemp  < 25) -> 75.0 * airTempWeight
+        (airTemp  >= 15) && (airTemp  < 20) -> 50.0 * airTempWeight
+        (airTemp  >= 10) && (airTemp  < 15) -> 25.0 * airTempWeight
         else -> 0.0
     }
 
     // calculates a value for wind speed
     val windResult = when  {
-        (wind >= 0) && (wind < 3.4) -> 100.0 * windSpeedWeight
-        (wind >= 3.4) && (wind < 5.5) -> 75.0 * windSpeedWeight
-        (wind >= 5.5) && (wind < 8) -> 50.0 * windSpeedWeight
-        (wind >= 8) && (wind < 10.7) -> 25.0 * windSpeedWeight
+        (windSpeed !!>= 0) && (windSpeed < 3.4) -> 100.0 * windSpeedWeight
+        (windSpeed >= 3.4) && (windSpeed < 5.5) -> 75.0 * windSpeedWeight
+        (windSpeed >= 5.5) && (windSpeed < 8) -> 50.0 * windSpeedWeight
+        (windSpeed >= 8) && (windSpeed < 10.7) -> 25.0 * windSpeedWeight
         else -> 0.0
     }
 
     // calculates a value for wave height
     val waveResult = when {
-        (wave >= 0) && (wave < 0.4) -> 100.0 * waveHeightWeight
-        (wave >= 0.4) && (wave < 0.85) -> 75.0 * waveHeightWeight
-        (wave >= 0.85) && (wave < 1.26) -> 50.0 * waveHeightWeight
-        (wave >= 1.26) && (wave < 2.5) -> 25.0 * waveHeightWeight
+        (waveHeight !! >= 0) && (waveHeight < 0.4) -> 100.0 * waveHeightWeight
+        (waveHeight >= 0.4) && (waveHeight < 0.85) -> 75.0 * waveHeightWeight
+        (waveHeight >= 0.85) && (waveHeight < 1.26) -> 50.0 * waveHeightWeight
+        (waveHeight >= 1.26) && (waveHeight < 2.5) -> 25.0 * waveHeightWeight
         else -> 0.0
     }
 
@@ -52,7 +65,7 @@ fun padleAlgoritme(by: By, wind: Double, wave: Double): Double {
         waterTempResult == 0.0 ||
         airTempResult == 0.0
         ){
-        0.0
+        0
     } else
-        windResult + waveResult + waterTempResult + airTempResult
+        ((windResult + waveResult + waterTempResult + airTempResult)/10).roundToInt()
 }

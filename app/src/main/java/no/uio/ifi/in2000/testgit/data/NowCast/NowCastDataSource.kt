@@ -1,8 +1,8 @@
 package no.uio.ifi.in2000.testgit.data.nowcast
 
 import android.util.Log
-import com.example.example.NowcastData
-import com.example.example.Timeseries
+import no.uio.ifi.in2000.testgit.model.nowcast.NowcastData
+import no.uio.ifi.in2000.testgit.model.nowcast.Timeseries
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -11,6 +11,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.http.isSuccess
 import io.ktor.serialization.gson.gson
+import no.uio.ifi.in2000.testgit.model.nowcast.Details
 
 class NowCastDataSource {
     val client = HttpClient() {
@@ -26,19 +27,16 @@ class NowCastDataSource {
     }
 
 
-    suspend fun getData(lat: String, lon: String): Timeseries? {
-        val nowcastOslo = "weatherapi/nowcast/2.0/complete?lat=$lat&lon=$lon"
-        val callNowcastOslo = client.get(nowcastOslo)
-        // if api call gives a successful response
-        if(callNowcastOslo.status.isSuccess()) {
+    suspend fun getData(lat: String, lon: String): Details? {
+        try{
+            val nowcastOslo = "weatherapi/nowcast/2.0/complete?lat=$lat&lon=$lon"
+            val callNowcastOslo = client.get(nowcastOslo)
             val dataNowcastOslo = callNowcastOslo.body<NowcastData>()
-            return dataNowcastOslo.Properties?.timeseries?.get(0)
-        } else { // if api call fails, return empty timeseries object
-            return Timeseries(time = null, data = null)
+            return dataNowcastOslo.Properties?.timeseries?.get(0)?.data?.instant?.details
         }
-
+        catch(e:Exception) {
+            Log.i("Nowcastdatasource", "api call failed")
+            return null
+        }
     }
-
 }
-//val nowcastOslo = "weatherapi/nowcast/2.0/complete?lat=59.9139&lon=10.7522"
-

@@ -1,6 +1,7 @@
-package com.example.example
+package no.uio.ifi.in2000.testgit.model.nowcast
 
 import com.google.gson.annotations.SerializedName
+import no.uio.ifi.in2000.testgit.model.nowcast.Details
 
 
 data class Instant (

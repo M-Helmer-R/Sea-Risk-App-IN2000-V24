@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.testgit.data.map.GeoCodeRepository
 import no.uio.ifi.in2000.testgit.data.map.ReverseGeocodeCallback
 import no.uio.ifi.in2000.testgit.data.oceanforecast.OceanForeCastRepository
+import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanDetails
 import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanTimeseries
 
 data class LocationUIState(
@@ -20,7 +21,7 @@ data class LocationUIState(
 )
 
 data class OceanForeCastUIState(
-    var oceanDetails: OceanTimeseries?
+    var oceanDetails: OceanDetails?
 )
 
 data class DialogUIState(

@@ -37,6 +37,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,6 +57,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.testgit.R
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
@@ -70,12 +72,14 @@ TO DO
 - avrundet bar over bottombar
  */
 @Composable
-fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController: NavController) {
+fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController: NavController, activityScreenViewModel: ActivityScreenViewModel = viewModel()) {
     //val nowCastUIState = activityScreenViewModel.nowCastUIState.collectAsState()
     //val metAlertsUIState = activityScreenViewModel.metAlertsUIState.collectAsState()
 
     val activities = listOf("sailing", "surfing", "swimming", "kayaking")
     var selectedButton by remember { mutableStateOf(activities[0]) }
+
+    val recommendationUIState = activityScreenViewModel.reccomendationUIState.collectAsState()
 
 
     Column(modifier = Modifier
@@ -85,7 +89,7 @@ fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController
         Row(modifier = Modifier.fillMaxWidth()) {
             GenerellInfo(chosenCity, lat, lon)
             Spacer(modifier = Modifier.weight(1f))
-            ColorBar(value = 1)
+            recommendationUIState.value.level?.let { ColorBar(value = it) }
         }
 
 

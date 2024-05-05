@@ -1,108 +1,99 @@
 package no.uio.ifi.in2000.testgit.ui.Activity
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.example.AlertFeatures
-import com.example.example.Timeseries
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.testgit.data.MainRepository
-import no.uio.ifi.in2000.testgit.model.CityDatabase.CityDatabase
+import no.uio.ifi.in2000.testgit.data.padleAlgoritme
+import no.uio.ifi.in2000.testgit.model.nowcast.Details
+import no.uio.ifi.in2000.testgit.ui.map.OceanForeCastUIState
+
+
+data class NowCastUIState(
+    val nowCastData: Details?
+)
+
+data class MetAlertsUIState(
+    val metAlertsData: AlertFeatures?
+)
+
+data class ReccomendationUIState(
+    val level: Int?
+)
+
 
 // this viewmodel handles api calls depending on city chosen
 // this viewmodel will be created by pin clicks in HomeScreen
 class ActivityScreenViewModel(savedStateHandle: SavedStateHandle): ViewModel() {
     private val repository: MainRepository = MainRepository()
 
-    private var _nowCastUIState = MutableStateFlow(NowCastUIState(null))
-    var nowCastUIState: StateFlow<NowCastUIState> = _nowCastUIState.asStateFlow()
+    private val _nowCastUIState = MutableStateFlow(NowCastUIState(null))
+    val nowCastUIState: StateFlow<NowCastUIState> = _nowCastUIState.asStateFlow()
 
     private val _metAlertsUIState = MutableStateFlow(MetAlertsUIState(null))
     val metAlertsUIState: StateFlow<MetAlertsUIState> = _metAlertsUIState.asStateFlow()
 
+    private val _oceanForecastUIState = MutableStateFlow(OceanForeCastUIState(null))
+    val oceanForeCastUIState: StateFlow<OceanForeCastUIState> = _oceanForecastUIState.asStateFlow()
+
+    private val _reccomendationUIState = MutableStateFlow(ReccomendationUIState(0))
+    val reccomendationUIState: StateFlow<ReccomendationUIState> = _reccomendationUIState.asStateFlow()
+
     val cityName = checkNotNull(savedStateHandle["stedsnavn"])
-    val lat = checkNotNull(savedStateHandle["lat"])
-    val lon = checkNotNull(savedStateHandle["lon"])
+    val lat: String = checkNotNull(savedStateHandle["lat"])
+    val lon: String = checkNotNull(savedStateHandle["lon"])
 
 
     init {
         viewModelScope.launch {
-            loadAll()
+            val loadAllResult = async{ loadAll(lat, lon) }
+            loadAllResult.await()
+            Log.i("ActivityScreenViewModel", "${_oceanForecastUIState.value.oceanDetails}")
+            // should wait with algorithm calculations until apis are done
+            loadRecommendationBar()
         }
     }
-    private suspend fun loadNowCast(){
-        // prøv å bruke .find, så slipper du en lang when statement
-        val nowCastData = when(cityName) {
-            "Oslo" -> repository.fetchNowCast(CityDatabase.OSLO.lat, CityDatabase.OSLO.lon)
-            "Bergen" -> repository.fetchNowCast(CityDatabase.Bergen.lat, CityDatabase.Bergen.lon)
-            "Kristiansand" -> repository.fetchNowCast(CityDatabase.KRISTIANSAND.lat, CityDatabase.KRISTIANSAND.lon)
-            "Stavanger" -> repository.fetchNowCast(CityDatabase.STAVANGER.lat, CityDatabase.STAVANGER.lon)
-            "Kragerø" -> repository.fetchNowCast(CityDatabase.KRAGERØ.lat, CityDatabase.KRAGERØ.lon)
-            "Arendal" -> repository.fetchNowCast(CityDatabase.ARENDAL.lat, CityDatabase.ARENDAL.lon)
-            "Rørvik - Støtt" -> repository.fetchNowCast(CityDatabase.FARE.lat, CityDatabase.FARE.lon)
-            else -> null
-        }
 
+    private suspend fun loadRecommendationBar() {
+        val level = padleAlgoritme(oceanForeCastUIState.value, nowCastUIState.value)
 
-        println("RIGHT BEFORE ATTEMPT: ActivityScreenViewModel: repository.fetchNowcast")
-        //val nowCastData = repository.fetchNowCast(lat, lon)
-        println("ActivityScreenViewModel: repository.fetchNowcast")
+        val newRecommendationUIState = _reccomendationUIState.value.copy(level = level)
+        _reccomendationUIState.value = newRecommendationUIState
+    }
+    private suspend fun loadNowCast(lat: String, lon: String){
+        val nowCastData = repository.fetchNowCast(lat,lon)
         val newNowCastUIState = _nowCastUIState.value.copy(nowCastData = nowCastData)
         _nowCastUIState.value = newNowCastUIState
     }
 
+    private suspend fun loadOceanForecast(lat: String, lon: String) {
+        val oceanForecastData = repository.fetchOceanForecast(lat, lon)
+        val newOceanForecastUIState = _oceanForecastUIState.value.copy(oceanDetails = oceanForecastData)
+        _oceanForecastUIState.value = newOceanForecastUIState
+    }
 
-    private suspend fun loadMetAlerts() {
-        val metAlertsData = when(cityName) {
-            "Oslo" -> repository.fetchMetAlerts(
-                CityDatabase.OSLO.lat,
-                CityDatabase.OSLO.lon)
-            "Bergen" -> repository.fetchMetAlerts(
-                CityDatabase.Bergen.lat,
-                CityDatabase.Bergen.lon)
-            "Kristiansand" -> repository.fetchMetAlerts(
-                CityDatabase.KRISTIANSAND.lat,
-                CityDatabase.KRISTIANSAND.lon
-            )
-            "Stavanger" -> repository.fetchMetAlerts(
-                CityDatabase.STAVANGER.lat,
-                CityDatabase.STAVANGER.lon
-            )
-            "Kragerø" -> repository.fetchMetAlerts(
-                CityDatabase.KRAGERØ.lat,
-                CityDatabase.KRAGERØ.lon
-            )
-            "Arendal" -> repository.fetchMetAlerts(
-                CityDatabase.ARENDAL.lat,
-                CityDatabase.ARENDAL.lon
-            )
-            "Rørvik - Støtt" -> repository.fetchMetAlerts(
-                CityDatabase.FARE.lat,
-                CityDatabase.FARE.lon
-            )
-            else -> null
-        }
+    private suspend fun loadMetAlerts(lat: String, lon: String) {
+        val metAlertsData = repository.fetchMetAlerts(lat, lon)
         val newMetAlertsUIState = _metAlertsUIState.value.copy(metAlertsData = metAlertsData)
         _metAlertsUIState.value = newMetAlertsUIState
     }
 
 
 
-    private suspend fun loadAll(){
-        loadNowCast()
-        loadMetAlerts()
+    private suspend fun loadAll(lat: String, lon: String){
+        loadNowCast(lat, lon)
+        loadMetAlerts(lat, lon)
+        loadOceanForecast(lat, lon)
+
 
 
     }
 }
 
-data class NowCastUIState(
-    val nowCastData: Timeseries?
-)
-
-data class MetAlertsUIState(
-    val metAlertsData: AlertFeatures?
-)

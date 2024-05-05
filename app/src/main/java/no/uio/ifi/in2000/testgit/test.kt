@@ -22,7 +22,7 @@ suspend fun main1() {
     val oceanForeCastDataSource: OceanForeCastDataSource = OceanForeCastDataSource()
     val oceanForeCastData = oceanForeCastDataSource.getData(lat, lon)
     if (oceanForeCastData != null) {
-        print(oceanForeCastData.data?.instant?.details?.seaWaterSpeed)
+        //print(oceanForeCastData.details?.seaWaterSpeed)
     }
     /*if (metAlertsData != null) {
         if(metAlertsData.isEmpty() == true) {
