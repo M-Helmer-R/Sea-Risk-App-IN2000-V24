@@ -122,7 +122,7 @@ fun Mapscreen(
         //SearchBar(searchUIState.value, mapScreenViewModel, keyboardController)
         Box {
 
-            Text("Test")
+
 
             if (dialogUIState.value.isVisible == true && dialogUIState.value.oceanLoaded != null){
 
@@ -132,8 +132,12 @@ fun Mapscreen(
 
                     AlertDialogExample(
                         onDismissRequest = {mapScreenViewModel.hideDialog() },
+
                         onConfirmation = { mapScreenViewModel.hideDialog()
                             navController.navigate("ActivityScreen/${locationUIState.value.placeName}")},
+                        // forstaa hvorfor det ligger en nav til instillinger her
+                        //onConfirmation = {navController?.navigate("innstillinger"); mapScreenViewModel.hideDialog() },
+
 
                         dialogTitle = locationUIState.value.placeName,
                         dialogText = "Vil du se mer info om ${locationUIState.value.placeName}?",

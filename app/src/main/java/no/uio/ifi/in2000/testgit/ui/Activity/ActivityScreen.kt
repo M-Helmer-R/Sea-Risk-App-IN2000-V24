@@ -85,7 +85,7 @@ fun ActivityScreen(chosenCity: String, navController: NavController) {
         Row(modifier = Modifier.fillMaxWidth()) {
             GenerellInfo(chosenCity)
             Spacer(modifier = Modifier.weight(1f))
-            ColorBar(value = 10)
+            ColorBar(value = 1)
         }
 
 
