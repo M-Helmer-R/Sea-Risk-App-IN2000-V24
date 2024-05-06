@@ -1,3 +1,4 @@
+/*
 package no.uio.ifi.in2000.testgit.di
 
 import dagger.Module
@@ -7,4 +8,4 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 object MyAppModule {
-}
+}*/
