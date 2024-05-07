@@ -1,23 +1,36 @@
 package no.uio.ifi.in2000.testgit.ui.home
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import no.uio.ifi.in2000.testgit.data.room.City
-import no.uio.ifi.in2000.testgit.data.room.SortType
 
 data class HomeUiState(
-    //DTO
 
     //Main
-    val sortType: SortType = SortType.All,
     val allCities : List<City> = emptyList(),
     val favorites : List<City> = emptyList(),
     val preloaded : List<City> = emptyList(),
     val nearestCities : Map<City, Double> = emptyMap<City, Double>(),
-    val descendingOrder : Boolean = true,
+
+    //AddCityDialog
+    val cityName: String = "",
+    val cityLon: String = "",
+    val cityLat: String = "",
+    val fave: Int = 1,
+    val custom : Int = 1,
+
+    val nameError : Boolean = false,
+    val lonError : Boolean = false,
+    val latError : Boolean = false,
+    val errorMessage : String = "Not valid input",
 
     val isAddingCity: Boolean = false,
+
+    //LocationDialog
     val deniedPermission: Boolean = false,
     val askingPermission: Boolean = false,
-
     val rememberPermission : Boolean = false,
     val locationPermission : Boolean = false,
 
@@ -26,11 +39,7 @@ data class HomeUiState(
     var userLon : Double = 10.43067,
 
     //Add city dialog
-    val cityName: String = "",
-    val cityLon: Double = - 1.0,
-    val cityLat: Double = - 1.0,
-    val fave: Int = 1,
-    val custom : Int = 1,
+
     )
 
 /*

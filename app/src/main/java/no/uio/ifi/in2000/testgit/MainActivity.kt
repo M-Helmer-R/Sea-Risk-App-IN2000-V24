@@ -1,10 +1,11 @@
 package no.uio.ifi.in2000.testgit
 
-import BottomBar
 import HomeScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,11 +25,52 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import no.uio.ifi.in2000.testgit.data.room.CityDatabase
+import no.uio.ifi.in2000.testgit.ui.home.BottomBar
 import no.uio.ifi.in2000.testgit.ui.home.HomeViewModel
 import no.uio.ifi.in2000.testgit.ui.map.MapScreenMain
 import no.uio.ifi.in2000.testgit.ui.map.TopBar
+import java.security.Permission
 
 class MainActivity : ComponentActivity() {
+
+    /*
+    private val locationPermissions = arrayOf(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    )
+
+     */
+    /*
+    val locationPermissionRequest = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        when {
+            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+                // Precise location access granted.
+            }
+            permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+                // Only approximate location access granted.
+            } else -> {
+            // No location access granted.
+        }
+        }
+    }
+
+    val locationPermissions = arrayOf(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    )
+
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            viewModel.locationPermission(
+
+            )
+
+        })
+
+     */
 
     private val db by lazy {
         Room.databaseBuilder(
@@ -49,10 +91,14 @@ class MainActivity : ComponentActivity() {
         }
     )
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
+
+            //RequestLocation(permission = Manifest.permission.ACCESS_FINE_LOCATION)
+
             NavHost(navController = navController, startDestination = "home") {
                 composable("home") {
                     val state by viewModel.homeUiState.collectAsState()

@@ -102,8 +102,12 @@ dependencies {
     implementation("com.mapbox.extension:maps-compose:11.2.1")
     implementation ("com.mapbox.mapboxsdk:mapbox-sdk-services:6.15.0")
 
+
     //Locaton
+    //implementation(libs.play.services.location)
     //implementation()
+    implementation("com.google.android.gms:play-services-location:21.2.0")
+    implementation("com.google.accompanist:accompanist-permissions:0.31.3-beta")
 
 
 }

@@ -44,7 +44,6 @@ fun Mapscreen(mapScreenViewModel: MapScreenViewModel = viewModel()){
     val oceanForeCastUIState = mapScreenViewModel.oceanForeCastUIState.collectAsState()
 
 
-
     Box {
         if (dialogUIState.value.isVisible == true){
             if (oceanForeCastUIState.value.oceanDetails != null){

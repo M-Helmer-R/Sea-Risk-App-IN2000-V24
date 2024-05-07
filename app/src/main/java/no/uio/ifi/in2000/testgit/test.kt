@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.testgit
 
 
+/*
 
 import no.uio.ifi.in2000.testgit.data.metalerts.MetAlertsDataSource
 import no.uio.ifi.in2000.testgit.data.nowcast.*
@@ -43,3 +44,4 @@ suspend fun main() {
      */
 }
 
+*/
