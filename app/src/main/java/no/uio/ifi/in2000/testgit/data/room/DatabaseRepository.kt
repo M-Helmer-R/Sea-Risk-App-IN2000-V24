@@ -36,5 +36,4 @@ class DatabaseRepository(
     fun removeFavorite(city: City){
         cityDao.removeFavoriteByID(city.cityId)
     }
-
 }

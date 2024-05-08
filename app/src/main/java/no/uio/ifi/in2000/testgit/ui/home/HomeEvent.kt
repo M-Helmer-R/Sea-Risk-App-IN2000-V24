@@ -12,17 +12,19 @@ sealed interface HomeEvent {
     data class setUserPosition(val lon : Double, val lat: Double) : HomeEvent
     data class DeleteHome(val city: City) : HomeEvent
     data class OpenActivity(val city : City) : HomeEvent
+    //DialogError
+
     object setNameError : HomeEvent
     object setLonError : HomeEvent
     object setLatError : HomeEvent
-    //DialogError
     object updateNearest : HomeEvent
     object showAddCityDialog: HomeEvent
     object hideAddCityDialog: HomeEvent
-    object showDeniedPermissionDialog :  HomeEvent
-    object hideDeniedPermissionDialog : HomeEvent
+    object showLocationDialog :  HomeEvent
+    object hideLocationDialog : HomeEvent
+    object showManualLocationDialog :  HomeEvent
+    object hideManualLocationDialog : HomeEvent
     object showPermissionDialog :  HomeEvent
     object hidePermissionDialog : HomeEvent
-
 
 }

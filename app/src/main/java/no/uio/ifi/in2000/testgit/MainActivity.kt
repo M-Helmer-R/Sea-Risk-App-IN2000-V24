@@ -24,6 +24,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationServices
 import no.uio.ifi.in2000.testgit.data.room.CityDatabase
 import no.uio.ifi.in2000.testgit.ui.home.BottomBar
 import no.uio.ifi.in2000.testgit.ui.home.HomeViewModel
@@ -91,11 +94,17 @@ class MainActivity : ComponentActivity() {
         }
     )
 
+    private lateinit var fusedLocationClient : FusedLocationProviderClient
+    private lateinit var locationCallback: LocationCallback
+    private var locationRequired : Boolean = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
             //RequestLocation(permission = Manifest.permission.ACCESS_FINE_LOCATION)
 

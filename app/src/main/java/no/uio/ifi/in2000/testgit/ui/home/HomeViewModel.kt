@@ -1,9 +1,11 @@
 package no.uio.ifi.in2000.testgit.ui.home
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,7 +31,6 @@ class HomeViewModel (
     private val _favorites = repository.getFavorites().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     private val _userLon = MutableStateFlow(0.0)
     private val _userLat = MutableStateFlow(0.0)
-
     private val _homeUiState = MutableStateFlow(HomeUiState())
 
     //Location
@@ -67,6 +68,13 @@ class HomeViewModel (
                 }
             }
 
+            HomeEvent.showAddCityDialog -> {
+                _homeUiState.update {
+                    it.copy( isAddingCity = true
+                    )
+                }
+            }
+
             HomeEvent.hideAddCityDialog -> {
                 _homeUiState.update { it.copy( isAddingCity = false
                 ) }
@@ -91,12 +99,6 @@ class HomeViewModel (
                 }
             }
 
-            HomeEvent.showAddCityDialog -> {
-                _homeUiState.update {
-                    it.copy( isAddingCity = true
-                    )
-                }
-            }
 
             is HomeEvent.setUserPosition -> {
                 _userLon.value = event.lon
@@ -112,42 +114,27 @@ class HomeViewModel (
                             homeUiState.value.userLon,
                             homeUiState.value.userLat,
                             ),
-                        deniedPermission = false,
+                        locationDialog = false,
                         )
                 }
             }
 
-            HomeEvent.hideDeniedPermissionDialog -> {
+            HomeEvent.hideManualLocationDialog -> {
                 _homeUiState.update {
                     it.copy(
-                        deniedPermission = false
+                        locationDialog = false
                     )
                 }
             }
 
-            HomeEvent.showDeniedPermissionDialog -> {
+            HomeEvent.showManualLocationDialog -> {
                 _homeUiState.update {
                     it.copy(
-                        deniedPermission = true
+                        locationDialog = true
                     )
                 }
             }
 
-            HomeEvent.hidePermissionDialog -> {
-                _homeUiState.update {
-                    it.copy(
-                        askingPermission = false
-                    )
-                }
-            }
-
-            HomeEvent.showPermissionDialog -> {
-                _homeUiState.update {
-                    it.copy(
-                        askingPermission = true
-                    )
-                }
-            }
 
             is HomeEvent.OpenActivity -> {
                 TODO()
@@ -221,6 +208,37 @@ class HomeViewModel (
                 _homeUiState.update { it.copy(
                     lonError = true
                 ) }
+            }
+
+            HomeEvent.hidePermissionDialog -> {
+                _homeUiState.update {
+                    it.copy(
+                        permissionDialog = false
+                    )
+                }
+            }
+
+            HomeEvent.showPermissionDialog -> {
+                _homeUiState.update {
+                    it.copy(
+                        permissionDialog = true
+                    )
+                }
+            }
+
+            HomeEvent.hideLocationDialog -> {
+                _homeUiState.update {
+                    it.copy(
+                        locationDialog = false
+                    )
+                }
+            }
+            HomeEvent.showLocationDialog -> {
+                _homeUiState.update {
+                    it.copy(
+                        locationDialog = true
+                    )
+                }
             }
         }
     }

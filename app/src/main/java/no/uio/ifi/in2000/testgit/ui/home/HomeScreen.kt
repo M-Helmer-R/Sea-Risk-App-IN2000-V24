@@ -32,7 +32,8 @@ import androidx.navigation.NavController
 import no.uio.ifi.in2000.testgit.ui.home.AddCityCard
 import no.uio.ifi.in2000.testgit.ui.home.Dialog.AddCityDialog
 import no.uio.ifi.in2000.testgit.ui.home.BottomBar
-import no.uio.ifi.in2000.testgit.ui.home.Dialog.DeniedPermissionDialog
+import no.uio.ifi.in2000.testgit.ui.home.Dialog.LocationDialog
+import no.uio.ifi.in2000.testgit.ui.home.Dialog.ManualLocationDialog
 import no.uio.ifi.in2000.testgit.ui.home.HomeEvent
 import no.uio.ifi.in2000.testgit.ui.home.HomeUiState
 import no.uio.ifi.in2000.testgit.ui.home.HomeViewModel
@@ -58,8 +59,6 @@ fun HomeScreen(
         .fillMaxSize()
         .padding(8.dp)
 
-
-
     Scaffold(
         containerColor = DarkBlue,
         topBar = {
@@ -75,8 +74,25 @@ fun HomeScreen(
         ) {
         innerPadding ->
         LazyColumn (
-            modifier = Modifier.padding(innerPadding).background(DarkBlue)
+            modifier = Modifier
+                .padding(innerPadding)
+                .background(DarkBlue)
         ) {
+            item{
+                if (homeUiState.isAddingCity) {
+                    AddCityDialog(homeUiState = homeUiState, onEvent = onEvent)
+                }
+                if (homeUiState.locationDialog) {
+                    LocationDialog(onEvent = onEvent)
+                }
+                if (homeUiState.permissionDialog){
+                    PermissionDialog(onEvent = onEvent, homeViewModel)
+                }
+                if (homeUiState.manualLocationDialog){
+                    ManualLocationDialog(onEvent = onEvent)
+                }
+
+            }
             item{
                 HorizontalContent(homeUiState, onEvent, containerModifier)
             }
@@ -126,7 +142,7 @@ fun HorizontalContent(
                 //modifier = Modifier.size(64.dp),
                 onClick = {
                     Log.w("Home_SCREEN: ", "Before ${homeUiState.userLat}")
-                    onEvent(HomeEvent.showPermissionDialog)
+                    onEvent(HomeEvent.showLocationDialog)
                     Log.w("Home_SCREEN", "After ${homeUiState.userLat}")
                 }
             ) {
@@ -150,18 +166,6 @@ fun FavoriteContent(
     Column (
         modifier = modifier
     ){
-        if (homeUiState.isAddingCity) {
-            AddCityDialog(homeUiState = homeUiState, onEvent = onEvent)
-        }
-
-        if (homeUiState.askingPermission){
-            PermissionDialog(onEvent = onEvent)
-        }
-
-        if (homeUiState.deniedPermission) {
-            DeniedPermissionDialog(onEvent = onEvent)
-        }
-
         Text(
             modifier = Modifier.padding(8.dp),
             text = "Favoritter",

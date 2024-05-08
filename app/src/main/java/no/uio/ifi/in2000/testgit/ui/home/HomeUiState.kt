@@ -1,9 +1,6 @@
 package no.uio.ifi.in2000.testgit.ui.home
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import com.google.accompanist.permissions.rememberPermissionState
 import no.uio.ifi.in2000.testgit.data.room.City
 
 data class HomeUiState(
@@ -29,10 +26,9 @@ data class HomeUiState(
     val isAddingCity: Boolean = false,
 
     //LocationDialog
-    val deniedPermission: Boolean = false,
-    val askingPermission: Boolean = false,
-    val rememberPermission : Boolean = false,
-    val locationPermission : Boolean = false,
+    val locationDialog: Boolean = false,
+    val permissionDialog : Boolean = false,
+    val manualLocationDialog : Boolean = false,
 
     //Positon dialogs
     var userLat : Double = 59.56374,

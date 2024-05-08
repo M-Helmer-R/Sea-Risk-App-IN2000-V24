@@ -2,7 +2,6 @@ package no.uio.ifi.in2000.testgit.ui.home.Dialog
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import no.uio.ifi.in2000.testgit.ui.home.HomeEvent
 
 @Composable
-fun DeniedPermissionDialog(
+fun ManualLocationDialog(
     onEvent: (HomeEvent) -> Unit,
     modifier: Modifier = Modifier,
 ){
@@ -45,7 +44,7 @@ fun DeniedPermissionDialog(
     AlertDialog(
         modifier = modifier,
         onDismissRequest = {
-            onEvent(HomeEvent.hideDeniedPermissionDialog)
+            onEvent(HomeEvent.hideManualLocationDialog)
         },
 
         confirmButton = {
@@ -56,7 +55,7 @@ fun DeniedPermissionDialog(
             ){
                 Button(
                     onClick = {
-                        onEvent(HomeEvent.hideDeniedPermissionDialog)
+                        onEvent(HomeEvent.hideManualLocationDialog)
                     }
                 ) {
                     Text(text = "Avbryt")
@@ -105,16 +104,24 @@ fun DeniedPermissionDialog(
 }
 
 @Composable
-fun PermissionDialog(
+fun LocationDialog(
     onEvent: (HomeEvent) -> Unit,
-    modifier: Modifier = Modifier,
 ){
 
     AlertDialog(
-        modifier = modifier,
         onDismissRequest = {
-            onEvent(HomeEvent.hidePermissionDialog)
+            onEvent(HomeEvent.hideLocationDialog)
         },
+        icon = {
+            Icon(
+                imageVector = Icons.Filled.LocationOn,
+                contentDescription = "Location Icon"
+            )
+        },
+        title = {
+            Text( text = "Location permission")
+        },
+
         confirmButton = {
             Row (
                 modifier = Modifier.fillMaxWidth(),
@@ -122,51 +129,39 @@ fun PermissionDialog(
             ){
                 Button(
                     onClick = {
-                        onEvent(HomeEvent.hidePermissionDialog)
-                        onEvent(HomeEvent.showDeniedPermissionDialog)
+                        onEvent(HomeEvent.hideLocationDialog)
+                        onEvent(HomeEvent.showManualLocationDialog)
                     }
                 )
                 {
                     Text(text = "Set manually")
                 }
-
-                Button(
-                    onClick = { /*TODO*/ })
-                {
-                    Text(text = "Accept - Only this time")
-                }
-                Button(
-                    onClick = { /*TODO*/ })
-                {
-                    Text(text = "Accept - Remember")
-                }
                 Button(
                     onClick = {
-                        onEvent(HomeEvent.hidePermissionDialog)
+                        onEvent(HomeEvent.hideLocationDialog)
+                        onEvent(HomeEvent.showPermissionDialog)
                     })
                 {
-                    Text(text = "Deny")
+                    Text(text = "Share location")
                 }
             }
         },
-        title = {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.LocationOn,
-                    contentDescription = "Location Icon"
-                )
-                Text( text = "Location permission")
-            }
-                },
-        text = {
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ){
-
+/*
+        dismissButton = {
+            Button(
+                onClick = {
+                    onEvent(HomeEvent.hidePermissionDialog)
+                    onEvent(HomeEvent.showDeniedPermissionDialog)
+                }
+            )
+            {
+                Text(text = "Deny")
             }
         }
+
+ */
     )
+
 }
+
+
