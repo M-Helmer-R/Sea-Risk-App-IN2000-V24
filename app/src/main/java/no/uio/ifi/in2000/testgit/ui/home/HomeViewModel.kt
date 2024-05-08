@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.testgit.ui.home
 
 import android.Manifest
+import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.testgit.MainApplication
 import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.data.room.CityDao
 import no.uio.ifi.in2000.testgit.data.room.DatabaseRepository
@@ -28,9 +30,8 @@ import no.uio.ifi.in2000.testgit.data.room.haversine
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModel (
-    private val context: Context,
     private val repository : DatabaseRepository,
-
+    context : Context,
 ) : ViewModel() {
 
     private val _allCities = repository.getAll().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
@@ -272,21 +273,13 @@ class HomeViewModel (
                 modelClass: Class<T>,
                 extras : CreationExtras
             ): T {
-                //val application = checkNotNull()
+                val application = checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]) as MainApplication
                 return HomeViewModel(
-                    repository = application.d
-                )
+                    repository = application.databaseRepository,
+                    context = application.context,
+                ) as T
             }
         }
-        private val viewModel by viewModels<HomeViewModel>(
-            factoryProducer = {
-                object : ViewModelProvider.Factory {
-                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                        return HomeViewModel(db.dao) as T
-                    }
-                }
-            }
-        )
     }
 }
 

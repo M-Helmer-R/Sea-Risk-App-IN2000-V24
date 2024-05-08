@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.testgit.ui.home.AddCityCard
 import no.uio.ifi.in2000.testgit.ui.home.Dialog.AddCityDialog
@@ -47,7 +48,7 @@ import no.uio.ifi.in2000.testgit.ui.theme.White
 fun HomeScreen(
     navController : NavController?,
     currentRoute : String,
-    homeViewModel : HomeViewModel,
+    homeViewModel : HomeViewModel = viewModel(factory = HomeViewModel.Factory),
     onEvent: (HomeEvent) -> Unit
 ) {
 
