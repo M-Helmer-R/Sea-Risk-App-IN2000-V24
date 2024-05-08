@@ -30,8 +30,12 @@ data class DialogUIState(
     var oceanLoaded: Boolean?
 )
 class MapScreenViewModel: ViewModel() {
-    private val _mapClickLocation = MutableStateFlow(Point.fromLngLat(0.0, 0.0))
-    val mapClickLocation: StateFlow<Point> = _mapClickLocation.asStateFlow()
+    // Holder punktet som ble trykket på
+    val mapClickLocation = MutableStateFlow<Point?>(null)
+
+    // Tilstand for å vise/lukke popup
+    val showPopup = MutableStateFlow(false)
+
 
     private val repository: GeoCodeRepository = GeoCodeRepository()
     private val oceanRepository: OceanForeCastRepository = OceanForeCastRepository()
@@ -126,9 +130,25 @@ class MapScreenViewModel: ViewModel() {
         println("Dialog hidden")
     }
 
+
+
+
+
+    // Oppdaterer punktet som ble trykket på og viser popup
     fun updateMapClickLocation(point: Point) {
-        _mapClickLocation.value = point
+        mapClickLocation.value = point
     }
+
+    // Viser popup ved å sette showPopup til true
+    fun showPopup() {
+        showPopup.value = true
+    }
+
+    // Lukker popup ved å sette showPopup til false
+    fun hidePopup() {
+        showPopup.value = false
+    }
+
 
 
 }

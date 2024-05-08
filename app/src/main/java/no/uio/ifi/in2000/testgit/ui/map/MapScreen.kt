@@ -16,6 +16,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -54,6 +56,7 @@ import com.mapbox.maps.viewannotation.viewAnnotationOptions
 
 import no.uio.ifi.in2000.testgit.data.map.GeocodingPlacesResponse
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
+import no.uio.ifi.in2000.testgit.ui.theme.LightBlue
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -154,10 +157,8 @@ fun Mapscreen(
     keyboardController: SoftwareKeyboardController?,
     navController: NavController
 ){
-
     Column(modifier = Modifier.fillMaxSize()) {
         Box {
-
             MapboxMap(
                 Modifier.fillMaxSize(),
                 mapViewportState = MapViewportState().apply {
@@ -169,33 +170,48 @@ fun Mapscreen(
                     }
                 },
                 onMapClickListener =  { point ->
-                    // Logger bredde- og lengdegraden til det klikkede punktet
                     Log.i("Map Click", "Lat: ${point.latitude()}, Lon: ${point.longitude()}")
-
                     mapScreenViewModel.updateMapClickLocation(point)
+                    mapScreenViewModel.showPopup.value = true
                     keyboardController?.hide()
-
                     true
                 },
             ) {
-                val point by mapScreenViewModel.mapClickLocation.collectAsState()
+                val point = mapScreenViewModel.mapClickLocation.collectAsState().value
+                val showPopup = mapScreenViewModel.showPopup.collectAsState().value
 
-                val viewAnnotationOptions : ViewAnnotationOptions= ViewAnnotationOptions.Builder()
-                    .geometry(point)
-                    .annotationAnchor {
-                        anchor(ViewAnnotationAnchor.BOTTOM)
+                if (showPopup && point != null) {
+                    ViewAnnotation(
+                        options = ViewAnnotationOptions.Builder()
+                            .geometry(point) 
+                            .annotationAnchor {
+                                anchor(ViewAnnotationAnchor.BOTTOM)
+                            }
+                            .build()
+                    ) {
+                        Card(
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .width(200.dp),
+                            colors = CardDefaults.cardColors(containerColor = DarkBlue),
+                            shape = RoundedCornerShape(18.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(8.dp)) {
+                                Text("Ingen data, trykk på område nærme vann", color = Color.White)
+                                Button(
+                                    onClick = { mapScreenViewModel.hidePopup() },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = LightBlue,
+                                        contentColor = Color.White
+                                    )
+                                ) {
+                                    Text("Lukk", color = Color.White)
+                                }
+                            }
+                        }
                     }
-                    .build()
-
-
-                ViewAnnotation(
-                    options = viewAnnotationOptions
-                ) {
-                    Text("Latitude: ${point.latitude()} Longitude: ${point.longitude()}", color = Color.White)
                 }
-
             }
-
         }
     }
 }
