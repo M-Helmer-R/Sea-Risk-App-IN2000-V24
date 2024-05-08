@@ -39,7 +39,6 @@ import no.uio.ifi.in2000.testgit.ui.home.HomeUiState
 import no.uio.ifi.in2000.testgit.ui.home.HomeViewModel
 import no.uio.ifi.in2000.testgit.ui.home.HorizontalCard
 import no.uio.ifi.in2000.testgit.ui.home.MainCard
-import no.uio.ifi.in2000.testgit.ui.home.Dialog.PermissionDialog
 import no.uio.ifi.in2000.testgit.ui.map.TopBar
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 import no.uio.ifi.in2000.testgit.ui.theme.White
@@ -83,10 +82,10 @@ fun HomeScreen(
                     AddCityDialog(homeUiState = homeUiState, onEvent = onEvent)
                 }
                 if (homeUiState.locationDialog) {
-                    LocationDialog(onEvent = onEvent)
+                    LocationDialog(onEvent = onEvent, homeViewModel)
                 }
                 if (homeUiState.permissionDialog){
-                    PermissionDialog(onEvent = onEvent, homeViewModel)
+                    //PermissionDialog(onEvent = onEvent, homeViewModel)
                 }
                 if (homeUiState.manualLocationDialog){
                     ManualLocationDialog(onEvent = onEvent)

@@ -84,15 +84,7 @@ class MainActivity : ComponentActivity() {
             .build()
     }
 
-    private val viewModel by viewModels<HomeViewModel>(
-        factoryProducer = {
-            object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return HomeViewModel(db.dao) as T
-                }
-            }
-        }
-    )
+
 
     private lateinit var fusedLocationClient : FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback

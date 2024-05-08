@@ -1,10 +1,17 @@
 package no.uio.ifi.in2000.testgit.ui.home
 
+import android.Manifest
 import android.content.Context
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.room.Database
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,10 +28,10 @@ import no.uio.ifi.in2000.testgit.data.room.haversine
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModel (
-    private val dao : CityDao,
-) : ViewModel() {
+    private val context: Context,
+    private val repository : DatabaseRepository,
 
-    private val repository : DatabaseRepository = DatabaseRepository(dao)
+) : ViewModel() {
 
     private val _allCities = repository.getAll().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     private val _preloaded = repository.getPreLoaded().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
@@ -32,6 +39,7 @@ class HomeViewModel (
     private val _userLon = MutableStateFlow(0.0)
     private val _userLat = MutableStateFlow(0.0)
     private val _homeUiState = MutableStateFlow(HomeUiState())
+
 
     //Location
     val permissionDialogQueue = mutableStateListOf<String>()
@@ -255,6 +263,30 @@ class HomeViewModel (
     }
 
     fun requestLocation(){
+    }
+
+    companion object{
+
+        val Factory : ViewModelProvider.Factory = object  : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(
+                modelClass: Class<T>,
+                extras : CreationExtras
+            ): T {
+                //val application = checkNotNull()
+                return HomeViewModel(
+                    repository = application.d
+                )
+            }
+        }
+        private val viewModel by viewModels<HomeViewModel>(
+            factoryProducer = {
+                object : ViewModelProvider.Factory {
+                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                        return HomeViewModel(db.dao) as T
+                    }
+                }
+            }
+        )
     }
 }
 
