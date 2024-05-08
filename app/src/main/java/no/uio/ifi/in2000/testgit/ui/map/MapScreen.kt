@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.testgit.ui.map
 
+import android.util.Log
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,8 +43,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapboxExperimental
+import com.mapbox.maps.ViewAnnotationAnchor
+import com.mapbox.maps.ViewAnnotationOptions
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
+import com.mapbox.maps.extension.compose.annotation.ViewAnnotation
+import com.mapbox.maps.viewannotation.annotationAnchor
+import com.mapbox.maps.viewannotation.geometry
+import com.mapbox.maps.viewannotation.viewAnnotationOptions
 
 import no.uio.ifi.in2000.testgit.data.map.GeocodingPlacesResponse
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
@@ -135,6 +142,7 @@ fun LocationSuggestionCardClickable(lat: Double, lon: Double, place: String, nav
 }
 
 
+
 @OptIn(MapboxExperimental::class)
 @Composable
 fun Mapscreen(
@@ -147,59 +155,10 @@ fun Mapscreen(
     navController: NavController
 ){
 
-    // er lat og lon her fylt inn allerede
-    var lat: Double = 7.0
-    var lon: Double = 8.0
-
-
-
     Column(modifier = Modifier.fillMaxSize()) {
-        //SearchBar(searchUIState.value, mapScreenViewModel)
-        //SearchBar(searchUIState.value, mapScreenViewModel, keyboardController)
         Box {
 
-
-
-            if (dialogUIState.value.isVisible == true && dialogUIState.value.oceanLoaded != null){
-
-                if (dialogUIState.value.oceanLoaded == true){
-
-
-
-                    AlertDialogExample(
-                        onDismissRequest = {mapScreenViewModel.hideDialog() },
-
-                        onConfirmation = { mapScreenViewModel.hideDialog()
-                            navController.navigate(
-                                "ActivityScreen/${locationUIState.value.placeName}/${locationUIState.value.lat}/${locationUIState.value.lon}")},
-                        // forstaa hvorfor det ligger en nav til instillinger her
-                        //onConfirmation = {navController?.navigate("innstillinger"); mapScreenViewModel.hideDialog() },
-
-
-                        dialogTitle = locationUIState.value.placeName,
-                        dialogText = "Vil du se mer info om ${locationUIState.value.placeName}?",
-                        icon = Icons.Default.Info
-                    )
-                }
-
-                else{
-                    //Lage en annen popup her
-                    AlertDialogExample(
-                        onDismissRequest = {mapScreenViewModel.hideDialog() },
-                        onConfirmation = {
-                            mapScreenViewModel.hideDialog()
-
-                                         },
-                        dialogTitle = "Ingen data",
-                        dialogText = "",
-                        icon = Icons.Default.Info
-                    )
-                }
-
-
-            }
             MapboxMap(
-
                 Modifier.fillMaxSize(),
                 mapViewportState = MapViewportState().apply {
                     setCameraOptions {
@@ -208,126 +167,37 @@ fun Mapscreen(
                         pitch(0.0)
                         bearing(0.0)
                     }
-
-
                 },
                 onMapClickListener =  { point ->
-                    lat = point.latitude()
-                    lon = point.longitude()
-                    mapScreenViewModel.loadPlaceName(lon, lat)
+                    // Logger bredde- og lengdegraden til det klikkede punktet
+                    Log.i("Map Click", "Lat: ${point.latitude()}, Lon: ${point.longitude()}")
+
+                    mapScreenViewModel.updateMapClickLocation(point)
                     keyboardController?.hide()
 
                     true
                 },
+            ) {
+                val point by mapScreenViewModel.mapClickLocation.collectAsState()
 
+                val viewAnnotationOptions : ViewAnnotationOptions= ViewAnnotationOptions.Builder()
+                    .geometry(point)
+                    .annotationAnchor {
+                        anchor(ViewAnnotationAnchor.BOTTOM)
+                    }
+                    .build()
+
+
+                ViewAnnotation(
+                    options = viewAnnotationOptions
                 ) {
+                    Text("Latitude: ${point.latitude()} Longitude: ${point.longitude()}", color = Color.White)
+                }
 
             }
-
 
         }
     }
-    /*Box {
-        if (dialogUIState.value.isVisible == true && dialogUIState.value.oceanLoaded != null){
-
-            if (dialogUIState.value.oceanLoaded == true){
-
-
-
-                AlertDialogExample(
-                    onDismissRequest = {mapScreenViewModel.hideDialog() },
-                    onConfirmation = { mapScreenViewModel.hideDialog() },
-
-                    dialogTitle = locationUiState.value.placeName,
-                    dialogText = "Vil du se mer info om ${locationUiState.value.placeName}?",
-                    icon = Icons.Default.Info
-                )
-            }
-
-            else{
-                //Lage en annen popup her
-                AlertDialogExample(
-                    onDismissRequest = {mapScreenViewModel.hideDialog() },
-                    onConfirmation = { mapScreenViewModel.hideDialog() },
-                    dialogTitle = "Ingen data",
-                    dialogText = "",
-                    icon = Icons.Default.Info
-                )
-            }
-
-
-        }
-        MapboxMap(
-
-            Modifier.fillMaxSize(),
-            mapViewportState = MapViewportState().apply {
-                setCameraOptions {
-                    zoom(3.7)
-                    center(Point.fromLngLat(11.49537, 64.01487))
-                    pitch(0.0)
-                    bearing(0.0)
-                }
-
-
-            },
-            onMapClickListener =  { point ->
-                lat = point.latitude()
-                lon = point.longitude()
-                mapScreenViewModel.loadPlaceName(lon, lat)
-
-                true
-            },
-
-            ) {
-
-        }
-    }*/
 }
-
-
-
-@Composable
-fun AlertDialogExample(
-    onDismissRequest: () -> Unit,
-    onConfirmation: () -> Unit,
-    dialogTitle: String,
-    dialogText: String,
-    icon: ImageVector,
-) {
-    AlertDialog(
-        icon = {
-            Icon(icon, contentDescription = "Example Icon")
-        },
-        title = {
-            Text(text = dialogTitle)
-        },
-        text = {
-            Text(text = dialogText)
-        },
-        onDismissRequest = {
-            onDismissRequest()
-
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirmation()
-                }
-            ) {
-                Text("Ja")
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
-                }
-            ) {
-                Text("Nei")
-            }
-        }
-    )
-}
-
 
 

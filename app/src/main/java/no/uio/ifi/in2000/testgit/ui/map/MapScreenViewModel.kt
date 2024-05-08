@@ -3,6 +3,7 @@ package no.uio.ifi.in2000.testgit.ui.map
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mapbox.geojson.Point
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,6 +30,9 @@ data class DialogUIState(
     var oceanLoaded: Boolean?
 )
 class MapScreenViewModel: ViewModel() {
+    private val _mapClickLocation = MutableStateFlow(Point.fromLngLat(0.0, 0.0))
+    val mapClickLocation: StateFlow<Point> = _mapClickLocation.asStateFlow()
+
     private val repository: GeoCodeRepository = GeoCodeRepository()
     private val oceanRepository: OceanForeCastRepository = OceanForeCastRepository()
 
@@ -122,5 +126,10 @@ class MapScreenViewModel: ViewModel() {
         println("Dialog hidden")
     }
 
+    fun updateMapClickLocation(point: Point) {
+        _mapClickLocation.value = point
+    }
+
 
 }
+
