@@ -88,13 +88,9 @@ fun HomeScreen(
                 if (homeUiState.locationDialog) {
                     LocationDialog(onEvent = onEvent, homeViewModel)
                 }
-                if (homeUiState.permissionDialog){
-                    //PermissionDialog(onEvent = onEvent, homeViewModel)
-                }
                 if (homeUiState.manualLocationDialog){
                     ManualLocationDialog(onEvent = onEvent)
                 }
-
             }
             item{
                 HorizontalContent(homeUiState, onEvent, containerModifier)
