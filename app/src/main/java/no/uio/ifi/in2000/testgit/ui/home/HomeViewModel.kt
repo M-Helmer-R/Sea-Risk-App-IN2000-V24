@@ -1,11 +1,11 @@
 package no.uio.ifi.in2000.testgit.ui.home
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.location.LocationServices
+import androidx.lifecycle.viewmodel.CreationExtras
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,17 +14,17 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.testgit.MainApplication
 import no.uio.ifi.in2000.testgit.data.room.City
-import no.uio.ifi.in2000.testgit.data.room.CityDao
 import no.uio.ifi.in2000.testgit.data.room.DatabaseRepository
+import no.uio.ifi.in2000.testgit.data.room.DatabaseRepositoryImpl
 import no.uio.ifi.in2000.testgit.data.room.haversine
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModel (
-    private val dao : CityDao,
+    private val repository : DatabaseRepository,
+    //context : Context,
 ) : ViewModel() {
-
-    private val repository : DatabaseRepository = DatabaseRepository(dao)
 
     private val _allCities = repository.getAll().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     private val _preloaded = repository.getPreLoaded().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
@@ -33,21 +33,21 @@ class HomeViewModel (
     private val _userLat = MutableStateFlow(0.0)
     private val _homeUiState = MutableStateFlow(HomeUiState())
 
-    //Location
-    val permissionDialogQueue = mutableStateListOf<String>()
 
-    fun dismissDialog(){
-        permissionDialogQueue.removeFirst()
-    }
-
-    fun onPermissionResult(
-        permission : String,
-        isGranted : Boolean
-    ){
-        if (!isGranted && !permissionDialogQueue.contains(permission)){
-            permissionDialogQueue.add(permission)
+        //Location
+        val permissionDialogQueue = mutableStateListOf<String>()
+        fun dismissDialog(){
+            permissionDialogQueue.removeFirst()
         }
-    }
+        fun onPermissionResult(
+            permission : String,
+            isGranted : Boolean
+        ){
+            if (!isGranted && !permissionDialogQueue.contains(permission)){
+                permissionDialogQueue.add(permission)
+            }
+        }
+
 
     val homeUiState = combine(
         _homeUiState, _favorites, _preloaded, _userLon, _userLat
@@ -113,9 +113,9 @@ class HomeViewModel (
                             homeUiState.value.preloaded,
                             homeUiState.value.userLon,
                             homeUiState.value.userLat,
-                            ),
+                        ),
                         locationDialog = false,
-                        )
+                    )
                 }
             }
 
@@ -243,7 +243,7 @@ class HomeViewModel (
         }
     }
 
-    fun getNearestCities(cities : List<City>, lon : Double, lat : Double) : Map<City, Double> {
+    private fun getNearestCities(cities : List<City>, lon : Double, lat : Double) : Map<City, Double> {
 
         val citiesDist : MutableMap<City, Double> = mutableMapOf<City, Double>()
 
@@ -256,6 +256,20 @@ class HomeViewModel (
 
     fun requestLocation(){
     }
-}
 
-//Fiks denne
+    companion object{
+
+        val Factory : ViewModelProvider.Factory = object  : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(
+                modelClass: Class<T>,
+                extras : CreationExtras
+            ): T {
+                val application = checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
+                return HomeViewModel(
+                    repository = (application as MainApplication).databaseRepository,
+                    //context = application.context,
+                ) as T
+            }
+        }
+    }
+}

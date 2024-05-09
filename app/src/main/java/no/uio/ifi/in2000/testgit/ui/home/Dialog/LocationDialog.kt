@@ -1,6 +1,9 @@
 package no.uio.ifi.in2000.testgit.ui.home.Dialog
 
+import android.Manifest
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import no.uio.ifi.in2000.testgit.ui.home.HomeEvent
+import no.uio.ifi.in2000.testgit.ui.home.HomeViewModel
 
 @Composable
 fun ManualLocationDialog(
@@ -106,7 +110,18 @@ fun ManualLocationDialog(
 @Composable
 fun LocationDialog(
     onEvent: (HomeEvent) -> Unit,
+    homeViewModel : HomeViewModel,
 ){
+
+         val locationPermissionResultLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+            onResult = {isGranted ->
+                homeViewModel.onPermissionResult(
+                    permission = Manifest.permission.ACCESS_FINE_LOCATION,
+                    isGranted = true,
+                )
+            }
+        )
 
     AlertDialog(
         onDismissRequest = {
@@ -146,22 +161,20 @@ fun LocationDialog(
                 }
             }
         },
-/*
-        dismissButton = {
-            Button(
-                onClick = {
-                    onEvent(HomeEvent.hidePermissionDialog)
-                    onEvent(HomeEvent.showDeniedPermissionDialog)
+        /*
+                dismissButton = {
+                    Button(
+                        onClick = {
+                            onEvent(HomeEvent.hidePermissionDialog)
+                            onEvent(HomeEvent.showDeniedPermissionDialog)
+                        }
+                    )
+                    {
+                        Text(text = "Deny")
+                    }
                 }
-            )
-            {
-                Text(text = "Deny")
-            }
-        }
-
- */
+         */
     )
 
 }
-
 
