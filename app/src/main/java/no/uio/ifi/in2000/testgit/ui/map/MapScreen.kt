@@ -189,7 +189,7 @@ fun Mapscreen(
                             }
                             .build()
                     ) {
-                        if(true){
+                        if(true){ //Få inn testene til Kriss
                             Card(
                                 modifier = Modifier
                                     .padding(8.dp)
@@ -200,7 +200,7 @@ fun Mapscreen(
                                 Column(modifier = Modifier.padding(8.dp)) {
                                     Text("Vil du se værdata fra: (NAVN)", color = Color.White)
                                     Button(
-                                        onClick = { navController.navigate("ActivityScreen/NAVN/${point.latitude()}/${point.longitude()}") },
+                                        onClick = { navController.navigate("ActivityScreen/NAVN/${point.latitude()}/${point.longitude()}") }, //Få inn navn på kommune Kriss, tror ikke point.l() ikke funker
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = LightBlue,
                                             contentColor = Color.White
@@ -208,6 +208,7 @@ fun Mapscreen(
                                     ) {
                                         Text("JA", color = Color.White)
                                     }
+                                    //Opprette en nei knapp som closer
                                 }
                             }
                         }
