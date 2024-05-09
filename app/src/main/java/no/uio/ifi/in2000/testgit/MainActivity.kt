@@ -35,6 +35,10 @@ class MainActivity : ComponentActivity() {
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
 
+
+     */
+
+    /*
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
@@ -42,9 +46,12 @@ class MainActivity : ComponentActivity() {
 
             )
 
-        })
+        }
+    )
 
      */
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.testgit.ui.home
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -32,7 +33,7 @@ class HomeViewModel (
     private val _userLat = MutableStateFlow(0.0)
     private val _homeUiState = MutableStateFlow(HomeUiState())
 
-/*
+
     //Location
     val permissionDialogQueue = mutableStateListOf<String>()
 
@@ -50,7 +51,7 @@ class HomeViewModel (
     }
 
 
- */
+
 
     val homeUiState = combine(
         _homeUiState, _favorites, _preloaded, _userLon, _userLat
