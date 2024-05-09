@@ -15,7 +15,7 @@ import no.uio.ifi.in2000.testgit.ui.map.MapScreenMain
 @Composable
 fun PlaskApp(
 ){
-    val navController : NavController = rememberNavController()
+    val navController = rememberNavController()
     PlaskAppHost(
         navController = navController
     )
@@ -27,7 +27,7 @@ fun PlaskAppHost(
 ) {
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
-            HomeScreen(navController, "home", viewModel(factory = HomeViewModel.Factory))
+            HomeScreen(navController, "home")
         }
         composable("kart") {
             MapScreenMain(navController, "kart")

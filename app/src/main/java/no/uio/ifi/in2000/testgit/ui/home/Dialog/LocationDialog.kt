@@ -112,7 +112,7 @@ fun LocationDialog(
     onEvent: (HomeEvent) -> Unit,
     homeViewModel : HomeViewModel,
     ){
-
+/*
      val locationPermissionResultLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = {isGranted ->
@@ -122,6 +122,9 @@ fun LocationDialog(
             )
         }
     )
+
+
+ */
     AlertDialog(
         onDismissRequest = {
             onEvent(HomeEvent.hideLocationDialog)

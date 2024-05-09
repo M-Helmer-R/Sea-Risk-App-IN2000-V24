@@ -49,8 +49,8 @@ fun HomeScreen(
     navController : NavController?,
     currentRoute : String,
     homeViewModel : HomeViewModel = viewModel(factory = HomeViewModel.Factory),
-    onEvent: (HomeEvent) -> Unit
 ) {
+    val onEvent = homeViewModel :: onEvent
 
     val homeUiState: HomeUiState by homeViewModel.homeUiState.collectAsState()
 
@@ -80,7 +80,10 @@ fun HomeScreen(
         ) {
             item{
                 if (homeUiState.isAddingCity) {
-                    AddCityDialog(homeUiState = homeUiState, onEvent = onEvent)
+                    AddCityDialog(
+                        onEvent = onEvent,
+                        homeUiState = homeUiState,
+                    )
                 }
                 if (homeUiState.locationDialog) {
                     LocationDialog(onEvent = onEvent, homeViewModel)

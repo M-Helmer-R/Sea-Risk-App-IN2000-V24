@@ -28,7 +28,7 @@ abstract class CityDatabase : RoomDatabase() {
                     CityDatabase::class.java,
                     "cities.db"
                 ).createFromAsset("database/cities100.db").build()
-                INSTANCE= instance
+                INSTANCE = instance
                 instance
             }
         }
