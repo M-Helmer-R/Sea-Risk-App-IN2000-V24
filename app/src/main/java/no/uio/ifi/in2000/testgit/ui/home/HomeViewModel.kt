@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.testgit.MainApplication
-import no.uio.ifi.in2000.testgit.PlaskApplication
 import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.data.room.DatabaseRepository
 import no.uio.ifi.in2000.testgit.data.room.DatabaseRepositoryImpl
@@ -270,7 +269,7 @@ class HomeViewModel (
             ): T {
                 val application = checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
                 return HomeViewModel(
-                    repository = (application as PlaskApplication).databaseRepository,
+                    repository = (application as MainApplication).databaseRepository,
                     //context = application.context,
                 ) as T
             }

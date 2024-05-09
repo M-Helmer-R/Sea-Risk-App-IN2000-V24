@@ -2,11 +2,12 @@ package no.uio.ifi.in2000.testgit
 
 import android.app.Application
 import no.uio.ifi.in2000.testgit.data.room.CityDatabase
+import no.uio.ifi.in2000.testgit.data.room.DatabaseRepository
 import no.uio.ifi.in2000.testgit.data.room.DatabaseRepositoryImpl
 
 class MainApplication : Application() {
 
-    lateinit var databaseRepositoryImpl: DatabaseRepositoryImpl
+    lateinit var databaseRepository: DatabaseRepository
     //lateinit var context : Context //
 
     override fun onCreate() {
@@ -15,6 +16,6 @@ class MainApplication : Application() {
 
         //context = this.applicationContext
 
-        databaseRepositoryImpl = DatabaseRepositoryImpl(cityDao = db.dao)
+        databaseRepository = DatabaseRepositoryImpl(cityDao = db.dao)
     }
 }
