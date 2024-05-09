@@ -34,6 +34,7 @@ data class HomeUiState(
     var userLat : Double = 59.56374,
     var userLon : Double = 10.43067,
 
+
     //Add city dialog
 
     )

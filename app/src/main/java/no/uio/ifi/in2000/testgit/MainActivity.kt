@@ -1,38 +1,9 @@
 package no.uio.ifi.in2000.testgit
 
-import HomeScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.room.Room
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationServices
-import no.uio.ifi.in2000.testgit.data.room.CityDatabase
-import no.uio.ifi.in2000.testgit.ui.home.BottomBar
-import no.uio.ifi.in2000.testgit.ui.home.HomeViewModel
-import no.uio.ifi.in2000.testgit.ui.map.MapScreenMain
-import no.uio.ifi.in2000.testgit.ui.map.TopBar
-import java.security.Permission
+import no.uio.ifi.in2000.testgit.compose.PlaskApp
 
 class MainActivity : ComponentActivity() {
 
@@ -64,6 +35,10 @@ class MainActivity : ComponentActivity() {
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
 
+
+     */
+
+    /*
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
@@ -71,64 +46,18 @@ class MainActivity : ComponentActivity() {
 
             )
 
-        })
-
-     */
-
-    private val db by lazy {
-        Room.databaseBuilder(
-            applicationContext,
-            CityDatabase::class.java,
-            "cities.db"
-        ).createFromAsset("database/cities100.db")
-            .build()
-    }
-
-    private val viewModel by viewModels<HomeViewModel>(
-        factoryProducer = {
-            object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return HomeViewModel(db.dao) as T
-                }
-            }
         }
     )
 
-    private lateinit var fusedLocationClient : FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
-    private var locationRequired : Boolean = false
+     */
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         setContent {
-            val navController = rememberNavController()
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
-            //RequestLocation(permission = Manifest.permission.ACCESS_FINE_LOCATION)
-
-            NavHost(navController = navController, startDestination = "home") {
-                composable("home") {
-                    val state by viewModel.homeUiState.collectAsState()
-                    HomeScreen(navController, "home", viewModel, onEvent = viewModel::onEvent)
-                }
-                composable("kart") {
-                    MapScreenMain(navController, "kart")
-                }
-                composable("innstillinger") {
-                    InnstillingerScreen(navController, "innstillinger")
-                }
-            }
+            PlaskApp()
         }
     }
 }
 
-@Composable
-fun InnstillingerScreen(navController: NavController?, currentRoute: String = "innstillinger") {
-    Column(modifier = Modifier.fillMaxSize()) {
-        TopBar()
-        Text("Dette er Innstillinger-skjermen.", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(16.dp))
-        BottomBar(navController, currentRoute)
-    }
-}

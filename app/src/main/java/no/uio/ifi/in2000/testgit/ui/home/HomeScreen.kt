@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.testgit.ui.home.AddCityCard
 import no.uio.ifi.in2000.testgit.ui.home.Dialog.AddCityDialog
@@ -39,7 +40,6 @@ import no.uio.ifi.in2000.testgit.ui.home.HomeUiState
 import no.uio.ifi.in2000.testgit.ui.home.HomeViewModel
 import no.uio.ifi.in2000.testgit.ui.home.HorizontalCard
 import no.uio.ifi.in2000.testgit.ui.home.MainCard
-import no.uio.ifi.in2000.testgit.ui.home.Dialog.PermissionDialog
 import no.uio.ifi.in2000.testgit.ui.map.TopBar
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 import no.uio.ifi.in2000.testgit.ui.theme.White
@@ -48,9 +48,9 @@ import no.uio.ifi.in2000.testgit.ui.theme.White
 fun HomeScreen(
     navController : NavController?,
     currentRoute : String,
-    homeViewModel : HomeViewModel,
-    onEvent: (HomeEvent) -> Unit
+    homeViewModel : HomeViewModel = viewModel(factory = HomeViewModel.Factory),
 ) {
+    val onEvent = homeViewModel :: onEvent
 
     val homeUiState: HomeUiState by homeViewModel.homeUiState.collectAsState()
 
@@ -80,18 +80,17 @@ fun HomeScreen(
         ) {
             item{
                 if (homeUiState.isAddingCity) {
-                    AddCityDialog(homeUiState = homeUiState, onEvent = onEvent)
+                    AddCityDialog(
+                        onEvent = onEvent,
+                        homeUiState = homeUiState,
+                    )
                 }
                 if (homeUiState.locationDialog) {
-                    LocationDialog(onEvent = onEvent)
-                }
-                if (homeUiState.permissionDialog){
-                    PermissionDialog(onEvent = onEvent, homeViewModel)
+                    LocationDialog(onEvent = onEvent, homeViewModel)
                 }
                 if (homeUiState.manualLocationDialog){
                     ManualLocationDialog(onEvent = onEvent)
                 }
-
             }
             item{
                 HorizontalContent(homeUiState, onEvent, containerModifier)
