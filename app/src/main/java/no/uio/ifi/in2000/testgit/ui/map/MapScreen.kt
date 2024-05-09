@@ -183,29 +183,56 @@ fun Mapscreen(
                 if (showPopup && point != null) {
                     ViewAnnotation(
                         options = ViewAnnotationOptions.Builder()
-                            .geometry(point) 
+                            .geometry(point)
                             .annotationAnchor {
                                 anchor(ViewAnnotationAnchor.BOTTOM)
                             }
                             .build()
                     ) {
-                        Card(
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .width(200.dp),
-                            colors = CardDefaults.cardColors(containerColor = DarkBlue),
-                            shape = RoundedCornerShape(18.dp)
-                        ) {
-                            Column(modifier = Modifier.padding(8.dp)) {
-                                Text("Ingen data, trykk på område nærme vann", color = Color.White)
-                                Button(
-                                    onClick = { mapScreenViewModel.hidePopup() },
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = LightBlue,
-                                        contentColor = Color.White
+                        if(true){
+                            Card(
+                                modifier = Modifier
+                                    .padding(8.dp)
+                                    .width(200.dp),
+                                colors = CardDefaults.cardColors(containerColor = DarkBlue),
+                                shape = RoundedCornerShape(18.dp)
+                            ) {
+                                Column(modifier = Modifier.padding(8.dp)) {
+                                    Text("Vil du se værdata fra: (NAVN)", color = Color.White)
+                                    Button(
+                                        onClick = { navController.navigate("ActivityScreen/NAVN/${point.latitude()}/${point.longitude()}") },
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = LightBlue,
+                                            contentColor = Color.White
+                                        )
+                                    ) {
+                                        Text("JA", color = Color.White)
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            Card(
+                                modifier = Modifier
+                                    .padding(8.dp)
+                                    .width(200.dp),
+                                colors = CardDefaults.cardColors(containerColor = DarkBlue),
+                                shape = RoundedCornerShape(18.dp)
+                            ) {
+                                Column(modifier = Modifier.padding(8.dp)) {
+                                    Text(
+                                        "Ingen data, trykk på område nærme vann",
+                                        color = Color.White
                                     )
-                                ) {
-                                    Text("Lukk", color = Color.White)
+                                    Button(
+                                        onClick = { mapScreenViewModel.hidePopup() },
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = LightBlue,
+                                            contentColor = Color.White
+                                        )
+                                    ) {
+                                        Text("Lukk", color = Color.White)
+                                    }
                                 }
                             }
                         }
