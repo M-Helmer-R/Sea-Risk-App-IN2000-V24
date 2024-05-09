@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.testgit.MainApplication
 import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.data.room.DatabaseRepository
-import no.uio.ifi.in2000.testgit.data.room.DatabaseRepositoryImpl
 import no.uio.ifi.in2000.testgit.data.room.haversine
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -26,7 +25,7 @@ class HomeViewModel (
     //context : Context,
 ) : ViewModel() {
 
-    private val _allCities = repository.getAll().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+    //private val _allCities = repository.getAll().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     private val _preloaded = repository.getPreLoaded().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     private val _favorites = repository.getFavorites().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     private val _userLon = MutableStateFlow(0.0)
@@ -36,9 +35,7 @@ class HomeViewModel (
 
         //Location
         val permissionDialogQueue = mutableStateListOf<String>()
-        fun dismissDialog(){
-            permissionDialogQueue.removeFirst()
-        }
+
         fun onPermissionResult(
             permission : String,
             isGranted : Boolean
@@ -122,7 +119,7 @@ class HomeViewModel (
             HomeEvent.hideManualLocationDialog -> {
                 _homeUiState.update {
                     it.copy(
-                        locationDialog = false
+                        manualLocationDialog = false
                     )
                 }
             }
@@ -130,7 +127,7 @@ class HomeViewModel (
             HomeEvent.showManualLocationDialog -> {
                 _homeUiState.update {
                     it.copy(
-                        locationDialog = true
+                        manualLocationDialog = true
                     )
                 }
             }

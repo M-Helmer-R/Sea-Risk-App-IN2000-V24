@@ -155,6 +155,7 @@ fun LocationDialog(
                     onClick = {
                         onEvent(HomeEvent.hideLocationDialog)
                         onEvent(HomeEvent.showPermissionDialog)
+                        locationPermissionResultLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                     })
                 {
                     Text(text = "Share location")
