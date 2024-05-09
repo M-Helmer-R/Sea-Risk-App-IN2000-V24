@@ -58,8 +58,8 @@ fun AddCityDialog(
                     onClick = {
                         validateInput(homeUiState.cityName, homeUiState.cityLat, homeUiState.cityLon)
                         Log.w("ADD_CITY_DIALOG", "Button pressed")
-                        if (!hasErrors()){
-                            Log.w("ADD_CITY_DIALOG", "Latitude: ${homeUiState.cityLat} , Longitude: ${homeUiState.cityLon}")
+                        if (hasErrors()){
+                            //Log.w("Add_City", "Latitude: $lat , ${lat.toDouble()}, Longitude: $lon , ${lon.toDouble()}")
                             //onEvent(HomeEvent.saveCity)
                             onEvent(HomeEvent.insertCity(homeUiState.cityName, homeUiState.cityLat, homeUiState.cityLon))
                         }

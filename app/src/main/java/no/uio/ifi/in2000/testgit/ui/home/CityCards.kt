@@ -41,13 +41,11 @@ fun MainCard(
             .padding(8.dp),
         colors =  CardDefaults.cardColors(containerColor = LightBlue),
         shape = MaterialTheme.shapes.medium,
-
         onClick = {
             //Legg inn navigasjon her
+            TODO()
             //onEvent(HomeEvent.OpenActivity(city))
         }
-
-
     ) {
         Row (
             modifier = Modifier
@@ -111,9 +109,9 @@ fun HorizontalCard(
             .padding(8.dp),
         colors = CardDefaults.cardColors(containerColor = LightBlue),
         shape = MaterialTheme.shapes.medium,
-
         onClick = {
             //Legg inn navigasjon her
+            TODO()
         }
     ) {
         Row (
