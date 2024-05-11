@@ -1,28 +1,40 @@
+@file:OptIn(ExperimentalPermissionsApi::class)
+
 package no.uio.ifi.in2000.testgit.ui.home.Dialog
 
 import android.Manifest
+import android.content.Intent
+import android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import no.uio.ifi.in2000.testgit.ui.home.HomeEvent
 import no.uio.ifi.in2000.testgit.ui.home.HomeViewModel
 
@@ -112,16 +124,24 @@ fun LocationDialog(
     onEvent: (HomeEvent) -> Unit,
     homeViewModel : HomeViewModel,
 ){
-
+/*
          val locationPermissionResultLauncher = rememberLauncherForActivityResult(
+
             contract = ActivityResultContracts.RequestPermission(),
-            onResult = {isGranted ->
+            onResult = {
+
+                /*isGranted ->
                 homeViewModel.onPermissionResult(
                     permission = Manifest.permission.ACCESS_FINE_LOCATION,
                     isGranted = true,
                 )
+
+                 */
             }
         )
+
+ */
+
 
     AlertDialog(
         onDismissRequest = {
@@ -138,44 +158,78 @@ fun LocationDialog(
         },
 
         confirmButton = {
-            Row (
+            Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
-            ){
+            ) {
                 Button(
                     onClick = {
                         onEvent(HomeEvent.hideLocationDialog)
                         onEvent(HomeEvent.showManualLocationDialog)
                     }
-                )
-                {
+                ) {
                     Text(text = "Set manually")
                 }
                 Button(
                     onClick = {
                         onEvent(HomeEvent.hideLocationDialog)
-                        onEvent(HomeEvent.showPermissionDialog)
-                        locationPermissionResultLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                    })
-                {
+                        //onEvent(HomeEvent.showPermissionDialog)
+                        //onEvent(HomeEvent.requestLocationPermission(locationPermissionResultLauncher))
+
+                    }
+                ) {
                     Text(text = "Share location")
                 }
             }
-        },
-        /*
-                dismissButton = {
-                    Button(
-                        onClick = {
-                            onEvent(HomeEvent.hidePermissionDialog)
-                            onEvent(HomeEvent.showDeniedPermissionDialog)
-                        }
-                    )
-                    {
-                        Text(text = "Deny")
-                    }
-                }
-         */
+        }
     )
+}
+/*
 
+@Composable
+fun PermissionDialog(
+    onEvent: (HomeEvent) -> Unit,
+    isPermanentlyDeclined : Boolean,
+    //isPermanentlyDeclined : Boolean = !shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)
+    //    isPermanentlyDeclined = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+    onDismiss : () -> Unit,
+    onOkClick: () -> Unit,
+    onGoToAppSettings: () -> Unit,
+){
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            Column (
+                modifier = Modifier.fillMaxWidth()
+            ){
+                Divider()
+                Text(
+                    text = if (isPermanentlyDeclined)"Grant Permission" else "Ok",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            if (isPermanentlyDeclined) {
+                                onGoToAppSettings()
+                            } else {
+                                onOkClick()
+                            }
+                        }
+                )
+            }
+        },
+        title = {
+            Text(text = "Tilgang nødvendig")
+        },
+        text = {
+            Text(
+                text = if (isPermanentlyDeclined){
+                    "Permanent avvist"
+                } else {
+                    "Ikke permanent"
+                }
+            )
+        }
+    )
 }
 
+         */

@@ -1,8 +1,13 @@
 package no.uio.ifi.in2000.testgit.ui.home
 
+import android.Manifest
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import no.uio.ifi.in2000.testgit.data.room.City
 
+@OptIn(ExperimentalPermissionsApi::class)
 data class HomeUiState(
 
     //Main
@@ -29,6 +34,7 @@ data class HomeUiState(
     val locationDialog: Boolean = false,
     val permissionDialog : Boolean = false,
     val manualLocationDialog : Boolean = false,
+
 
     //Positon dialogs
     var userLat : Double = 59.56374,

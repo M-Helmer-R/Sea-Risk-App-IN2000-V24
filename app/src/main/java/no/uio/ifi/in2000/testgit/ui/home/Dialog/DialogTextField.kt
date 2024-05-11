@@ -104,7 +104,6 @@ fun DoubleTextField(
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
     )
-
 }
 
 fun validateCoordinates(cord : String) : Boolean {

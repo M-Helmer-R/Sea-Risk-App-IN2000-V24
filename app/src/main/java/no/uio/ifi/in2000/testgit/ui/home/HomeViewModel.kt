@@ -1,11 +1,15 @@
 package no.uio.ifi.in2000.testgit.ui.home
 
+import android.Manifest
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,10 +23,8 @@ import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.data.room.DatabaseRepository
 import no.uio.ifi.in2000.testgit.data.room.haversine
 
-@OptIn(ExperimentalCoroutinesApi::class)
-class HomeViewModel (
-    private val repository : DatabaseRepository,
-    //context : Context,
+@OptIn(ExperimentalCoroutinesApi::class, ExperimentalPermissionsApi::class)
+class HomeViewModel (private val repository : DatabaseRepository
 ) : ViewModel() {
 
     //private val _allCities = repository.getAll().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
@@ -237,6 +239,10 @@ class HomeViewModel (
                     )
                 }
             }
+
+            is HomeEvent.requestLocationPermission -> {
+                event.locationState.launchMultiplePermissionRequest()
+            }
         }
     }
 
@@ -249,9 +255,6 @@ class HomeViewModel (
         }
 
         return citiesDist.toList().sortedBy { it.second }.take(5).toMap()
-    }
-
-    fun requestLocation(){
     }
 
     companion object{

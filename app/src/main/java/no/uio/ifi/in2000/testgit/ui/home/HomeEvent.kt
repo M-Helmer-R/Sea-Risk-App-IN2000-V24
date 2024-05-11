@@ -1,5 +1,10 @@
+@file:OptIn(ExperimentalPermissionsApi::class)
+
 package no.uio.ifi.in2000.testgit.ui.home
 
+import androidx.activity.result.ActivityResultLauncher
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
 import no.uio.ifi.in2000.testgit.data.room.City
 
 sealed interface HomeEvent {
@@ -13,7 +18,7 @@ sealed interface HomeEvent {
     data class DeleteHome(val city: City) : HomeEvent
     data class OpenActivity(val city : City) : HomeEvent
     //DialogError
-
+    data class requestLocationPermission(val locationState: MultiplePermissionsState) : HomeEvent
     object setNameError : HomeEvent
     object setLonError : HomeEvent
     object setLatError : HomeEvent
@@ -26,5 +31,6 @@ sealed interface HomeEvent {
     object hideManualLocationDialog : HomeEvent
     object showPermissionDialog :  HomeEvent
     object hidePermissionDialog : HomeEvent
+
 
 }

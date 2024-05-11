@@ -4,6 +4,7 @@ package no.uio.ifi.in2000.testgit
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.ui.platform.LocalContext
 import no.uio.ifi.in2000.testgit.compose.PlaskApp
 
 class MainActivity : ComponentActivity() {
