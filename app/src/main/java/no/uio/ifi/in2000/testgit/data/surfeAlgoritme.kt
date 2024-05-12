@@ -23,17 +23,18 @@ suspend fun surfeAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUI
 
     // Create lists of temperature limits using the defined data class
     val oceanTemps = listOf(
-        WeatherLimit(Double.NEGATIVE_INFINITY..10.0, 25.0),
-        WeatherLimit(10.0..15.0, 25.0),
-        WeatherLimit(33.0..Double.POSITIVE_INFINITY, 25.0),
+        WeatherLimit(Double.NEGATIVE_INFINITY..0.0, 0.0), // possibility of ice on water
+        WeatherLimit(0.0..10.0, 10.0),
         WeatherLimit(15.0..17.0, 50.0),
-        WeatherLimit(30.0..33.0, 50.0),
         WeatherLimit(17.0..20.0, 75.0),
-        WeatherLimit(20.0..30.0, 100.0)
+        WeatherLimit(20.0..30.0, 100.0),
+        WeatherLimit(30.0..33.0, 50.0),
+        WeatherLimit(33.0..Double.POSITIVE_INFINITY, 25.0),
     )
 
     val airTemps = listOf(
-        WeatherLimit(Double.NEGATIVE_INFINITY..10.0, 0.0),
+        WeatherLimit(Double.NEGATIVE_INFINITY..0.0, 0.0), // possibility of ice on water
+        WeatherLimit(0.0..10.0, 10.0),
         WeatherLimit(10.0..15.0, 25.0),
         WeatherLimit(15.0..20.0, 50.0),
         WeatherLimit(20.0..25.0, 75.0),
