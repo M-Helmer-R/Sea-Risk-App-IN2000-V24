@@ -11,7 +11,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.testgit.data.MainRepository
+import no.uio.ifi.in2000.testgit.data.badeAlgoritme
 import no.uio.ifi.in2000.testgit.data.padleAlgoritme
+import no.uio.ifi.in2000.testgit.data.seileAlgoritme
+import no.uio.ifi.in2000.testgit.data.surfeAlgoritme
 import no.uio.ifi.in2000.testgit.model.nowcast.Details
 import no.uio.ifi.in2000.testgit.ui.map.OceanForeCastUIState
 
@@ -57,13 +60,32 @@ class ActivityScreenViewModel(savedStateHandle: SavedStateHandle): ViewModel() {
             loadAllResult.await()
             Log.i("ActivityScreenViewModel", "${_oceanForecastUIState.value.oceanDetails}")
             // should wait with algorithm calculations until apis are done
-            loadRecommendationBar()
+            loadRecommendationBar("swimming")
         }
     }
 
-    private suspend fun loadRecommendationBar() {
-        val level = padleAlgoritme(oceanForeCastUIState.value, nowCastUIState.value)
+    fun changeReccomendationBar(activity: String){
+        viewModelScope.launch {
+            loadRecommendationBar(activity)
+        }
+    }
 
+    suspend fun loadRecommendationBar(activity: String) {
+
+        val level = if (oceanForeCastUIState.value.oceanDetails != null && nowCastUIState.value.nowCastData != null){
+            when(activity){
+                "padling" -> padleAlgoritme(oceanForeCastUIState.value, nowCastUIState.value)
+                "swimming" -> badeAlgoritme(oceanForeCastUIState.value, nowCastUIState.value)
+                "sailing" -> seileAlgoritme(oceanForeCastUIState.value, nowCastUIState.value)
+                "surfing" -> surfeAlgoritme(oceanForeCastUIState.value, nowCastUIState.value)
+                else -> 0
+            }
+        } else{
+            0
+        }
+
+
+        Log.i("ActivityScreenViewModel, loadRecommendationBar", "Score for $activity is $level ")
         val newRecommendationUIState = _reccomendationUIState.value.copy(level = level)
         _reccomendationUIState.value = newRecommendationUIState
     }
