@@ -108,6 +108,7 @@ class MapScreenViewModel: ViewModel() {
 
     fun loadPlaceName2(lon: Double, lat: Double){
         viewModelScope.launch {
+            Log.i("MAPVIEWMODEL", "TEST")
             val locationData = repository.reverseGeoCode2(lon, lat)
             loadOceanForeCast(lat.toString(), lon.toString())
 
