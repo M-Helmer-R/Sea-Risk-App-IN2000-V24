@@ -4,11 +4,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface DatabaseRepository{
     fun getAll() : Flow<List<City>>
-
     fun getPreLoaded() : Flow<List<City>>
-
     fun getFavorites() : Flow<List<City>>
-
     suspend fun saveCity(city : City)
     suspend fun deleteCity(city: City)
     fun setFavorite(city: City)

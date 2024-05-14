@@ -24,32 +24,17 @@ data class HomeUiState(
     val latError : Boolean = false,
     val errorMessage : String = "Not valid input",
 
+    //Add city dialog
     val isAddingCity: Boolean = false,
 
     //LocationDialog
     val locationDialog: Boolean = false,
     val permissionDialog : Boolean = false,
     val manualLocationDialog : Boolean = false,
+    val deniedLocationDialog : Boolean = false,
 
 
     //Positon dialogs
     var userLat : Double = 59.56374,
     var userLon : Double = 10.43067,
-
-    //Add city dialog
-
     )
-
-/*
-fun getNearestCities(cities : List<City>, userLat: Double, userLon : Double) : Map<City, Double> {
-
-    val citiesDist : MutableMap<City, Double> = mutableMapOf<City, Double>()
-
-    for (city in cities) {
-        citiesDist.put(city, haversine(city.lat, city.lon, userLat, userLon))
-    }
-
-    return citiesDist.toList().sortedBy { it.second }.toMap()
-}
-
- */

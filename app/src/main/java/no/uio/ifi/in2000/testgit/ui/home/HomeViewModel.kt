@@ -1,9 +1,10 @@
+@file:OptIn(ExperimentalPermissionsApi::class, ExperimentalPermissionsApi::class,
+    ExperimentalPermissionsApi::class
+)
+
 package no.uio.ifi.in2000.testgit.ui.home
 
-import android.Manifest
 import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -11,7 +12,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -23,30 +23,15 @@ import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.data.room.DatabaseRepository
 import no.uio.ifi.in2000.testgit.data.room.haversine
 
-@OptIn(ExperimentalCoroutinesApi::class, ExperimentalPermissionsApi::class)
 class HomeViewModel (private val repository : DatabaseRepository
 ) : ViewModel() {
 
     //private val _allCities = repository.getAll().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     private val _preloaded = repository.getPreLoaded().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     private val _favorites = repository.getFavorites().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
-    private val _userLon = MutableStateFlow(0.0)
-    private val _userLat = MutableStateFlow(0.0)
+    private val _userLat = MutableStateFlow(59.56374)
+    private val _userLon = MutableStateFlow( 10.43067)
     private val _homeUiState = MutableStateFlow(HomeUiState())
-
-
-        //Location
-        val permissionDialogQueue = mutableStateListOf<String>()
-
-        fun onPermissionResult(
-            permission : String,
-            isGranted : Boolean
-        ){
-            if (!isGranted && !permissionDialogQueue.contains(permission)){
-                permissionDialogQueue.add(permission)
-            }
-        }
-
 
     val homeUiState = combine(
         _homeUiState, _favorites, _preloaded, _userLon, _userLat
@@ -66,19 +51,16 @@ class HomeViewModel (private val repository : DatabaseRepository
                 viewModelScope.launch {repository.deleteCity(event.city)
                 }
             }
-
             HomeEvent.showAddCityDialog -> {
                 _homeUiState.update {
                     it.copy( isAddingCity = true
                     )
                 }
             }
-
             HomeEvent.hideAddCityDialog -> {
                 _homeUiState.update { it.copy( isAddingCity = false
                 ) }
             }
-
             is HomeEvent.updateFavorite -> {
                 viewModelScope.launch(Dispatchers.IO){
                     if (event.city.favorite == 1) {
@@ -89,7 +71,6 @@ class HomeViewModel (private val repository : DatabaseRepository
                     }
                 }
             }
-
             is HomeEvent.setName -> {
                 _homeUiState.update {
                     it.copy(
@@ -97,13 +78,10 @@ class HomeViewModel (private val repository : DatabaseRepository
                     )
                 }
             }
-
-
             is HomeEvent.setUserPosition -> {
                 _userLon.value = event.lon
                 _userLat.value = event.lat
             }
-
             HomeEvent.updateNearest ->   {
                 _homeUiState.update {
                     it.copy(
@@ -117,7 +95,6 @@ class HomeViewModel (private val repository : DatabaseRepository
                     )
                 }
             }
-
             HomeEvent.hideManualLocationDialog -> {
                 _homeUiState.update {
                     it.copy(
@@ -125,7 +102,6 @@ class HomeViewModel (private val repository : DatabaseRepository
                     )
                 }
             }
-
             HomeEvent.showManualLocationDialog -> {
                 _homeUiState.update {
                     it.copy(
@@ -133,12 +109,9 @@ class HomeViewModel (private val repository : DatabaseRepository
                     )
                 }
             }
-
-
             is HomeEvent.OpenActivity -> {
                 TODO()
             }
-
             is HomeEvent.setCityLat -> {
                 _homeUiState.update {
                     it.copy(
@@ -146,7 +119,6 @@ class HomeViewModel (private val repository : DatabaseRepository
                     )
                 }
             }
-
             is HomeEvent.setCityLon -> {
                 _homeUiState.update {
                     it.copy(
@@ -154,18 +126,14 @@ class HomeViewModel (private val repository : DatabaseRepository
                     )
                 }
             }
-
             is HomeEvent.insertCity -> {
                 val name = event.name
                 val lat : Double? = event.lat.toDoubleOrNull()
                 val lon : Double? = event.lon.toDoubleOrNull()
-
                 Log.w("VIEW_MODEL", "Name: $name, Lat: $lat, Lon: $lon" )
-
                 if (event.name.isBlank() || lat == null|| lon == null){
                     return
                 } else {
-
                     val newCity = City(
                         name = name,
                         lat = lat,
@@ -173,13 +141,11 @@ class HomeViewModel (private val repository : DatabaseRepository
                         customized = 1,
                         favorite = 1
                     )
-
                     //Sjekk her
                     viewModelScope.launch {
                         repository.saveCity(newCity)
                         Log.w("VIEW_MODEL", "City: ${newCity.lat}" )
                     }
-
                     _homeUiState.update { it.copy(
                         isAddingCity = false,
                         cityName = "",
@@ -192,7 +158,6 @@ class HomeViewModel (private val repository : DatabaseRepository
                 }
 
             }
-
             HomeEvent.setNameError -> {
                 _homeUiState.update { it.copy(
                     nameError = true
@@ -208,7 +173,6 @@ class HomeViewModel (private val repository : DatabaseRepository
                     lonError = true
                 ) }
             }
-
             HomeEvent.hidePermissionDialog -> {
                 _homeUiState.update {
                     it.copy(
@@ -216,7 +180,6 @@ class HomeViewModel (private val repository : DatabaseRepository
                     )
                 }
             }
-
             HomeEvent.showPermissionDialog -> {
                 _homeUiState.update {
                     it.copy(
@@ -224,7 +187,6 @@ class HomeViewModel (private val repository : DatabaseRepository
                     )
                 }
             }
-
             HomeEvent.hideLocationDialog -> {
                 _homeUiState.update {
                     it.copy(
@@ -239,21 +201,32 @@ class HomeViewModel (private val repository : DatabaseRepository
                     )
                 }
             }
-
             is HomeEvent.requestLocationPermission -> {
                 event.locationState.launchMultiplePermissionRequest()
+            }
+
+            HomeEvent.hideDeniedPermissionDialog -> {
+                _homeUiState.update {
+                    it.copy(
+                        deniedLocationDialog = false
+                    )
+                }
+            }
+            HomeEvent.showDeniedPermissionDialog -> {
+                _homeUiState.update {
+                    it.copy(
+                        deniedLocationDialog = true
+                    )
+                }
             }
         }
     }
 
     private fun getNearestCities(cities : List<City>, lon : Double, lat : Double) : Map<City, Double> {
-
         val citiesDist : MutableMap<City, Double> = mutableMapOf<City, Double>()
-
         for (city in cities) {
             citiesDist.put(city, haversine(city.lat, city.lon, lat, lon))
         }
-
         return citiesDist.toList().sortedBy { it.second }.take(5).toMap()
     }
 

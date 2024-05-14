@@ -136,13 +136,6 @@ fun HorizontalCard(
                     text = String.format("%.2f", distance) + " km",
                     style = MaterialTheme.typography.bodySmall.copy(color = White)
                 )
-                /*
-            Row(modifier = Modifier.padding(8.dp)) {
-                city.icons.forEach { iconId ->
-                    Icon(imageVector = Icons.Filled.Place, contentDescription = null, modifier = Modifier.size(24.dp), tint = White)
-                }
-            }
-             */
             }
         }
     }
@@ -153,7 +146,6 @@ fun AddCityCard(onEvent: (HomeEvent) -> Unit){
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            //.size(width = 140.dp, height = 90.dp)
             .padding(12.dp),
         colors = CardDefaults.cardColors(containerColor = LightBlueShade1),
         shape = MaterialTheme.shapes.medium,

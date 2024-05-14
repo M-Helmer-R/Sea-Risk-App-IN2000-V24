@@ -3,7 +3,6 @@
 )
 
 package no.uio.ifi.in2000.testgit.ui.home.Dialog
-
 import android.Manifest
 import android.content.Context
 import android.location.Location
@@ -27,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
+import com.google.accompanist.permissions.PermissionStatus
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
@@ -58,13 +58,11 @@ fun LocationButton(
                                 lat = location.latitude
                             )
                         )
-//                    } ?: run {
+                    } ?: run {
                         Log.w("LOCATION_MANAGER:", "getUserLocation failed")
-                        onEvent(HomeEvent.showPermissionDialog)
                     }
                 }
             } else {
-                Log.w("LOCATION_MANAGER:", "Permissions not granted")
                 onEvent(HomeEvent.showPermissionDialog)
             }
         }
@@ -89,7 +87,6 @@ fun getUserLocation(
             Log.w("LOCATION_MANAGER:", "location task sucsesfull")
             val location = task.result
             callback(location)
-            //Log.w("LOCATION_MANAGER:", "location client: ${task.result.latitude} ${task.result.longitude}")
         } else {
             Log.w("LOCATION_MANAGER:", "location client failed")
             callback(null)
@@ -116,7 +113,6 @@ fun LocationStatus(
                     Icons.Filled.CheckCircle,
                     "Location",
                     tint = Color.Green
-
                 )
                 false -> Icon(
                     Icons.Filled.Clear,
@@ -125,6 +121,7 @@ fun LocationStatus(
                 )
             }
         }
+
         Text(
             text =
             if (locationState.allPermissionsGranted) {

@@ -2,7 +2,6 @@
 
 package no.uio.ifi.in2000.testgit.ui.home
 
-import androidx.activity.result.ActivityResultLauncher
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import no.uio.ifi.in2000.testgit.data.room.City
@@ -31,6 +30,8 @@ sealed interface HomeEvent {
     object hideManualLocationDialog : HomeEvent
     object showPermissionDialog :  HomeEvent
     object hidePermissionDialog : HomeEvent
+    object showDeniedPermissionDialog : HomeEvent
 
+    object hideDeniedPermissionDialog : HomeEvent
 
 }

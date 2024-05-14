@@ -12,12 +12,9 @@ class MainRepository(
     private val metAlertsRepository: MetAlertsRepository = MetAlertsRepository()
 ) {
 
-
     suspend fun fetchNowCast(lat: String, lon: String): Timeseries?{
         return nowCastRepository.fetchNowCast(lat, lon)
     }
-
-
 
     suspend fun fetchMetAlerts(lat: String, lon: String): AlertFeatures? {
         return metAlertsRepository.fetchMetAlerts(lat, lon)

@@ -110,6 +110,7 @@ fun PermissionsCard(
             .padding(8.dp),
         colors = CardDefaults.cardColors(containerColor = LightBlue),
         onClick = {
+
             val intent = Intent(ACTION_APPLICATION_DETAILS_SETTINGS)
             intent.data = Uri.fromParts("package", context.packageName, null)
             context.startActivity((intent))

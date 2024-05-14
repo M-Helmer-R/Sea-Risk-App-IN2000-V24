@@ -35,6 +35,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import no.uio.ifi.in2000.testgit.ui.home.AddCityCard
 import no.uio.ifi.in2000.testgit.ui.BottomBar
 import no.uio.ifi.in2000.testgit.ui.home.Dialog.AddCityDialog
+import no.uio.ifi.in2000.testgit.ui.home.Dialog.DeniedPermissionDialog
 import no.uio.ifi.in2000.testgit.ui.home.Dialog.LocationButton
 import no.uio.ifi.in2000.testgit.ui.home.Dialog.LocationStatus
 import no.uio.ifi.in2000.testgit.ui.home.Dialog.ManualLocationDialog
@@ -100,13 +101,17 @@ fun HomeScreen(
                 if (homeUiState.manualLocationDialog){
                     ManualLocationDialog(onEvent = onEvent)
                 }
+                if (homeUiState.deniedLocationDialog){
+                    DeniedPermissionDialog(onEvent)
+                }
             }
             item{
                 HorizontalContent(
                     homeUiState = homeUiState,
                     onEvent = onEvent,
                     modifier = containerModifier,
-                    locationPermissionState = fineLocationPermissionState, context)
+                    locationPermissionState = fineLocationPermissionState, context
+                )
             }
             item{
                 FavoriteContent(homeUiState, onEvent, containerModifier)
