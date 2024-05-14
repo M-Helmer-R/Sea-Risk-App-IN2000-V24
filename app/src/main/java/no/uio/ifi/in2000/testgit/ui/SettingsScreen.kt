@@ -2,6 +2,9 @@ package no.uio.ifi.in2000.testgit.ui
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
+import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
 import android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.testgit.ui.map.TopBar
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
@@ -60,6 +64,7 @@ fun SettingsContent(
                 style = MaterialTheme.typography.titleLarge.copy(color = White)
             )
             SettingsCard()
+            PermissionsCard()
         }
     }
 }
@@ -89,6 +94,41 @@ fun SettingsCard(
                 style = MaterialTheme.typography.titleMedium.copy(color = White)
             )
             Icon(Icons.Filled.Settings, "Location Settings",
+                modifier = Modifier.padding(8.dp).size(32.dp),
+                tint = Color.White,
+            )
+        }
+    }
+}
+
+@Composable
+fun PermissionsCard(
+    context : Context = LocalContext.current
+){
+    Card(
+        modifier = Modifier
+            //.width(196.dp)
+            .fillMaxWidth()
+            .padding(8.dp),
+        colors = CardDefaults.cardColors(containerColor = LightBlue),
+        onClick = {
+            val intent = Intent(ACTION_APPLICATION_DETAILS_SETTINGS)
+            intent.data = Uri.fromParts("package", context.packageName, null)
+            context.startActivity((intent))
+        }
+    ) {
+        Row (
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Text(text = "Tillatelkser",
+                modifier = Modifier.padding(8.dp),
+                style = MaterialTheme.typography.titleMedium.copy(color = White)
+            )
+            Icon(Icons.Filled.Settings, "Innstillinger",
                 modifier = Modifier.padding(8.dp).size(32.dp),
                 tint = Color.White,
             )

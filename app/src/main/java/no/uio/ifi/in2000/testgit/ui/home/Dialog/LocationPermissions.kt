@@ -76,7 +76,6 @@ fun PermissionRationaleDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    //fineLocationPermissionState.launchMultiplePermissionRequest()
                     onEvent(HomeEvent.hidePermissionDialog)
                     locationPermissionResultLauncher.launch(
                         arrayOf(
@@ -84,7 +83,6 @@ fun PermissionRationaleDialog(
                             Manifest.permission.ACCESS_COARSE_LOCATION
                         )
                     )
-                    //onEvent(HomeEvent.requestLocationPermission(fineLocationPermissionState))
                 }
             ) {
                 Text("Continue")

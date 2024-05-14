@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalPermissionsApi::class)
+@file:OptIn(ExperimentalPermissionsApi::class, ExperimentalPermissionsApi::class)
 
 package no.uio.ifi.in2000.testgit.ui.home.Dialog
 
@@ -48,6 +48,7 @@ fun LocationButton(
             if (locationPermissionState.allPermissionsGranted) {
                 Log.w("LOCATION_MANAGER:", "Permissions granted")
                 getUserLocation(context) { location ->
+                    Log.w("LOCATION_MANAGER:", "location: ${location.toString()}")
                     location?.let {
                         Log.w("LOCATION_MANAGER:", "getUserLocation: ${location.latitude} ${location.longitude}")
                         onEvent(
@@ -62,6 +63,7 @@ fun LocationButton(
                     }
                 }
             } else {
+                Log.w("LOCATION_MANAGER:", "Permissions not granted")
                 onEvent(HomeEvent.showPermissionDialog)
             }
         }
@@ -71,7 +73,7 @@ fun LocationButton(
 }
 
 @RequiresPermission(
-    anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION],
+    anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,],
 )
 fun getUserLocation(
     context: Context,
@@ -79,7 +81,7 @@ fun getUserLocation(
 ) {
     val locationClient = LocationServices.getFusedLocationProviderClient(context)
     locationClient.getCurrentLocation(
-        Priority.PRIORITY_PASSIVE,
+        Priority.PRIORITY_HIGH_ACCURACY,
         CancellationTokenSource().token
     ).addOnCompleteListener { task ->
         if (task.isSuccessful) {

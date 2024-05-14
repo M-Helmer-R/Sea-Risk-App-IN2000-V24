@@ -1,10 +1,6 @@
 package no.uio.ifi.in2000.testgit.ui.home
 
-import android.Manifest
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.MultiplePermissionsState
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.google.accompanist.permissions.rememberPermissionState
 import no.uio.ifi.in2000.testgit.data.room.City
 
 @OptIn(ExperimentalPermissionsApi::class)
