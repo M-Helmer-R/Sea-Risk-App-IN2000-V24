@@ -113,7 +113,8 @@ class MapScreenViewModel: ViewModel() {
             loadOceanForeCast(lat.toString(), lon.toString())
 
             if (locationData != null){
-                val newlocationUIState = _locationUIState.value.copy(placeName = locationData.name, lat = locationData.coordinates.lat.toString(), lon = locationData.coordinates.lon.toString(), loaded = Loaded.SUCCESS)
+                val name = locationData.formattedName.replace(Regex("[0-9]"), "")
+                val newlocationUIState = _locationUIState.value.copy(placeName = name, lat = locationData.coordinates.lat.toString(), lon = locationData.coordinates.lon.toString(), loaded = Loaded.SUCCESS)
                 _locationUIState.value = newlocationUIState
 
             }
