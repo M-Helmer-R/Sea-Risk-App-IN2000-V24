@@ -30,7 +30,7 @@ data class ReccomendationUIState(
 
 
 // this viewmodel handles api calls depending on city chosen
-// this viewmodel will be created by pin clicks in HomeScreen
+// this viewmodel will be created by user interaction with locations in HomeScreen and mapscreen
 class ActivityScreenViewModel(savedStateHandle: SavedStateHandle): ViewModel() {
     private val repository: MainRepository = MainRepository()
 
@@ -62,11 +62,15 @@ class ActivityScreenViewModel(savedStateHandle: SavedStateHandle): ViewModel() {
     }
 
     private suspend fun loadRecommendationBar() {
-        val level = padleAlgoritme(oceanForeCastUIState.value, nowCastUIState.value)
+        // padleAlgoritme should only run if each weather api returns data
+        if(oceanForeCastUIState.value.oceanDetails != null && nowCastUIState.value.nowCastData != null) {
+            val level = padleAlgoritme(oceanForeCastUIState.value, nowCastUIState.value)
 
-        val newRecommendationUIState = _reccomendationUIState.value.copy(level = level)
-        _reccomendationUIState.value = newRecommendationUIState
+            val newRecommendationUIState = _reccomendationUIState.value.copy(level = level)
+            _reccomendationUIState.value = newRecommendationUIState
+        }
     }
+
     private suspend fun loadNowCast(lat: String, lon: String){
         val nowCastData = repository.fetchNowCast(lat,lon)
         val newNowCastUIState = _nowCastUIState.value.copy(nowCastData = nowCastData)

@@ -10,10 +10,8 @@ suspend fun seileAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUI
     // How much weight each variable gives to the end result
     // Sum should be 1.0
     val windSpeedWeight = 0.6
-    val waveHeightWeight = 0.1
-    val airTempWeight = 0.1
-    val waterTempWeight = 0.1
-    val currentWeight = 0.1
+    val waveHeightWeight = 0.2
+    val currentWeight = 0.2
 
     //Weather variables
     //how can i cast them from Double? to Double so that i dont get an error further down
@@ -24,24 +22,6 @@ suspend fun seileAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUI
     val currentSpeed = oceanForeCastUIState.oceanDetails?.seaWaterSpeed
 
     // Create lists of temperature limits using the defined data class
-    val oceanTemps = listOf(
-        WeatherLimit(Double.NEGATIVE_INFINITY..10.0, 25.0),
-        WeatherLimit(10.0..15.0, 25.0),
-        WeatherLimit(33.0..Double.POSITIVE_INFINITY, 25.0),
-        WeatherLimit(15.0..17.0, 50.0),
-        WeatherLimit(30.0..33.0, 50.0),
-        WeatherLimit(17.0..20.0, 75.0),
-        WeatherLimit(20.0..30.0, 100.0)
-    )
-
-    val airTemps = listOf(
-        WeatherLimit(Double.NEGATIVE_INFINITY..10.0, 0.0),
-        WeatherLimit(10.0..15.0, 25.0),
-        WeatherLimit(15.0..20.0, 50.0),
-        WeatherLimit(20.0..25.0, 75.0),
-        WeatherLimit(25.0..Double.POSITIVE_INFINITY, 100.0)
-    )
-
     val windSpeeds = listOf(
         WeatherLimit(0.0..3.4, 100.0),
         WeatherLimit(3.4..5.5, 75.0),
@@ -67,8 +47,6 @@ suspend fun seileAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUI
     )
 
 
-    val airTempResult = calculateRiskLevel(airTempWeight, airTemp!!, airTemps)
-    val waterTempResult = calculateRiskLevel(waterTempWeight, oceanTemp!!, oceanTemps)
     val waveHeightResult = calculateRiskLevel(waveHeightWeight, waveHeight!!, waveHeights)
     val windSpeedResult = calculateRiskLevel(windSpeedWeight, windSpeed!!, windSpeeds)
     val currentSpeedResult = calculateRiskLevel(currentWeight, currentSpeed!!, currentSpeeds)
@@ -77,12 +55,11 @@ suspend fun seileAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUI
     return if (
         windSpeedResult == 0.0 ||
         waveHeightResult == 0.0 ||
-        waterTempResult == 0.0 ||
-        airTempResult == 0.0
+        currentSpeedResult == 0.0
     ){
         0
     } else
-        ((windSpeedResult + waveHeightResult + waterTempResult + airTempResult + currentSpeedResult)/10).roundToInt()
+        ((windSpeedResult + waveHeightResult + currentSpeedResult)/10).roundToInt()
 }
 
 private suspend fun calculateRiskLevel(weight: Double, weatherInput: Double, limits: List<WeatherLimit>): Double {

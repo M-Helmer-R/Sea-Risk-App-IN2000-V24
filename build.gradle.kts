@@ -5,7 +5,6 @@ buildscript {
         set("room_version", "2.5.2")
     }
     dependencies {
-        classpath("com.google.dagger:hilt-android-gradle-plugin:2.40.5")
     }
 
 
