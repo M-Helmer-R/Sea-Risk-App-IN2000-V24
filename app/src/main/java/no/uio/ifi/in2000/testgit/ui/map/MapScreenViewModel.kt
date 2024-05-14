@@ -3,6 +3,7 @@ package no.uio.ifi.in2000.testgit.ui.map
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mapbox.geojson.Point
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,21 +15,36 @@ import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanDetails
 import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanTimeseries
 
 data class LocationUIState(
-
+    var loaded : Loaded = Loaded.NOTLOADED,
     var placeName: String,
     var lon: String,
     var lat: String
 )
 
 data class OceanForeCastUIState(
-    var oceanDetails: OceanDetails?
+    var oceanDetails: OceanDetails?,
+    var loaded: Loaded = Loaded.NOTLOADED
 )
+
+enum class Loaded{
+    NOTLOADED,
+    LOADING,
+    FAILURE,
+    SUCCESS
+}
 
 data class DialogUIState(
     var isVisible: Boolean?,
     var oceanLoaded: Boolean?
 )
 class MapScreenViewModel: ViewModel() {
+    // Holder punktet som ble trykket på
+    val mapClickLocation = MutableStateFlow<Point?>(null)
+
+    // Tilstand for å vise/lukke popup
+    val showPopup = MutableStateFlow(false)
+
+
     private val repository: GeoCodeRepository = GeoCodeRepository()
     private val oceanRepository: OceanForeCastRepository = OceanForeCastRepository()
 
@@ -53,6 +69,8 @@ class MapScreenViewModel: ViewModel() {
     fun unloadSearchUIState(){
         searchUIState.value.geocodingPlacesResponse = null
     }
+
+
     fun loadSearchUIState(searchString: String){
         viewModelScope.launch {
             val geocodingPlacesResponse = repository.searchGeoCode(searchString)
@@ -73,6 +91,8 @@ class MapScreenViewModel: ViewModel() {
             if (oceanDetails != null){
                 val newDialogUiState = _dialogUIState.value.copy(oceanLoaded = true)
                 _dialogUIState.value = newDialogUiState
+                val newOceanForeCastUIState = _oceanForeCastUIState.value.copy(oceanDetails = oceanDetails, loaded = Loaded.SUCCESS)
+                _oceanForeCastUIState.value = newOceanForeCastUIState
             }
 
             else{
@@ -80,31 +100,32 @@ class MapScreenViewModel: ViewModel() {
                 _dialogUIState.value = newDialogUiState
             }
 
-            val newOceanForeCastUIState = _oceanForeCastUIState.value.copy(oceanDetails = oceanDetails)
-            _oceanForeCastUIState.value = newOceanForeCastUIState
+
         }
 
 
     }
-    fun loadPlaceName(lon: Double, lat: Double){
 
-        repository.reverseGeoCode(lon, lat, object: ReverseGeocodeCallback {
-            override fun onSuccess(placeName: String) {
-                val newlocationUIState = _locationUIState.value.copy(placeName = placeName, lat = lat.toString(), lon = lon.toString())
+    fun loadPlaceName2(lon: Double, lat: Double){
+        viewModelScope.launch {
+            Log.i("MAPVIEWMODEL", "TEST")
+            val locationData = repository.reverseGeoCode2(lon, lat)
+            loadOceanForeCast(lat.toString(), lon.toString())
+
+            if (locationData != null){
+                val newlocationUIState = _locationUIState.value.copy(placeName = locationData.name, lat = locationData.coordinates.lat.toString(), lon = locationData.coordinates.lon.toString(), loaded = Loaded.SUCCESS)
                 _locationUIState.value = newlocationUIState
-                loadOceanForeCast(lat.toString(), lon.toString())
-                showDialog()
+
             }
 
-            override fun onFailure(placeName: String) {
-                val newlocationUIState = _locationUIState.value.copy(placeName = placeName)
+            else{
+                val newlocationUIState = _locationUIState.value.copy(placeName = "$lon $lat", lat = lat.toString(), lon = lon.toString(), loaded = Loaded.SUCCESS)
                 _locationUIState.value = newlocationUIState
-                loadOceanForeCast(lat.toString(), lon.toString())
-                //showDialog()
             }
-        } )
+        }
 
     }
+
 
 
     private fun showDialog(){
@@ -123,4 +144,25 @@ class MapScreenViewModel: ViewModel() {
     }
 
 
+
+
+
+    // Oppdaterer punktet som ble trykket på og viser popup
+    fun updateMapClickLocation(point: Point) {
+        mapClickLocation.value = point
+    }
+
+    // Viser popup ved å sette showPopup til true
+    fun showPopup() {
+        showPopup.value = true
+    }
+
+    // Lukker popup ved å sette showPopup til false
+    fun hidePopup() {
+        showPopup.value = false
+    }
+
+
+
 }
+

@@ -29,37 +29,23 @@ class GeoCodeDataSource {
 
     }
 
-    fun reverseGeoCode(lon: Double, lat: Double, callback: ReverseGeocodeCallback) {
+    suspend fun reverseGeoCode2(lon: Double, lat: Double): Properties? {
+        Log.i("GeoCodeDataSource", "TEST")
+        try{
+            val clickURL = "https://api.mapbox.com/search/geocode/v6/reverse?longitude=$lon&latitude=$lat&access_token=sk.eyJ1IjoiYmpvaG9sbW0iLCJhIjoiY2x0eWVwZHp5MGRmaTJrcGpueG8zcTR1MCJ9.zal9bJ3fdxMij0MJB-GvUQ"
+            val callReverseGeoCode = client.get(clickURL)
 
-        val reverseGeocode = MapboxGeocoding.builder()
-            .accessToken("sk.eyJ1IjoiYmpvaG9sbW0iLCJhIjoiY2x0eWVwZHp5MGRmaTJrcGpueG8zcTR1MCJ9.zal9bJ3fdxMij0MJB-GvUQ")
-            .query(Point.fromLngLat(lon, lat))
-            //.geocodingTypes(GeocodingCriteria.TYPE_ADDRESS)
-            .build()
+            Log.i("GeoCodeDataSource", "Full click API call: ${callReverseGeoCode.body<GeocodingPlacesResponse>().features[0].properties}")
+            Log.i("GeoCodeDataSource", "Placename: ${callReverseGeoCode.body<GeocodingPlacesResponse>().features[0].properties.name}")
 
+            return callReverseGeoCode.body<GeocodingPlacesResponse>().features[0].properties
+        }
 
-        reverseGeocode.enqueueCall(object : Callback<GeocodingResponse> {
-            override fun onResponse(call: Call<GeocodingResponse>, response: Response<GeocodingResponse>) {
-                val results = response.body()?.features()
-                if (results != null && results.size > 0) {
-                    val firstResult = results[0]
-                    val placeName = firstResult.placeName()
-                    if (placeName != null) {
-                        callback.onSuccess(placeName)
-                    }
-                    //isDialogVisible = true
-                    Log.i("Geocoding", "Place name: $placeName")
-                } else {
-                    callback.onFailure("Ingen Data")
-                    Log.i("Geocoding", "No results found.")
-                }
-            }
+        catch (e: Exception){
+            Log.d("GeoCodeDataSource", "Reverse geocode on map click failed")
+        }
+        return null
 
-            override fun onFailure(call: Call<GeocodingResponse>, throwable: Throwable) {
-                Log.e("Geocoding", "Error: " + throwable.message)
-            }
-
-        })
     }
 
     suspend fun searchGeoCode(searchString: String): GeocodingPlacesResponse? {

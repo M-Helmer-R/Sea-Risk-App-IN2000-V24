@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.testgit.ui.Activity
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
@@ -76,7 +77,7 @@ fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController
     //val nowCastUIState = activityScreenViewModel.nowCastUIState.collectAsState()
     //val metAlertsUIState = activityScreenViewModel.metAlertsUIState.collectAsState()
 
-    val activities = listOf("sailing", "surfing", "swimming", "kayaking")
+    val activities = listOf("swimming", "sailing","surfing" , "kayaking")
     var selectedButton by remember { mutableStateOf(activities[0]) }
 
     val recommendationUIState = activityScreenViewModel.reccomendationUIState.collectAsState()
@@ -98,7 +99,7 @@ fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController
             .padding(16.dp),
             contentAlignment = Alignment.BottomStart
         ) {
-            ExpandableIconButton(activities, selectedButton) { selectedButton = it }
+            ExpandableIconButton(activities, selectedButton, activityScreenViewModel) { selectedButton = it }
         }
     }
 }
@@ -251,7 +252,9 @@ fun InfoPopUp(onDismissRequest: () -> Unit) {
 fun ExpandableIconButton(
     activities: List<String>,
     selectedActivity: String,
+    activityScreenViewModel: ActivityScreenViewModel,
     onSelectedActivityChanged: (String) -> Unit
+
 ) {
     var expanded by remember { mutableStateOf(false) }
     val iconSize: Dp = 60.dp
@@ -297,6 +300,8 @@ fun ExpandableIconButton(
                     IconButton(
                         onClick = {
                             onSelectedActivityChanged(activity)
+                            activityScreenViewModel.changeReccomendationBar(activity)
+                            Log.i("ActivityScreen", "Activity selected: $selectedActivity")
                             expanded = false
                         },
                         modifier = Modifier

@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("com.google.devtools.ksp") version "1.9.0-1.0.13"
     id("org.jetbrains.kotlin.android")
+
 }
 
 android {
@@ -99,15 +100,7 @@ dependencies {
 
 
     //mapbox
-    implementation("com.mapbox.maps:android:11.2.1")
-    implementation("com.mapbox.extension:maps-compose:11.2.1")
+    implementation("com.mapbox.maps:android:11.3.0")
+    implementation("com.mapbox.extension:maps-compose:11.3.0")
     implementation ("com.mapbox.mapboxsdk:mapbox-sdk-services:6.15.0")
-
-
-    //mapbox search
-
-
-    
-
-
 }
