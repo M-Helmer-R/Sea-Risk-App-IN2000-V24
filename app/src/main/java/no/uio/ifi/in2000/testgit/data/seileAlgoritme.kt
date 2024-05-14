@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.testgit.data
 
+import android.util.Log
 import no.uio.ifi.in2000.testgit.ui.Activity.NowCastUIState
 import no.uio.ifi.in2000.testgit.ui.map.OceanForeCastUIState
 import kotlin.math.roundToInt
@@ -50,6 +51,10 @@ suspend fun seileAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUI
     val waveHeightResult = calculateRiskLevel(waveHeightWeight, waveHeight!!, waveHeights)
     val windSpeedResult = calculateRiskLevel(windSpeedWeight, windSpeed!!, windSpeeds)
     val currentSpeedResult = calculateRiskLevel(currentWeight, currentSpeed!!, currentSpeeds)
+    Log.i("seileAlgoritme", "wind: $windSpeedResult\")\n" +
+            "\"wave: $waveHeightResult\")\n" +
+            "\"current: $currentSpeedResult"
+    )
 
     // returns 0 if one of the values is outside acceptable parameters
     return if (

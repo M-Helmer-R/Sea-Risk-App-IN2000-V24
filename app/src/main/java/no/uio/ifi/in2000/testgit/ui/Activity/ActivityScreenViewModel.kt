@@ -75,7 +75,7 @@ class ActivityScreenViewModel(savedStateHandle: SavedStateHandle): ViewModel() {
 
         val level = if (oceanForeCastUIState.value.oceanDetails != null && nowCastUIState.value.nowCastData != null){
             when(activity){
-                "padling" -> padleAlgoritme(oceanForeCastUIState.value, nowCastUIState.value)
+                "kayaking" -> padleAlgoritme(oceanForeCastUIState.value, nowCastUIState.value)
                 "swimming" -> badeAlgoritme(oceanForeCastUIState.value, nowCastUIState.value)
                 "sailing" -> seileAlgoritme(oceanForeCastUIState.value, nowCastUIState.value)
                 "surfing" -> surfeAlgoritme(oceanForeCastUIState.value, nowCastUIState.value)

@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.testgit.data
 
+import android.util.Log
 import no.uio.ifi.in2000.testgit.ui.Activity.NowCastUIState
 import no.uio.ifi.in2000.testgit.ui.map.OceanForeCastUIState
 import kotlin.math.roundToInt
@@ -9,15 +10,13 @@ import kotlin.math.roundToInt
 suspend fun surfeAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUIState: NowCastUIState): Int {
     // How much weight each variable gives to the end result
     // Sum should be 1.0
-    val windSpeedWeight = 0.3
-    val waveHeightWeight = 0.7
-    val airTempWeight = 0.15
-    val waterTempWeight = 0.15
+    val windSpeedWeight = 0.25
+    val waveHeightWeight = 0.65
+    val waterTempWeight = 0.1
 
     //Weather variables
     //how can i cast them from Double? to Double so that i dont get an error further down
     val oceanTemp = oceanForeCastUIState.oceanDetails?.seaWaterTemperature
-    val airTemp = nowCastUIState.nowCastData?.airTemperature
     val windSpeed = nowCastUIState.nowCastData?.windSpeed
     val waveHeight = oceanForeCastUIState.oceanDetails?.seaSurfaceWaveHeight
 
@@ -30,15 +29,6 @@ suspend fun surfeAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUI
         WeatherLimit(20.0..30.0, 100.0),
         WeatherLimit(30.0..33.0, 50.0),
         WeatherLimit(33.0..Double.POSITIVE_INFINITY, 25.0),
-    )
-
-    val airTemps = listOf(
-        WeatherLimit(Double.NEGATIVE_INFINITY..0.0, 0.0), // possibility of ice on water
-        WeatherLimit(0.0..10.0, 10.0),
-        WeatherLimit(10.0..15.0, 25.0),
-        WeatherLimit(15.0..20.0, 50.0),
-        WeatherLimit(20.0..25.0, 75.0),
-        WeatherLimit(25.0..Double.POSITIVE_INFINITY, 100.0)
     )
 
     val windSpeeds = listOf(
@@ -57,27 +47,24 @@ suspend fun surfeAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUI
         WeatherLimit(2.5..Double.POSITIVE_INFINITY, 0.0)
     )
 
-    val airTempResult = calculateRiskLevel(airTempWeight, airTemp!!, airTemps)
     val waterTempResult = calculateRiskLevel(waterTempWeight, oceanTemp!!, oceanTemps)
     val waveHeightResult = calculateRiskLevel(waveHeightWeight, waveHeight!!, waveHeights)
     val windSpeedResult = calculateRiskLevel(windSpeedWeight, windSpeed!!, windSpeeds)
 
-    println("water: $waterTempResult")
-    println("air: $airTempResult")
-    println("wind: $windSpeedResult")
-    println("wave: $waveHeightResult")
-    println("wave: $waveHeight")
+    Log.i("surfe", "wind: $windSpeedResult\")\n" +
+            "\"waterResult: $waterTempResult\")\n" +
+            "\"waterTemp: $oceanTemp\")\n" +
+            "\"wave: $waveHeightResult\")\n")
 
     // returns 0 if one of the values is outside acceptable parameters
     return if (
         windSpeedResult == 0.0 ||
         waveHeightResult == 0.0 ||
-        waterTempResult == 0.0 ||
-        airTempResult == 0.0
+        waterTempResult == 0.0
     ){
         0
     } else
-        ((windSpeedResult + waveHeightResult + waterTempResult + airTempResult)/10).roundToInt()
+        ((windSpeedResult + waveHeightResult + waterTempResult)/10).roundToInt()
 }
 
 private suspend fun calculateRiskLevel(weight: Double, weatherInput: Double, limits: List<WeatherLimit>): Double {

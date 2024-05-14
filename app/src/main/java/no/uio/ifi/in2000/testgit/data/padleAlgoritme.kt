@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.testgit.data
 
+import android.util.Log
 import no.uio.ifi.in2000.testgit.ui.Activity.NowCastUIState
 import no.uio.ifi.in2000.testgit.ui.map.OceanForeCastUIState
 import kotlin.math.roundToInt
@@ -54,10 +55,9 @@ suspend fun padleAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUI
     val waveHeightResult = calculateRiskLevel(waveHeightWeight, waveHeight!!, waveHeights)
     val windSpeedResult = calculateRiskLevel(windSpeedWeight, windSpeed!!, windSpeeds)
 
-    println("water: $waterTempResult")
-    println("wind: $windSpeedResult")
-    println("wave: $waveHeightResult")
-    println("wave: $waveHeight")
+    Log.i("padleAlgoritme", "wind: $windSpeedResult\")\n" +
+            "\"water: $waterTempResult\")\n" +
+            "\"wave: $waveHeightResult\")\n")
 
     // returns 0 if one of the values is outside acceptable parameters
     return if (
