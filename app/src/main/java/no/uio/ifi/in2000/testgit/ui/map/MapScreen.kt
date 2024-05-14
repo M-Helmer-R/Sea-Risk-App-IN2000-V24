@@ -175,6 +175,7 @@ fun Mapscreen(
                     mapScreenViewModel.updateMapClickLocation(point)
                     mapScreenViewModel.loadPlaceName2(point.longitude(), point.latitude() )
                     keyboardController?.hide()
+
                     true
                 },
             ) {
