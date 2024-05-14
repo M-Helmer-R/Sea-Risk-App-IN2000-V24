@@ -35,7 +35,8 @@ data class Properties(
     @SerializedName("mapbox_id") val mapbox_id: String,
     @SerializedName("wikidata") val wikidata: String,
     @SerializedName("name_preferred") val name: String,
-    @SerializedName("coordinates") val coordinates: Coordinates
+    @SerializedName("coordinates") val coordinates: Coordinates,
+    @SerializedName("place_formatted") val formattedName: String
 )
 
 data class Coordinates(
