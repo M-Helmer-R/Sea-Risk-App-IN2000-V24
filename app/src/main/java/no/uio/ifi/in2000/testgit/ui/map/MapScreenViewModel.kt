@@ -13,6 +13,7 @@ import no.uio.ifi.in2000.testgit.data.map.ReverseGeocodeCallback
 import no.uio.ifi.in2000.testgit.data.oceanforecast.OceanForeCastRepository
 import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanDetails
 import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanTimeseries
+import kotlin.math.roundToInt
 
 data class LocationUIState(
     var loaded : Loaded = Loaded.NOTLOADED,
@@ -108,7 +109,7 @@ class MapScreenViewModel: ViewModel() {
 
     fun loadPlaceName2(lon: Double, lat: Double){
         viewModelScope.launch {
-            Log.i("MAPVIEWMODEL", "TEST")
+
             val locationData = repository.reverseGeoCode2(lon, lat)
             loadOceanForeCast(lat.toString(), lon.toString())
 
@@ -120,7 +121,11 @@ class MapScreenViewModel: ViewModel() {
             }
 
             else{
-                val newlocationUIState = _locationUIState.value.copy(placeName = "$lon $lat", lat = lat.toString(), lon = lon.toString(), loaded = Loaded.SUCCESS)
+                val lon2 = (lon*100).roundToInt()/100.0
+                val lat2 = (lat*100.0).roundToInt()/100.0
+                val name = "$lon2, $lat2"
+
+                val newlocationUIState = _locationUIState.value.copy(placeName = name, lat = lat.toString(), lon = lon.toString(), loaded = Loaded.SUCCESS)
                 _locationUIState.value = newlocationUIState
             }
         }
