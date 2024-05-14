@@ -200,7 +200,7 @@ fun Mapscreen(
                                 Column(modifier = Modifier.padding(8.dp)) {
                                     Text(locationUIState.value.placeName, color = Color.White)
                                     Button(
-                                        onClick = { navController.navigate("ActivityScreen/NAVN/${point.latitude()}/${point.longitude()}") }, //Få inn navn på kommune Kriss, tror ikke point.l() ikke funker
+                                        onClick = { navController.navigate("ActivityScreen/${locationUIState.value.placeName}/${point.latitude()}/${point.longitude()}") }, //Få inn navn på kommune Kriss, tror ikke point.l() ikke funker
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = LightBlue,
                                             contentColor = Color.White
