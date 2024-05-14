@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.testgit.model.CityDatabase
 
+
 enum class CityDatabase(val cityName: String, val lon: String, val lat: String) {
     OSLO("Oslo", "10.7461", "59.9127"),
     Bergen("Bergen", "5.3242", "60.3930"),
@@ -10,3 +11,4 @@ enum class CityDatabase(val cityName: String, val lon: String, val lat: String) 
     FARE("Rørvik - Støtt", "11.987", "65.5899")
 
 }
+

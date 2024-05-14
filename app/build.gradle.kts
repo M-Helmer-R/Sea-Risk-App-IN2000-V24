@@ -54,10 +54,10 @@ android {
 dependencies {
 
     // Android Core
-    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.activity:activity-compose:1.8.2")
-    implementation(platform("androidx.compose:compose-bom:2024.03.00"))
+    implementation("androidx.activity:activity-compose:1.9.0")
+    implementation(platform("androidx.compose:compose-bom:2024.05.00"))
     //Compose
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
@@ -99,8 +99,25 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
 
+
     //mapbox
     implementation("com.mapbox.maps:android:11.3.0")
     implementation("com.mapbox.extension:maps-compose:11.3.0")
     implementation ("com.mapbox.mapboxsdk:mapbox-sdk-services:6.15.0")
+
+
+
+    //Locaton
+    //implementation(libs.play.services.location)
+    //implementation()
+    implementation("com.google.android.gms:play-services-location:21.2.0")
+    implementation("com.google.accompanist:accompanist-permissions:0.31.3-beta")
+    /*
+    implementation("libs.play.services.location")
+    implementation("libs.kotlin.coroutines.play")
+    implementation("libs.androidx.work.runtime.ktx")
+     */
+
+
+
 }

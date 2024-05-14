@@ -71,7 +71,7 @@ fun SearchBar(searchUIState: SearchUIState, mapScreenViewModel: MapScreenViewMod
             .fillMaxWidth()
             .padding(horizontal = 10.dp, vertical = 20.dp),
         shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 16.dp, bottomEnd = 16.dp),
-    colors = CardDefaults.cardColors(containerColor = DarkBlue.copy(alpha = 0.8F))
+        colors = CardDefaults.cardColors(containerColor = DarkBlue.copy(alpha = 0.8F))
     ) {
 
         Column(modifier = Modifier.fillMaxWidth()) {

@@ -17,6 +17,7 @@ class MainRepository(
 ) {
 
 
+
     suspend fun fetchNowCast(lat: String, lon: String): Details?{
         return nowCastRepository.fetchNowCast(lat, lon)
     }
@@ -24,6 +25,7 @@ class MainRepository(
     suspend fun fetchOceanForecast(lat: String, lon: String): OceanDetails? {
         return oceanForecastRepository.fetchOceanForeCast(lat, lon)
     }
+
 
     suspend fun fetchMetAlerts(lat: String, lon: String): AlertFeatures? {
         return metAlertsRepository.fetchMetAlerts(lat, lon)

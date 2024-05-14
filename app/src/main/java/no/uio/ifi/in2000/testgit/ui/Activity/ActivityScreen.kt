@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.testgit.ui.Activity
 
-import BottomBar
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -64,6 +63,7 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.testgit.R
+import no.uio.ifi.in2000.testgit.ui.BottomBar
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 import no.uio.ifi.in2000.testgit.ui.theme.LightBlue
 

@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.testgit.ui.map
 
 import androidx.compose.runtime.State
-import BottomBar
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -36,6 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.testgit.R
 import no.uio.ifi.in2000.testgit.data.map.GeocodingPlacesResponse
+import no.uio.ifi.in2000.testgit.ui.BottomBar
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 
 @Composable
@@ -56,7 +56,7 @@ fun MapScreenMain(navController: NavController, currentRoute: String, mapScreenV
 }
 @Composable
 fun ShowMap(modifier: Modifier = Modifier, mapScreenViewModel: MapScreenViewModel, locationUIState: State<LocationUIState>, dialogUIState: State<DialogUIState>, searchUIState: State<SearchUIState>, oceanForeCastUIState: State<OceanForeCastUIState>, keyboardController: SoftwareKeyboardController?, navController: NavController) {
-    //Putte kartet frå Kriss her 
+    //Putte kartet frå Kriss her
     Box(modifier = modifier
         .fillMaxSize()
         .background(Color.Red)) {
