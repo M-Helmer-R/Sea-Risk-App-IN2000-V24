@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.testgit.ui.Activity
 
+import BottomBar
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -56,6 +58,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -87,33 +90,72 @@ fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController
         .fillMaxSize()
         .background(DarkBlue)) {
         TopBarBy(navController, chosenCity)
-        Row(modifier = Modifier.fillMaxWidth()) {
+        recommendationUIState.value.level?.let { ReccomendationBox(value = it) }
+        Row(modifier = Modifier.fillMaxWidth().padding(end = 0.dp)) {
             GenerellInfo(chosenCity, lat, lon)
             Spacer(modifier = Modifier.weight(1f))
             recommendationUIState.value.level?.let { ColorBar(value = it) }
         }
+        Spacer(Modifier.weight(1f))
+        ExpandableIconButton(activities, selectedButton, activityScreenViewModel) { selectedButton = it }
+        BottomBar(navController, currentRoute = "Aktivitetsscreen")
+    }
+}
 
 
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-            contentAlignment = Alignment.BottomStart
-        ) {
-            ExpandableIconButton(activities, selectedButton, activityScreenViewModel) { selectedButton = it }
-        }
+@Composable
+fun ReccomendationBox(value: Int) {
+    val prosent = value * 10
+    val activityRecommendation = when {
+        prosent in 0..30 -> "Lav anbefaling. Det kan være best å velge en annen aktivitet, sted eller dag."
+        prosent in 31..50 -> "Dårlig anbefaling. Forholdene er akseptable, men vær forsiktig."
+        prosent in 51..70 -> "OK anbefaling. Forholdene ser OK ut for denne aktiviteten."
+        prosent in 71..100 -> "Sterk anbefaling. Dette er et flott tidspunkt for aktiviteten!"
+        else -> "Ugyldig prosentverdi"
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start =30.dp, top = 0.dp, end = 30.dp, bottom = 10.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(LightBlue)
+            .border(2.dp, Color.White, RoundedCornerShape(10.dp))
+            .height(110.dp)
+    ) {
+        Text(
+            text = "Anbefaling for aktivitet: $prosent %   - $activityRecommendation",
+            color = Color.White,
+            fontSize = 20.sp,
+            modifier = Modifier.padding(16.dp),
+            textAlign = TextAlign.Center
+        )
     }
 }
 
 
 @Composable
 fun GenerellInfo(bynavn: String, lat: String?, lon: String?) {
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text(text = "By: $bynavn", color = Color.White)
-        Text(text = "$lat", color = Color.White)
-        Text(text = "$lon", color = Color.White)
-        Text(text = "Linje 4", color = Color.White)
-        Text(text = "Linje 5", color = Color.White)
-        Text(text = "Linje 6", color = Color.White)
+
+
+    Box(
+        modifier = Modifier
+            .padding(start =30.dp, top = 35.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(LightBlue)
+            .border(2.dp, Color.White, RoundedCornerShape(10.dp))
+            .width(240.dp)
+            .height(345.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(25.dp)
+        ) {
+            Text(text = "Valgt aktivitet: ", color = Color.White, fontSize = 20.sp)
+            Text(text = "By: $bynavn", color = Color.White, fontSize = 20.sp)
+            Text(text = "$lat", color = Color.White, fontSize = 20.sp)
+            Text(text = "$lon", color = Color.White, fontSize = 20.sp)
+            Text(text = "Linje 4", color = Color.White, fontSize = 20.sp)
+            Text(text = "Linje 5", color = Color.White, fontSize = 20.sp)
+        }
     }
 }
 @OptIn(ExperimentalMaterial3Api::class)
@@ -155,7 +197,7 @@ fun TopBarBy(navController: NavController, bynavn: String) {
     )
 }
 @Composable
-fun ColorBar(value : Int) {
+fun ColorBar(value: Int) {
     var showDialog by remember { mutableStateOf(false) }
     require(value in 0..10) { "Verdien må være mellom 0 og 10" }
     val prosent = value * 10
@@ -173,8 +215,15 @@ fun ColorBar(value : Int) {
         Color(0xFFA52A2A)  // Mørkerød
     )
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = "$prosent %", color = Color.White)
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Vi anbefaler (Aktivitet): $prosent % ",
+            color = Color.White,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
 
         val total = 10
         val roundedTop = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp)

@@ -54,6 +54,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -376,7 +378,14 @@ fun HorizontalCard(city: City, distance : Double, navController: NavController) 
 @Composable
 fun BottomBar(navController: NavController?, currentRoute: String) {
     BottomAppBar(
-        //Modifier.navigationBarsPadding(),
+        modifier = Modifier.drawBehind {
+            drawLine(
+                color = Color.White,
+                start = Offset(x = 0f, y = 0f),
+                end = Offset(x = size.width, y = 0f),
+                strokeWidth = 1.dp.toPx()
+            )
+        },
         containerColor = DarkBlue,
         contentColor = Color.White
     ) {
@@ -395,3 +404,4 @@ fun BottomBar(navController: NavController?, currentRoute: String) {
         }
     }
 }
+
