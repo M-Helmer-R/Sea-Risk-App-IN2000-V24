@@ -171,16 +171,16 @@ fun Mapscreen(
                 },
                 onMapClickListener =  { point ->
                     Log.i("Map Click", "Lat: ${point.latitude()}, Lon: ${point.longitude()}")
+                    oceanForeCastUIState.value.loaded = Loaded.LOADING
                     mapScreenViewModel.updateMapClickLocation(point)
-                    mapScreenViewModel.showPopup.value = true
+                    mapScreenViewModel.loadPlaceName2(point.longitude(), point.latitude() )
                     keyboardController?.hide()
                     true
                 },
             ) {
                 val point = mapScreenViewModel.mapClickLocation.collectAsState().value
-                val showPopup = mapScreenViewModel.showPopup.collectAsState().value
 
-                if (showPopup && point != null) {
+                if (locationUIState.value.loaded == Loaded.SUCCESS && point != null && oceanForeCastUIState.value.loaded == Loaded.SUCCESS) {
                     ViewAnnotation(
                         options = ViewAnnotationOptions.Builder()
                             .geometry(point)
@@ -198,7 +198,7 @@ fun Mapscreen(
                                 shape = RoundedCornerShape(18.dp)
                             ) {
                                 Column(modifier = Modifier.padding(8.dp)) {
-                                    Text("Vil du se værdata fra: (NAVN)", color = Color.White)
+                                    Text(locationUIState.value.placeName, color = Color.White)
                                     Button(
                                         onClick = { navController.navigate("ActivityScreen/NAVN/${point.latitude()}/${point.longitude()}") }, //Få inn navn på kommune Kriss, tror ikke point.l() ikke funker
                                         colors = ButtonDefaults.buttonColors(
@@ -206,7 +206,7 @@ fun Mapscreen(
                                             contentColor = Color.White
                                         )
                                     ) {
-                                        Text("JA", color = Color.White)
+                                        Text("Naviger", color = Color.White)
                                     }
                                     //Opprette en nei knapp som closer
                                 }

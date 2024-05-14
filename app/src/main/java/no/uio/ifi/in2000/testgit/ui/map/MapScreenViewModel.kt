@@ -15,7 +15,7 @@ import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanDetails
 import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanTimeseries
 
 data class LocationUIState(
-
+    var loaded : Loaded = Loaded.NOTLOADED,
     var placeName: String,
     var lon: String,
     var lat: String
@@ -91,6 +91,8 @@ class MapScreenViewModel: ViewModel() {
             if (oceanDetails != null){
                 val newDialogUiState = _dialogUIState.value.copy(oceanLoaded = true)
                 _dialogUIState.value = newDialogUiState
+                val newOceanForeCastUIState = _oceanForeCastUIState.value.copy(oceanDetails = oceanDetails, loaded = Loaded.SUCCESS)
+                _oceanForeCastUIState.value = newOceanForeCastUIState
             }
 
             else{
@@ -98,46 +100,31 @@ class MapScreenViewModel: ViewModel() {
                 _dialogUIState.value = newDialogUiState
             }
 
-            val newOceanForeCastUIState = _oceanForeCastUIState.value.copy(oceanDetails = oceanDetails)
-            _oceanForeCastUIState.value = newOceanForeCastUIState
+
         }
 
 
     }
 
-    suspend fun loadPlaceName2(lon: Double, lat: Double){
-        val locationData = repository.reverseGeoCode2(lon, lat)
-        loadOceanForeCast(lat.toString(), lon.toString())
+    fun loadPlaceName2(lon: Double, lat: Double){
+        viewModelScope.launch {
+            val locationData = repository.reverseGeoCode2(lon, lat)
+            loadOceanForeCast(lat.toString(), lon.toString())
 
-        if (locationData != null){
-            val newlocationUIState = _locationUIState.value.copy(placeName = locationData.name, lat = locationData.coordinates.lat.toString(), lon = locationData.coordinates.lon.toString())
-            _locationUIState.value = newlocationUIState
-        }
-
-        else{
-            val newlocationUIState = _locationUIState.value.copy(placeName = "$lon $lat", lat = lat.toString(), lon = lon.toString())
-            _locationUIState.value = newlocationUIState
-        }
-    }
-    fun loadPlaceName(lon: Double, lat: Double){
-
-        repository.reverseGeoCode(lon, lat, object: ReverseGeocodeCallback {
-            override fun onSuccess(placeName: String) {
-                val newlocationUIState = _locationUIState.value.copy(placeName = placeName, lat = lat.toString(), lon = lon.toString())
+            if (locationData != null){
+                val newlocationUIState = _locationUIState.value.copy(placeName = locationData.name, lat = locationData.coordinates.lat.toString(), lon = locationData.coordinates.lon.toString(), loaded = Loaded.SUCCESS)
                 _locationUIState.value = newlocationUIState
-                loadOceanForeCast(lat.toString(), lon.toString())
-                showDialog()
+
             }
 
-            override fun onFailure(placeName: String) {
-                val newlocationUIState = _locationUIState.value.copy(placeName = placeName)
+            else{
+                val newlocationUIState = _locationUIState.value.copy(placeName = "$lon $lat", lat = lat.toString(), lon = lon.toString(), loaded = Loaded.SUCCESS)
                 _locationUIState.value = newlocationUIState
-                loadOceanForeCast(lat.toString(), lon.toString())
-                //showDialog()
             }
-        } )
+        }
 
     }
+
 
 
     private fun showDialog(){
