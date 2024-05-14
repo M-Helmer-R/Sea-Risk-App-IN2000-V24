@@ -1,4 +1,6 @@
-@file:OptIn(ExperimentalPermissionsApi::class, ExperimentalPermissionsApi::class)
+@file:OptIn(ExperimentalPermissionsApi::class, ExperimentalPermissionsApi::class,
+    ExperimentalPermissionsApi::class
+)
 
 package no.uio.ifi.in2000.testgit.ui.home.Dialog
 
@@ -15,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.outlined.Refresh
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -134,9 +135,4 @@ fun LocationStatus(
             style = MaterialTheme.typography.bodySmall.copy(color = White)
         )
     }
-}
-
-@Composable
-fun locationFailedDialog(){
-    AlertDialog(onDismissRequest = { /*TODO*/ }, confirmButton = { /*TODO*/ })
 }

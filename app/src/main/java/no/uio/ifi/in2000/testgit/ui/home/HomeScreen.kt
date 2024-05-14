@@ -36,7 +36,6 @@ import no.uio.ifi.in2000.testgit.ui.home.AddCityCard
 import no.uio.ifi.in2000.testgit.ui.BottomBar
 import no.uio.ifi.in2000.testgit.ui.home.Dialog.AddCityDialog
 import no.uio.ifi.in2000.testgit.ui.home.Dialog.LocationButton
-import no.uio.ifi.in2000.testgit.ui.home.Dialog.LocationDialog
 import no.uio.ifi.in2000.testgit.ui.home.Dialog.LocationStatus
 import no.uio.ifi.in2000.testgit.ui.home.Dialog.ManualLocationDialog
 import no.uio.ifi.in2000.testgit.ui.home.Dialog.PermissionRationaleDialog
@@ -93,16 +92,8 @@ fun HomeScreen(
                         homeUiState = homeUiState,
                     )
                 }
-                //SE PÅ DENNE
-                if (homeUiState.locationDialog) {
-                    LocationDialog(
-                        onEvent = onEvent,
-                        homeViewModel = homeViewModel
-                    )
-                }
                 if (homeUiState.permissionDialog){
                     PermissionRationaleDialog(
-                        locationState = fineLocationPermissionState,
                         onEvent = onEvent
                     )
                 }
