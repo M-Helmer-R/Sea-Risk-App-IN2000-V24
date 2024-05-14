@@ -22,8 +22,16 @@ data class LocationUIState(
 )
 
 data class OceanForeCastUIState(
-    var oceanDetails: OceanDetails?
+    var oceanDetails: OceanDetails?,
+    var loaded: Loaded = Loaded.NOTLOADED
 )
+
+enum class Loaded{
+    NOTLOADED,
+    LOADING,
+    FAILURE,
+    SUCCESS
+}
 
 data class DialogUIState(
     var isVisible: Boolean?,
@@ -61,6 +69,8 @@ class MapScreenViewModel: ViewModel() {
     fun unloadSearchUIState(){
         searchUIState.value.geocodingPlacesResponse = null
     }
+
+
     fun loadSearchUIState(searchString: String){
         viewModelScope.launch {
             val geocodingPlacesResponse = repository.searchGeoCode(searchString)
@@ -93,6 +103,21 @@ class MapScreenViewModel: ViewModel() {
         }
 
 
+    }
+
+    suspend fun loadPlaceName2(lon: Double, lat: Double){
+        val locationData = repository.reverseGeoCode2(lon, lat)
+        loadOceanForeCast(lat.toString(), lon.toString())
+
+        if (locationData != null){
+            val newlocationUIState = _locationUIState.value.copy(placeName = locationData.name, lat = locationData.coordinates.lat.toString(), lon = locationData.coordinates.lon.toString())
+            _locationUIState.value = newlocationUIState
+        }
+
+        else{
+            val newlocationUIState = _locationUIState.value.copy(placeName = "$lon $lat", lat = lat.toString(), lon = lon.toString())
+            _locationUIState.value = newlocationUIState
+        }
     }
     fun loadPlaceName(lon: Double, lat: Double){
 

@@ -5,6 +5,10 @@ import android.util.Log
 class GeoCodeRepository {
     val geoCodeDataSource: GeoCodeDataSource = GeoCodeDataSource()
 
+
+    suspend fun reverseGeoCode2(lon: Double, lat: Double): Properties? {
+        return geoCodeDataSource.reverseGeoCode2(lon, lat)
+    }
     fun reverseGeoCode(lon: Double, lat: Double, callback: ReverseGeocodeCallback) {
 
         geoCodeDataSource.reverseGeoCode(lon, lat, object: ReverseGeocodeCallback{

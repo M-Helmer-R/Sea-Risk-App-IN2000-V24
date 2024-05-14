@@ -29,6 +29,20 @@ class GeoCodeDataSource {
 
     }
 
+    suspend fun reverseGeoCode2(lon: Double, lat: Double): Properties? {
+        try{
+            val clickURL = "https://api.mapbox.com/search/geocode/v6/reverse?longitude=$lon&latitude=$lat&access_token=sk.eyJ1IjoiYmpvaG9sbW0iLCJhIjoiY2x0eWVwZHp5MGRmaTJrcGpueG8zcTR1MCJ9.zal9bJ3fdxMij0MJB-GvUQ"
+            val callReverseGeoCode = client.get(clickURL)
+
+            return callReverseGeoCode.body<GeocodingPlacesResponse>().features[0].properties
+        }
+
+        catch (e: Exception){
+            Log.d("GeoCodeDataSource", "Reverse geocode on map click failed")
+        }
+        return null
+
+    }
     fun reverseGeoCode(lon: Double, lat: Double, callback: ReverseGeocodeCallback) {
 
         val reverseGeocode = MapboxGeocoding.builder()
