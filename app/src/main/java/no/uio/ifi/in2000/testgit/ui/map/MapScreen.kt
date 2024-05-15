@@ -61,9 +61,9 @@ import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 import no.uio.ifi.in2000.testgit.ui.theme.LightBlue
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class, MapboxExperimental::class)
 @Composable
-fun SearchBar(searchUIState: SearchUIState, mapScreenViewModel: MapScreenViewModel, keyboardController: SoftwareKeyboardController?, navController: NavController){
+fun SearchBar(searchUIState: SearchUIState, mapScreenViewModel: MapScreenViewModel, keyboardController: SoftwareKeyboardController?, navController: NavController, mapViewportState: MapViewportState){
     var text by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
 
@@ -124,7 +124,9 @@ fun SearchBar(searchUIState: SearchUIState, mapScreenViewModel: MapScreenViewMod
                             lat = it.properties.coordinates.lat,
                             lon = it.properties.coordinates.lon,
                             place = it.properties.name,
-                            navController
+                            navController,
+                            mapScreenViewModel,
+                            mapViewportState
                         )
                     }
                 }
@@ -133,11 +135,22 @@ fun SearchBar(searchUIState: SearchUIState, mapScreenViewModel: MapScreenViewMod
     }
 }
 
+@OptIn(MapboxExperimental::class)
 @Composable
-fun LocationSuggestionCardClickable(lat: Double, lon: Double, place: String, navController: NavController) {
+fun LocationSuggestionCardClickable(lat: Double, lon: Double, place: String, navController: NavController, mapScreenViewModel: MapScreenViewModel, mapViewportState: MapViewportState) {
     Card(
         //Endre dette til funksjon som skal gå til kartet med popup
-        onClick = { navController.navigate("ActivityScreen/$place/$lat/$lon") },
+        onClick = {
+            val point = Point.fromLngLat(lon, lat)
+            mapScreenViewModel.updateMapClickLocation(point)
+            mapScreenViewModel.loadPlaceName2(point.longitude(), point.latitude() )
+            val cameraOptions = CameraOptions.Builder()
+                .center(Point.fromLngLat(point.longitude(), point.latitude())) // set center
+                .zoom(10.0)
+                .build()
+
+            mapViewportState.flyTo(cameraOptions)
+                  },
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = DarkBlue.copy(alpha = 0F))
 
@@ -184,7 +197,7 @@ fun Mapscreen(
                     keyboardController?.hide()
                     val cameraOptions = CameraOptions.Builder()
                         .center(Point.fromLngLat(point.longitude(), point.latitude())) // set center
-                        .zoom(14.0)
+                        .zoom(10.0)
                         .build()
 
                     mapViewportState.flyTo(cameraOptions)

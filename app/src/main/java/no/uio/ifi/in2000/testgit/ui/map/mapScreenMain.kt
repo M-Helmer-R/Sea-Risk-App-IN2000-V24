@@ -68,7 +68,7 @@ fun ShowMap(modifier: Modifier = Modifier, mapScreenViewModel: MapScreenViewMode
             modifier = Modifier.align(Alignment.TopCenter),
             contentAlignment = Alignment.TopCenter
         ) {
-            SearchBar(searchUIState = searchUIState.value, mapScreenViewModel = mapScreenViewModel, keyboardController = keyboardController, navController )
+            SearchBar(searchUIState = searchUIState.value, mapScreenViewModel = mapScreenViewModel, keyboardController = keyboardController, navController, mapScreenViewModel.mapViewportState )
         }
     }
 }
