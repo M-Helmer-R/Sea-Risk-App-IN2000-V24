@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.testgit.ui.home
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -35,6 +39,7 @@ import no.uio.ifi.in2000.testgit.ui.theme.White
 @Composable
 fun MainCard(
     city: City,
+    navController : NavController,
     onEvent: (HomeEvent) -> Unit
 ) {
     Card(
@@ -44,9 +49,7 @@ fun MainCard(
         colors =  CardDefaults.cardColors(containerColor = LightBlue),
         shape = MaterialTheme.shapes.medium,
         onClick = {
-            //Legg inn navigasjon her
-            TODO()
-            //onEvent(HomeEvent.OpenActivity(city))
+            navController.navigate("ActivityScreen/${city.name}/${city.lat}/${city.lon}")
         }
     ) {
         Row (
@@ -92,6 +95,28 @@ fun MainCard(
                     }
                 )
             }
+            Button(
+                onClick = {
+                    Log.w("SCREEN", "City: ${city.favorite}")
+                    onEvent(HomeEvent.UpdateFavorite(city))
+                    Log.w("SCREEN", "City: ${city.favorite}")
+                }
+            ) {
+                if (city.favorite == 1) {
+                    Icon(
+                        imageVector = Icons.Filled.Star,
+                        contentDescription = "is favorite",
+                        tint = Color.Yellow
+                    )
+                    Log.w("CITY_SCREEN", "is favorite")
+                } else {
+                    Icon(
+                        imageVector = Icons.Outlined.Star,
+                        contentDescription = "not favorite",
+                    )
+                    Log.w("CITY_SCREEN", "is not favorite")
+                }
+            }
         }
     }
 }
@@ -101,7 +126,6 @@ fun MainCard(
 fun HorizontalCard(
     city: City,
     distance : Double,
-    onEvent: (HomeEvent) -> Unit,
     navController: NavController
 ) {
     Card(
@@ -143,7 +167,7 @@ fun HorizontalCard(
 }
 
 @Composable
-fun AddCityCard(onEvent: (HomeEvent) -> Unit){
+fun AddCityCard(){
     Card(
         modifier = Modifier
             .fillMaxWidth()

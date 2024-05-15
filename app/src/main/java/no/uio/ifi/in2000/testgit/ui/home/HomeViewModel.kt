@@ -110,6 +110,7 @@ class HomeViewModel (
                     )
                 }
             }
+
             is HomeEvent.InsertCity -> {
                 val name = event.name
                 val lat : Double? = event.lat.toDoubleOrNull()

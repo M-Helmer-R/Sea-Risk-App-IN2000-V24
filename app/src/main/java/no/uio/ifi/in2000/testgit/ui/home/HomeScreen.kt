@@ -125,7 +125,7 @@ fun HomeScreen(
                 )
             }
             item{
-                FavoriteContent(homeUiState, onEvent, containerModifier)
+                FavoriteContent(homeUiState, onEvent, containerModifier, navController)
             }
         }
     }
@@ -153,7 +153,7 @@ fun HorizontalContent(
         ) {
 
             items(homeUiState.nearestCities.keys.toList()) { city ->
-                HorizontalCard(city, homeUiState.nearestCities.getValue(city), onEvent, navController)
+                HorizontalCard(city, homeUiState.nearestCities.getValue(city), navController)
             }
         }
         Row(
@@ -175,6 +175,7 @@ fun FavoriteContent(
     homeUiState : HomeUiState,
     onEvent: (HomeEvent) -> Unit,
     modifier: Modifier,
+    navController: NavController
 ) {
     Column (
         modifier = modifier
@@ -188,10 +189,11 @@ fun FavoriteContent(
         homeUiState.favorites.map { city ->
             MainCard(
                 city = city,
-                onEvent = onEvent
+                onEvent = onEvent,
+                navController = navController
             )
         }
-        AddCityCard(onEvent = onEvent)
+        AddCityCard()
 
     }
 }

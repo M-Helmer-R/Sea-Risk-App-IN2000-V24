@@ -136,38 +136,42 @@ class ActivityScreenViewModel(
     }
 
     fun onEvent(event: ActivityEvent){
-        viewModelScope.launch(Dispatchers.IO) {  when (event) {
+         when (event) {
 
             is ActivityEvent.AddFavorite -> {
-                if (dbRepository.isInDatabase(event.name)){
-                    dbRepository.setFavoriteByName(event.name)
-                    Log.w("ActivityScreenViewModel", "Added old city as favorite")
-                } else {
-                    val newCity = City(
-                        name = event.name,
-                        lat = event.lat.toDoubleOrNull() ?: 0.0,
-                        lon = event.lat.toDoubleOrNull() ?: 0.0,
-                        customized = 1,
-                        favorite = 1
-                    )
-                    Log.w("ActivityScreenViewModel", "Added new city as favorite")
-                    dbRepository.saveCity(city = newCity)
+                viewModelScope.launch(Dispatchers.IO) {
+                    if (dbRepository.isInDatabase(event.name)) {
+                        dbRepository.setFavoriteByName(event.name)
+                        Log.w("ActivityScreenViewModel", "Added old city as favorite")
+                    } else {
+                        val newCity = City(
+                            name = event.name,
+                            lat = event.lat.toDoubleOrNull() ?: 0.0,
+                            lon = event.lat.toDoubleOrNull() ?: 0.0,
+                            customized = 1,
+                            favorite = 1
+                        )
+                        Log.w("ActivityScreenViewModel", "Added new city as favorite")
+                        dbRepository.saveCity(city = newCity)
+                    }
                 }
             }
             is ActivityEvent.RemoveFavorite -> {
-                dbRepository.removeFavoriteByName(event.name)
+                viewModelScope.launch (Dispatchers.IO){
+                    dbRepository.removeFavoriteByName(event.name)
+                }
             }
 
             is ActivityEvent.CheckFavorite -> {
-                if (dbRepository.isFavorite(name = event.name)){
-                    _activityUIState.update {
-                        it.copy(favorite = true)
+                viewModelScope.launch (Dispatchers.IO) {
+                    if (dbRepository.isFavorite(name = event.name)) {
+                        _activityUIState.update {
+                            it.copy(favorite = true)
+                        }
                     }
                 }
             }
         }
-        }
-
     }
     @Suppress("UNCHECKED_CAST")
     companion object{
