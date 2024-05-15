@@ -113,7 +113,6 @@ fun HorizontalCard(
         shape = MaterialTheme.shapes.medium,
         onClick = {
             navController.navigate("ActivityScreen/${city.name}/${city.lat}/${city.lon}")
-
         }
     ) {
         Row (
@@ -161,7 +160,6 @@ fun AddCityCard(onEvent: (HomeEvent) -> Unit){
                         "Gå til aktivitettsiden til en by",
                 style = MaterialTheme.typography.bodySmall.copy(color = White),
             )
-
         }
     }
 }

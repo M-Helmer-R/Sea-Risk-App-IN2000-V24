@@ -77,9 +77,12 @@ TO DO
 - avrundet bar over bottombar
  */
 @Composable
-fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController: NavController, activityScreenViewModel: ActivityScreenViewModel = viewModel()) {
+
+fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController: NavController, activityScreenViewModel: ActivityScreenViewModel = viewModel(factory = ActivityScreenViewModel.Factory)) {
     val nowCastUIState = activityScreenViewModel.nowCastUIState.collectAsState()
-    val oceanForeCastUIState = activityScreenViewModel.oceanForeCastUIState.collectAsState()
+    val oceanForeCastUIState =activityScreenViewModel.oceanForeCastUIState.collectAsState()
+    //val metAlertsUIState = activityScreenViewModel.metAlertsUIState.collectAsState()
+
 
     val activities = listOf("swimming", "sailing","surfing" , "kayaking")
     var selectedButton by remember { mutableStateOf(activities[0]) }
@@ -97,7 +100,9 @@ fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController
             onEvent = onEvent,
         )
         recommendationUIState.value.level?.let { ReccomendationBox(value = it) }
-        Row(modifier = Modifier.fillMaxWidth().padding(end = 0.dp)) {
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(end = 0.dp)) {
             GenerellInfo(chosenCity, lat, lon, nowCastUIState.value, oceanForeCastUIState.value)
             Spacer(modifier = Modifier.weight(1f))
             recommendationUIState.value.level?.let { ColorBar(value = it) }
@@ -122,7 +127,7 @@ fun ReccomendationBox(value: Int) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start =30.dp, top = 0.dp, end = 30.dp, bottom = 10.dp)
+            .padding(start = 30.dp, top = 0.dp, end = 30.dp, bottom = 10.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(LightBlue)
             .border(2.dp, Color.White, RoundedCornerShape(10.dp))
@@ -145,7 +150,7 @@ fun GenerellInfo(bynavn: String, lat: String?, lon: String?, nowCastUIState: Now
 
     Box(
         modifier = Modifier
-            .padding(start =30.dp, top = 35.dp)
+            .padding(start = 30.dp, top = 35.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(LightBlue)
             .border(2.dp, Color.White, RoundedCornerShape(10.dp))

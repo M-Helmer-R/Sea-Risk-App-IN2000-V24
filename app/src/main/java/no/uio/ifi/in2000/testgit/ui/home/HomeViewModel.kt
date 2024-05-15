@@ -96,9 +96,6 @@ class HomeViewModel (
                 }
             }
 
-            is HomeEvent.OpenActivity -> {
-                TODO()
-            }
             is HomeEvent.SetCityLat -> {
                 _homeUiState.update {
                     it.copy(
