@@ -76,7 +76,7 @@ TO DO
 - avrundet bar over bottombar
  */
 @Composable
-fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController: NavController, activityScreenViewModel: ActivityScreenViewModel = viewModel()) {
+fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController: NavController, activityScreenViewModel: ActivityScreenViewModel = viewModel(factory = ActivityScreenViewModel.Factory)) {
     //val nowCastUIState = activityScreenViewModel.nowCastUIState.collectAsState()
     //val metAlertsUIState = activityScreenViewModel.metAlertsUIState.collectAsState()
 

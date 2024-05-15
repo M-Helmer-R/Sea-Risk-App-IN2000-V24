@@ -3,18 +3,23 @@ package no.uio.ifi.in2000.testgit.ui.Activity
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.example.AlertFeatures
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.testgit.MainApplication
 import no.uio.ifi.in2000.testgit.data.MainRepository
 import no.uio.ifi.in2000.testgit.data.badeAlgoritme
 import no.uio.ifi.in2000.testgit.data.padleAlgoritme
 import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.data.room.DatabaseRepository
+import no.uio.ifi.in2000.testgit.data.room.DatabaseRepositoryImpl
 import no.uio.ifi.in2000.testgit.data.seileAlgoritme
 import no.uio.ifi.in2000.testgit.data.surfeAlgoritme
 import no.uio.ifi.in2000.testgit.model.nowcast.Details
@@ -144,6 +149,21 @@ class ActivityScreenViewModel(
 
             is ActivityEvent.CheckFavorite -> {
                 dbRepository.isFavorite(name = event.name)
+            }
+        }
+    }
+    @Suppress("UNCHECKED_CAST")
+    companion object{
+        val Factory : ViewModelProvider.Factory = object  : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(
+                modelClass: Class<T>,
+                extras : CreationExtras
+            ): T {
+                val application = checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
+                return ActivityScreenViewModel(
+                    dbRepository = (application as MainApplication).databaseRepository,
+                    savedStateHandle = extras.createSavedStateHandle()
+                ) as T
             }
         }
     }

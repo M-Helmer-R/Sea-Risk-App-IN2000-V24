@@ -15,7 +15,6 @@ sealed interface HomeEvent {
     data class UpdateFavorite(val city : City) : HomeEvent
     data class SetUserPosition(val lon : Double, val lat: Double) : HomeEvent
     data class DeleteHome(val city: City) : HomeEvent
-    data class OpenActivity(val city : City) : HomeEvent
     //DialogError
     data class RequestLocationPermission(val locationState: MultiplePermissionsState) : HomeEvent
     data object SetNameError : HomeEvent
