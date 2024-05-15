@@ -8,8 +8,12 @@ interface DatabaseRepository{
     fun getFavorites() : Flow<List<City>>
     suspend fun saveCity(city : City)
     suspend fun deleteCity(city: City)
-    fun setFavorite(city: City)
-    fun removeFavorite(city: City)
+    fun setFavoriteById(city: City)
+    fun removeFavoriteById(city: City)
+    fun setFavoriteByName(name: String)
+    fun removeFavoriteByName(name: String)
+    fun isInDatabase(name : String) : Boolean
+    fun isFavorite(name: String) : Boolean
 }
 
 class DatabaseRepositoryImpl (
@@ -35,11 +39,31 @@ class DatabaseRepositoryImpl (
         cityDao.deleteCity(city)
     }
 
-    override fun setFavorite(city: City){
-        cityDao.setFavoriteByID(city.cityId)
+    override fun setFavoriteById(city: City){
+        cityDao.setFavoriteById(city.cityId)
     }
 
-    override fun removeFavorite(city: City){
-        cityDao.removeFavoriteByID(city.cityId)
+    override fun removeFavoriteById(city: City){
+        cityDao.removeFavoriteById(city.cityId)
     }
+    override fun setFavoriteByName(name: String){
+        cityDao.setFavoriteByName(name)
+    }
+
+    override fun removeFavoriteByName(name: String){
+        cityDao.removeFavoriteByName(name)
+    }
+
+    override fun isInDatabase(name : String) : Boolean {
+        return if (cityDao.getCityByName(name) == null) {
+            false
+        } else {
+            true
+        }
+    }
+
+    override fun isFavorite(name: String) : Boolean {
+        return cityDao.isCityFavorite(name)
+    }
+
 }

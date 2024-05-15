@@ -83,14 +83,19 @@ fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController
 
     val activities = listOf("swimming", "sailing","surfing" , "kayaking")
     var selectedButton by remember { mutableStateOf(activities[0]) }
-
     val recommendationUIState = activityScreenViewModel.reccomendationUIState.collectAsState()
-
+    val onEvent = activityScreenViewModel :: onEvent
 
     Column(modifier = Modifier
         .fillMaxSize()
         .background(DarkBlue)) {
-        TopBarBy(navController, chosenCity)
+        TopBarBy(
+            navController = navController,
+            bynavn = chosenCity,
+            lat = lat,
+            lon = lon,
+            onEvent = onEvent,
+        )
         recommendationUIState.value.level?.let { ReccomendationBox(value = it) }
         Row(modifier = Modifier.fillMaxWidth().padding(end = 0.dp)) {
             GenerellInfo(chosenCity, lat, lon, nowCastUIState.value, oceanForeCastUIState.value)
@@ -161,7 +166,13 @@ fun GenerellInfo(bynavn: String, lat: String?, lon: String?, nowCastUIState: Now
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBarBy(navController: NavController, bynavn: String) {
+fun TopBarBy(
+    navController: NavController,
+    bynavn: String,
+    lat: String?,
+    lon: String?,
+    onEvent : (ActivityEvent) -> Unit
+) {
     TopAppBar(
         title = {
             Text(text = bynavn, color = Color.White, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
@@ -172,7 +183,16 @@ fun TopBarBy(navController: NavController, bynavn: String) {
             }
         },
         actions = {
-            IconButton(onClick = { /* Favoritttrykk() som endrer  */ }) {
+            IconButton(
+                onClick = {
+                    onEvent(
+                        ActivityEvent.AddFavorite(
+                            name = bynavn,
+                            lat =  lat ?: "",
+                            lon = lon ?: "")
+                    )
+                }
+            ) {
                 if (false) {
                     Icon(
                         Icons.Filled.Star,

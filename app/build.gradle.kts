@@ -101,8 +101,8 @@ dependencies {
 
 
     //mapbox
-    implementation("com.mapbox.maps:android:11.3.0")
-    implementation("com.mapbox.extension:maps-compose:11.3.0")
+    implementation("com.mapbox.maps:android:11.3.1")
+    implementation("com.mapbox.extension:maps-compose:11.3.1")
     implementation ("com.mapbox.mapboxsdk:mapbox-sdk-services:6.15.0")
 
 

@@ -13,6 +13,8 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.testgit.data.MainRepository
 import no.uio.ifi.in2000.testgit.data.badeAlgoritme
 import no.uio.ifi.in2000.testgit.data.padleAlgoritme
+import no.uio.ifi.in2000.testgit.data.room.City
+import no.uio.ifi.in2000.testgit.data.room.DatabaseRepository
 import no.uio.ifi.in2000.testgit.data.seileAlgoritme
 import no.uio.ifi.in2000.testgit.data.surfeAlgoritme
 import no.uio.ifi.in2000.testgit.model.nowcast.Details
@@ -34,7 +36,10 @@ data class ReccomendationUIState(
 
 // this viewmodel handles api calls depending on city chosen
 // this viewmodel will be created by user interaction with locations in HomeScreen and mapscreen
-class ActivityScreenViewModel(savedStateHandle: SavedStateHandle): ViewModel() {
+class ActivityScreenViewModel(
+    savedStateHandle: SavedStateHandle,
+    private val dbRepository : DatabaseRepository
+): ViewModel() {
     private val repository: MainRepository = MainRepository()
 
     private val _nowCastUIState = MutableStateFlow(NowCastUIState(null))
@@ -114,8 +119,33 @@ class ActivityScreenViewModel(savedStateHandle: SavedStateHandle): ViewModel() {
         loadMetAlerts(lat, lon)
         loadOceanForecast(lat, lon)
 
+    }
 
+    fun onEvent(event: ActivityEvent){
+        when (event) {
 
+            is ActivityEvent.AddFavorite -> {
+                if (dbRepository.isInDatabase(event.name)){
+                    dbRepository.setFavoriteByName(event.name)
+                } else {
+
+                    val newCity = City(
+                        name = event.name,
+                        lat = event.lat.toDoubleOrNull() ?: 0.0,
+                        lon = event.lat.toDoubleOrNull() ?: 0.0,
+                        customized = 1,
+                        favorite = 1
+                    )
+                }
+            }
+            is ActivityEvent.RemoveFavorite -> {
+                dbRepository.removeFavoriteByName(event.name)
+            }
+
+            is ActivityEvent.CheckFavorite -> {
+                dbRepository.isFavorite(name = event.name)
+            }
+        }
     }
 }
 

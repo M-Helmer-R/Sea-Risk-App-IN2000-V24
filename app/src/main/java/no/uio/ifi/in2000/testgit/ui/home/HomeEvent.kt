@@ -8,30 +8,27 @@ import no.uio.ifi.in2000.testgit.data.room.City
 
 sealed interface HomeEvent {
     //DTO
-    data class insertCity(val name : String, val lon : String, val lat: String) : HomeEvent
-    data class setName(val name : String): HomeEvent
-    data class setCityLat(val lat : String) : HomeEvent
-    data class setCityLon(val lon : String) : HomeEvent
-    data class updateFavorite(val city : City) : HomeEvent
-    data class setUserPosition(val lon : Double, val lat: Double) : HomeEvent
+    data class InsertCity(val name : String, val lon : String, val lat: String) : HomeEvent
+    data class SetName(val name : String): HomeEvent
+    data class SetCityLat(val lat : String) : HomeEvent
+    data class SetCityLon(val lon : String) : HomeEvent
+    data class UpdateFavorite(val city : City) : HomeEvent
+    data class SetUserPosition(val lon : Double, val lat: Double) : HomeEvent
     data class DeleteHome(val city: City) : HomeEvent
     data class OpenActivity(val city : City) : HomeEvent
     //DialogError
-    data class requestLocationPermission(val locationState: MultiplePermissionsState) : HomeEvent
-    object setNameError : HomeEvent
-    object setLonError : HomeEvent
-    object setLatError : HomeEvent
-    object updateNearest : HomeEvent
-    object showAddCityDialog: HomeEvent
-    object hideAddCityDialog: HomeEvent
-    object showLocationDialog :  HomeEvent
-    object hideLocationDialog : HomeEvent
-    object showManualLocationDialog :  HomeEvent
-    object hideManualLocationDialog : HomeEvent
-    object showPermissionDialog :  HomeEvent
-    object hidePermissionDialog : HomeEvent
-    object showDeniedPermissionDialog : HomeEvent
-
-    object hideDeniedPermissionDialog : HomeEvent
+    data class RequestLocationPermission(val locationState: MultiplePermissionsState) : HomeEvent
+    data object SetNameError : HomeEvent
+    data object SetLonError : HomeEvent
+    data object SetLatError : HomeEvent
+    data object UpdateNearest : HomeEvent
+    data object ShowAddCityDialog: HomeEvent
+    data object HideAddCityDialog: HomeEvent
+    data object ShowPermissionDialog :  HomeEvent
+    data object HidePermissionDialog : HomeEvent
+    data object ShowDeniedPermissionDialog : HomeEvent
+    data object HideDeniedPermissionDialog : HomeEvent
+    data object ShowDisabledLocationDialog : HomeEvent
+    data object HideDisabledLocationDialog : HomeEvent
 
 }
