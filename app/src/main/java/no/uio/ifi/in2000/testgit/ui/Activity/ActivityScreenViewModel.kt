@@ -8,6 +8,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.example.AlertFeatures
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -127,7 +128,7 @@ class ActivityScreenViewModel(
     }
 
     fun onEvent(event: ActivityEvent){
-        when (event) {
+        viewModelScope.launch(Dispatchers.IO) {  when (event) {
 
             is ActivityEvent.AddFavorite -> {
                 if (dbRepository.isInDatabase(event.name)){
@@ -150,7 +151,8 @@ class ActivityScreenViewModel(
             is ActivityEvent.CheckFavorite -> {
                 dbRepository.isFavorite(name = event.name)
             }
-        }
+        }}
+
     }
     @Suppress("UNCHECKED_CAST")
     companion object{
