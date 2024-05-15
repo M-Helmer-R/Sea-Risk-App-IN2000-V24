@@ -4,7 +4,9 @@
 
 package no.uio.ifi.in2000.testgit.ui.home
 
+import android.content.Context
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -21,9 +23,11 @@ import no.uio.ifi.in2000.testgit.MainApplication
 import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.data.room.DatabaseRepository
 import no.uio.ifi.in2000.testgit.data.room.haversine
+import no.uio.ifi.in2000.testgit.ui.home.dialog.getLocation
 
 class HomeViewModel (
-    private val repository : DatabaseRepository
+    private val repository : DatabaseRepository,
+    private val context: Context
 ) : ViewModel() {
 
     private val _preloaded = repository.getPreLoaded().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
@@ -31,6 +35,10 @@ class HomeViewModel (
     private val _userLat = MutableStateFlow(0.0)
     private val _userLon = MutableStateFlow( 0.0)
     private val _homeUiState = MutableStateFlow(HomeUiState())
+
+    init {
+        //getLocation(context = context, )
+    }
 
     val homeUiState = combine(
         _homeUiState, _favorites, _preloaded, _userLon, _userLat
@@ -43,8 +51,6 @@ class HomeViewModel (
             nearestCities = getNearestCities(preloaded, userLon, userLat)
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeUiState())
-
-
 
     fun onEvent( event : HomeEvent){
         when (event) {
@@ -236,6 +242,7 @@ class HomeViewModel (
                 val application = checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
                 return HomeViewModel(
                     repository = (application as MainApplication).databaseRepository,
+                    context = application
                 ) as T
             }
         }

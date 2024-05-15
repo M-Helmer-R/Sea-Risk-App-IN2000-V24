@@ -29,6 +29,42 @@ import com.google.android.gms.tasks.CancellationTokenSource
 import no.uio.ifi.in2000.testgit.ui.home.HomeEvent
 import no.uio.ifi.in2000.testgit.ui.home.HomeUiState
 import no.uio.ifi.in2000.testgit.ui.theme.White
+@RequiresPermission(
+    anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION],
+)
+@Composable
+fun getLocation(
+    locationPermissionState: MultiplePermissionsState,
+    context: Context,
+    onEvent: (HomeEvent) -> Unit
+){
+    if (ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, Manifest.permission.ACCESS_FINE_LOCATION)){
+        Log.w("LOCATION_MANAGER:", "Permissions not granted")
+        onEvent(HomeEvent.ShowPermissionDialog)
+    }
+    else {
+        if (locationPermissionState.allPermissionsGranted) {
+            Log.w("LOCATION_MANAGER", "Permissions granted")
+            getUserLocation(context) { location ->
+                Log.w("LOCATION_MANAGER:", "location: ${location.toString()}")
+                location?.let {
+                    Log.w("LOCATION_MANAGER:", "getUserLocation: ${location.latitude} ${location.longitude}")
+                    onEvent(
+                        HomeEvent.SetUserPosition(
+                            lon = location.longitude,
+                            lat = location.latitude
+                        )
+                    )
+                } ?: run {
+                    Log.w("LOCATION_MANAGER:", "getUserLocation failed")
+                    onEvent(HomeEvent.ShowDisabledLocationDialog)
+                }
+            }
+        } else {
+            onEvent(HomeEvent.ShowDeniedPermissionDialog)
+        }
+    }
+}
 
 @RequiresPermission(
     anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION],
