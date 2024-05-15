@@ -13,6 +13,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.testgit.MainApplication
 import no.uio.ifi.in2000.testgit.data.MainRepository
@@ -39,6 +40,9 @@ data class ReccomendationUIState(
     val level: Int?
 )
 
+data class AcitivityUIState(
+    val favorite : Boolean
+)
 
 // this viewmodel handles api calls depending on city chosen
 // this viewmodel will be created by user interaction with locations in HomeScreen and mapscreen
@@ -59,6 +63,10 @@ class ActivityScreenViewModel(
 
     private val _reccomendationUIState = MutableStateFlow(ReccomendationUIState(0))
     val reccomendationUIState: StateFlow<ReccomendationUIState> = _reccomendationUIState.asStateFlow()
+
+    private val _activityUIState = MutableStateFlow(AcitivityUIState(false))
+
+    val acitivityUIState : StateFlow<AcitivityUIState> = _activityUIState.asStateFlow()
 
     val cityName = checkNotNull(savedStateHandle["stedsnavn"])
     val lat: String = checkNotNull(savedStateHandle["lat"])
@@ -133,8 +141,8 @@ class ActivityScreenViewModel(
             is ActivityEvent.AddFavorite -> {
                 if (dbRepository.isInDatabase(event.name)){
                     dbRepository.setFavoriteByName(event.name)
+                    Log.w("ActivityScreenViewModel", "Added old city as favorite")
                 } else {
-
                     val newCity = City(
                         name = event.name,
                         lat = event.lat.toDoubleOrNull() ?: 0.0,
@@ -142,6 +150,8 @@ class ActivityScreenViewModel(
                         customized = 1,
                         favorite = 1
                     )
+                    Log.w("ActivityScreenViewModel", "Added new city as favorite")
+                    dbRepository.saveCity(city = newCity)
                 }
             }
             is ActivityEvent.RemoveFavorite -> {
@@ -149,9 +159,14 @@ class ActivityScreenViewModel(
             }
 
             is ActivityEvent.CheckFavorite -> {
-                dbRepository.isFavorite(name = event.name)
+                if (dbRepository.isFavorite(name = event.name)){
+                    _activityUIState.update {
+                        it.copy(favorite = true)
+                    }
+                }
             }
-        }}
+        }
+        }
 
     }
     @Suppress("UNCHECKED_CAST")
