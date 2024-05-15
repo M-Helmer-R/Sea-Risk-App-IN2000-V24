@@ -32,6 +32,7 @@ suspend fun seileAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUI
 
     )
 
+
     val waveHeights = listOf(
         WeatherLimit(0.0..0.4, 100.0),
         WeatherLimit(0.4..0.85, 75.0),
@@ -48,14 +49,9 @@ suspend fun seileAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUI
         WeatherLimit(2.0..Double.POSITIVE_INFINITY, 0.0)
     )
 
-
     val waveHeightResult = calculateRiskLevel(waveHeightWeight, waveHeight!!, waveHeights)
     val windSpeedResult = calculateRiskLevel(windSpeedWeight, windSpeed!!, windSpeeds)
     val currentSpeedResult = calculateRiskLevel(currentWeight, currentSpeed!!, currentSpeeds)
-    Log.i("seileAlgoritme", "wind: $windSpeedResult\")\n" +
-            "\"wave: $waveHeightResult\")\n" +
-            "\"current: $currentSpeedResult"
-    )
 
     // returns 0 if one of the values is outside acceptable parameters
     return if (
@@ -68,7 +64,7 @@ suspend fun seileAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUI
         ((windSpeedResult + waveHeightResult + currentSpeedResult)/10).roundToInt()
 }
 
-private suspend fun calculateRiskLevel(weight: Double, weatherInput: Double, limits: List<WeatherLimit>): Double {
+private fun calculateRiskLevel(weight: Double, weatherInput: Double, limits: List<WeatherLimit>): Double {
     var riskLevel = 0.0
     for (limit in limits){
         if(weatherInput in limit.range){

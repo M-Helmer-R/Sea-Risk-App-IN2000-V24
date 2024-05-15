@@ -40,10 +40,10 @@ suspend fun surfeAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUI
     )
 
     val waveHeights = listOf(
-        WeatherLimit(0.0..0.4, 100.0),
-        WeatherLimit(0.4..0.85, 75.0),
-        WeatherLimit(0.85..1.26, 50.0),
-        WeatherLimit(1.26..2.5, 25.0),
+        WeatherLimit(0.0..0.3, 0.0),
+        WeatherLimit(0.3..0.6, 30.0),
+        WeatherLimit(0.6..0.9, 50.0),
+        WeatherLimit(0.9..1.2, 25.0),
         WeatherLimit(2.5..Double.POSITIVE_INFINITY, 0.0)
     )
 
