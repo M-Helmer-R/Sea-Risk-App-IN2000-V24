@@ -1,9 +1,7 @@
 package no.uio.ifi.in2000.testgit.ui.home
 
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import no.uio.ifi.in2000.testgit.data.room.City
 
-@OptIn(ExperimentalPermissionsApi::class)
 data class HomeUiState(
 
     //Main
@@ -28,11 +26,9 @@ data class HomeUiState(
     val isAddingCity: Boolean = false,
 
     //LocationDialog
-    val locationDialog: Boolean = false,
     val permissionDialog : Boolean = false,
-    val manualLocationDialog : Boolean = false,
     val deniedLocationDialog : Boolean = false,
-
+    val disabledLocationDialog : Boolean = false,
 
     //Positon dialogs
     var userLat : Double = 59.56374,

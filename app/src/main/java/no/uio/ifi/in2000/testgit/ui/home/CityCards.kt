@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.testgit.ui.home
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -97,6 +98,7 @@ fun MainCard(
     }
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun HorizontalCard(
     city: City,
@@ -151,7 +153,7 @@ fun AddCityCard(onEvent: (HomeEvent) -> Unit){
             .padding(12.dp),
         colors = CardDefaults.cardColors(containerColor = LightBlueShade1),
         shape = MaterialTheme.shapes.medium,
-        onClick = {onEvent(HomeEvent.showAddCityDialog)}
+        onClick = {onEvent(HomeEvent.ShowAddCityDialog)}
     ) {
         Box (
             modifier = Modifier.fillMaxSize(),

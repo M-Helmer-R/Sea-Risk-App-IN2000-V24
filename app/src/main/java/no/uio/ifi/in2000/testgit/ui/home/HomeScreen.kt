@@ -1,9 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
-    ExperimentalPermissionsApi::class
-)
+@file:OptIn(ExperimentalPermissionsApi::class)
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -18,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -36,16 +30,16 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import no.uio.ifi.in2000.testgit.ui.home.AddCityCard
 import no.uio.ifi.in2000.testgit.ui.BottomBar
 import no.uio.ifi.in2000.testgit.ui.home.Dialog.AddCityDialog
-import no.uio.ifi.in2000.testgit.ui.home.Dialog.DeniedPermissionDialog
-import no.uio.ifi.in2000.testgit.ui.home.Dialog.LocationButton
-import no.uio.ifi.in2000.testgit.ui.home.Dialog.LocationStatus
-import no.uio.ifi.in2000.testgit.ui.home.Dialog.ManualLocationDialog
-import no.uio.ifi.in2000.testgit.ui.home.Dialog.PermissionRationaleDialog
 import no.uio.ifi.in2000.testgit.ui.home.HomeEvent
 import no.uio.ifi.in2000.testgit.ui.home.HomeUiState
 import no.uio.ifi.in2000.testgit.ui.home.HomeViewModel
 import no.uio.ifi.in2000.testgit.ui.home.HorizontalCard
 import no.uio.ifi.in2000.testgit.ui.home.MainCard
+import no.uio.ifi.in2000.testgit.ui.home.dialog.DeniedPermissionDialog
+import no.uio.ifi.in2000.testgit.ui.home.dialog.DisabledLocationDialog
+import no.uio.ifi.in2000.testgit.ui.home.dialog.LocationButton
+import no.uio.ifi.in2000.testgit.ui.home.dialog.LocationStatus
+import no.uio.ifi.in2000.testgit.ui.home.dialog.PermissionRationaleDialog
 import no.uio.ifi.in2000.testgit.ui.map.TopBar
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 import no.uio.ifi.in2000.testgit.ui.theme.White
@@ -58,15 +52,17 @@ fun HomeScreen(
     currentRoute : String,
     context : Context,
     homeViewModel : HomeViewModel = viewModel(factory = HomeViewModel.Factory),
+
 ) {
     val onEvent = homeViewModel :: onEvent
     val homeUiState: HomeUiState by homeViewModel.homeUiState.collectAsState()
-    val fineLocationPermissionState = rememberMultiplePermissionsState(
+    val locationPermissionState = rememberMultiplePermissionsState(
         listOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION
         )
     )
+
     val containerModifier: Modifier = Modifier
         .background(DarkBlue)
         .fillMaxSize()
@@ -97,15 +93,13 @@ fun HomeScreen(
                     )
                 }
                 if (homeUiState.permissionDialog){
-                    PermissionRationaleDialog(
-                        onEvent = onEvent
-                    )
-                }
-                if (homeUiState.manualLocationDialog){
-                    ManualLocationDialog(onEvent = onEvent)
+                    PermissionRationaleDialog(onEvent = onEvent)
                 }
                 if (homeUiState.deniedLocationDialog){
                     DeniedPermissionDialog(onEvent)
+                }
+                if (homeUiState.disabledLocationDialog){
+                    DisabledLocationDialog(onEvent = onEvent)
                 }
             }
             item{
@@ -113,7 +107,7 @@ fun HomeScreen(
                     homeUiState = homeUiState,
                     onEvent = onEvent,
                     modifier = containerModifier,
-                    locationPermissionState = fineLocationPermissionState, context,
+                    locationPermissionState = locationPermissionState, context,
                     navController
                 )
             }
@@ -152,7 +146,7 @@ fun HorizontalContent(
         }
         Row(
             modifier = modifier,
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
 
@@ -160,7 +154,6 @@ fun HorizontalContent(
                 locationState = locationPermissionState,
                 homeUiState = homeUiState
             )
-            //PermissionRequestButton(fineLocationPermissionState, onEvent)
             LocationButton(
                 locationPermissionState = locationPermissionState,
                 context = context,

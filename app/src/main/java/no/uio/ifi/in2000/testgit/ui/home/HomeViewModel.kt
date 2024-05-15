@@ -1,11 +1,10 @@
 @file:OptIn(ExperimentalPermissionsApi::class, ExperimentalPermissionsApi::class,
-    ExperimentalPermissionsApi::class
+    ExperimentalPermissionsApi::class, ExperimentalPermissionsApi::class
 )
 
 package no.uio.ifi.in2000.testgit.ui.home
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -26,7 +25,6 @@ import no.uio.ifi.in2000.testgit.data.room.haversine
 class HomeViewModel (private val repository : DatabaseRepository
 ) : ViewModel() {
 
-    //private val _allCities = repository.getAll().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     private val _preloaded = repository.getPreLoaded().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     private val _favorites = repository.getFavorites().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     private val _userLat = MutableStateFlow(59.56374)
@@ -51,17 +49,17 @@ class HomeViewModel (private val repository : DatabaseRepository
                 viewModelScope.launch {repository.deleteCity(event.city)
                 }
             }
-            HomeEvent.showAddCityDialog -> {
+            HomeEvent.ShowAddCityDialog -> {
                 _homeUiState.update {
                     it.copy( isAddingCity = true
                     )
                 }
             }
-            HomeEvent.hideAddCityDialog -> {
+            HomeEvent.HideAddCityDialog -> {
                 _homeUiState.update { it.copy( isAddingCity = false
                 ) }
             }
-            is HomeEvent.updateFavorite -> {
+            is HomeEvent.UpdateFavorite -> {
                 viewModelScope.launch(Dispatchers.IO){
                     if (event.city.favorite == 1) {
                         repository.removeFavorite(event.city)
@@ -71,18 +69,18 @@ class HomeViewModel (private val repository : DatabaseRepository
                     }
                 }
             }
-            is HomeEvent.setName -> {
+            is HomeEvent.SetName -> {
                 _homeUiState.update {
                     it.copy(
                         cityName = event.name
                     )
                 }
             }
-            is HomeEvent.setUserPosition -> {
+            is HomeEvent.SetUserPosition -> {
                 _userLon.value = event.lon
                 _userLat.value = event.lat
             }
-            HomeEvent.updateNearest ->   {
+            HomeEvent.UpdateNearest ->   {
                 _homeUiState.update {
                     it.copy(
                         nearestCities =
@@ -91,42 +89,29 @@ class HomeViewModel (private val repository : DatabaseRepository
                             homeUiState.value.userLon,
                             homeUiState.value.userLat,
                         ),
-                        locationDialog = false,
                     )
                 }
             }
-            HomeEvent.hideManualLocationDialog -> {
-                _homeUiState.update {
-                    it.copy(
-                        manualLocationDialog = false
-                    )
-                }
-            }
-            HomeEvent.showManualLocationDialog -> {
-                _homeUiState.update {
-                    it.copy(
-                        manualLocationDialog = true
-                    )
-                }
-            }
+
             is HomeEvent.OpenActivity -> {
                 TODO()
             }
-            is HomeEvent.setCityLat -> {
+            is HomeEvent.SetCityLat -> {
                 _homeUiState.update {
                     it.copy(
                         cityLat = event.lat
                     )
                 }
             }
-            is HomeEvent.setCityLon -> {
+            is HomeEvent.SetCityLon -> {
                 _homeUiState.update {
                     it.copy(
                         cityLon = event.lon
                     )
                 }
             }
-            is HomeEvent.insertCity -> {
+
+            is HomeEvent.InsertCity -> {
                 val name = event.name
                 val lat : Double? = event.lat.toDoubleOrNull()
                 val lon : Double? = event.lon.toDoubleOrNull()
@@ -158,78 +143,78 @@ class HomeViewModel (private val repository : DatabaseRepository
                 }
 
             }
-            HomeEvent.setNameError -> {
+            HomeEvent.SetNameError -> {
                 _homeUiState.update { it.copy(
                     nameError = true
                 ) }
             }
-            HomeEvent.setLatError -> {
+            HomeEvent.SetLatError -> {
                 _homeUiState.update { it.copy(
                     latError = true
                 ) }
             }
-            HomeEvent.setLonError -> {
+            HomeEvent.SetLonError -> {
                 _homeUiState.update { it.copy(
                     lonError = true
                 ) }
             }
-            HomeEvent.hidePermissionDialog -> {
+            HomeEvent.HidePermissionDialog -> {
                 _homeUiState.update {
                     it.copy(
                         permissionDialog = false
                     )
                 }
             }
-            HomeEvent.showPermissionDialog -> {
+            HomeEvent.ShowPermissionDialog -> {
                 _homeUiState.update {
                     it.copy(
                         permissionDialog = true
                     )
                 }
             }
-            HomeEvent.hideLocationDialog -> {
-                _homeUiState.update {
-                    it.copy(
-                        locationDialog = false
-                    )
-                }
-            }
-            HomeEvent.showLocationDialog -> {
-                _homeUiState.update {
-                    it.copy(
-                        locationDialog = true
-                    )
-                }
-            }
-            is HomeEvent.requestLocationPermission -> {
+            is HomeEvent.RequestLocationPermission -> {
                 event.locationState.launchMultiplePermissionRequest()
             }
 
-            HomeEvent.hideDeniedPermissionDialog -> {
+            HomeEvent.HideDeniedPermissionDialog -> {
                 _homeUiState.update {
                     it.copy(
                         deniedLocationDialog = false
                     )
                 }
             }
-            HomeEvent.showDeniedPermissionDialog -> {
+            HomeEvent.ShowDeniedPermissionDialog -> {
                 _homeUiState.update {
                     it.copy(
                         deniedLocationDialog = true
                     )
                 }
             }
+            HomeEvent.ShowDisabledLocationDialog -> {
+                _homeUiState.update {
+                    it.copy(
+                        disabledLocationDialog = true
+                    )
+                }
+            }
+            HomeEvent.HideDisabledLocationDialog -> {
+                _homeUiState.update {
+                    it.copy(
+                        disabledLocationDialog = false
+                    )
+                }
+            }
+
         }
     }
 
     private fun getNearestCities(cities : List<City>, lon : Double, lat : Double) : Map<City, Double> {
-        val citiesDist : MutableMap<City, Double> = mutableMapOf<City, Double>()
-        for (city in cities) {
-            citiesDist.put(city, haversine(city.lat, city.lon, lat, lon))
-        }
+        val citiesDist : MutableMap<City, Double> = mutableMapOf()
+        cities.map { city -> citiesDist.put(city, haversine(city.lat, city.lon, lat, lon)) }
         return citiesDist.toList().sortedBy { it.second }.take(5).toMap()
     }
 
+    @Suppress("UNCHECKED_CAST")
     companion object{
 
         val Factory : ViewModelProvider.Factory = object  : ViewModelProvider.Factory {
