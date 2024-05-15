@@ -22,13 +22,14 @@ import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.data.room.DatabaseRepository
 import no.uio.ifi.in2000.testgit.data.room.haversine
 
-class HomeViewModel (private val repository : DatabaseRepository
+class HomeViewModel (
+    private val repository : DatabaseRepository
 ) : ViewModel() {
 
     private val _preloaded = repository.getPreLoaded().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     private val _favorites = repository.getFavorites().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
-    private val _userLat = MutableStateFlow(59.56374)
-    private val _userLon = MutableStateFlow( 10.43067)
+    private val _userLat = MutableStateFlow(0.0)
+    private val _userLon = MutableStateFlow( 0.0)
     private val _homeUiState = MutableStateFlow(HomeUiState())
 
     val homeUiState = combine(
@@ -42,6 +43,8 @@ class HomeViewModel (private val repository : DatabaseRepository
             nearestCities = getNearestCities(preloaded, userLon, userLat)
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeUiState())
+
+
 
     fun onEvent( event : HomeEvent){
         when (event) {
@@ -77,9 +80,18 @@ class HomeViewModel (private val repository : DatabaseRepository
                 }
             }
             is HomeEvent.SetUserPosition -> {
-                _userLon.value = event.lon
                 _userLat.value = event.lat
+                _userLon.value = event.lon
+                /*
+                _homeUiState.update {
+                    it.copy(
+                        userLat = event.lon,
+                        userLon = event.lat)
+                }
+
+                 */
             }
+
             HomeEvent.UpdateNearest ->   {
                 _homeUiState.update {
                     it.copy(
@@ -216,7 +228,6 @@ class HomeViewModel (private val repository : DatabaseRepository
 
     @Suppress("UNCHECKED_CAST")
     companion object{
-
         val Factory : ViewModelProvider.Factory = object  : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(
                 modelClass: Class<T>,
@@ -225,7 +236,6 @@ class HomeViewModel (private val repository : DatabaseRepository
                 val application = checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
                 return HomeViewModel(
                     repository = (application as MainApplication).databaseRepository,
-                    //context = application.context,
                 ) as T
             }
         }

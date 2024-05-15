@@ -10,12 +10,8 @@ import android.content.Context
 import android.location.Location
 import android.util.Log
 import androidx.annotation.RequiresPermission
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Button
@@ -23,8 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.core.app.ActivityCompat
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -51,7 +45,6 @@ fun LocationButton(
             if (ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, Manifest.permission.ACCESS_FINE_LOCATION)){
                 Log.w("LOCATION_MANAGER:", "Permissions not granted")
                 onEvent(HomeEvent.ShowPermissionDialog)
-
             }
             else {
                 if (locationPermissionState.allPermissionsGranted) {
@@ -124,44 +117,5 @@ fun LocationStatus(
                 tint = Color.Red
             )
         }
-
-
     }
-    /*
-    Column {
-        Row(
-            modifier = Modifier,
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            Text(text = "Delt posisjon: ",
-                style = MaterialTheme.typography.bodySmall.copy(color = White),
-                modifier = Modifier.background(Color.Transparent)
-            )
-            when (locationState.allPermissionsGranted) {
-                true -> Icon(
-                    Icons.Filled.CheckCircle,
-                    "Location",
-                    tint = Color.Green
-                )
-                false -> Icon(
-                    Icons.Filled.Clear,
-                    "Location",
-                    tint = Color.Red
-                )
-            }
-        }
-
-        Text(
-            text =
-            if (locationState.allPermissionsGranted) {
-                "Din posisjon: ${String.format("%.2f",homeUiState.userLat)}, ${String.format("%.2f",homeUiState.userLon)}"
-            } else {
-                "Din posisjon: - , -"
-            },
-            style = MaterialTheme.typography.bodySmall.copy(color = White)
-        )
-    }
-
-     */
 }

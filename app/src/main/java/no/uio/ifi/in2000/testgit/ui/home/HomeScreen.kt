@@ -29,12 +29,12 @@ import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import no.uio.ifi.in2000.testgit.ui.home.AddCityCard
 import no.uio.ifi.in2000.testgit.ui.BottomBar
-import no.uio.ifi.in2000.testgit.ui.home.Dialog.AddCityDialog
 import no.uio.ifi.in2000.testgit.ui.home.HomeEvent
 import no.uio.ifi.in2000.testgit.ui.home.HomeUiState
 import no.uio.ifi.in2000.testgit.ui.home.HomeViewModel
 import no.uio.ifi.in2000.testgit.ui.home.HorizontalCard
 import no.uio.ifi.in2000.testgit.ui.home.MainCard
+import no.uio.ifi.in2000.testgit.ui.home.dialog.AddCityDialog
 import no.uio.ifi.in2000.testgit.ui.home.dialog.DeniedPermissionDialog
 import no.uio.ifi.in2000.testgit.ui.home.dialog.DisabledLocationDialog
 import no.uio.ifi.in2000.testgit.ui.home.dialog.LocationButton
@@ -146,7 +146,7 @@ fun HorizontalContent(
         }
         Row(
             modifier = modifier,
-            verticalAlignment = Alignment.Top,
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
 

@@ -82,16 +82,7 @@ fun PermissionRationaleDialog(
     AlertDialog(
         onDismissRequest = { onEvent(HomeEvent.HidePermissionDialog)},
         title = { Text( text = "Tilgang til posisjon")},
-        text = {
-            Column (
-                modifier = Modifier.padding(4.dp)
-            ){
-                Text(
-                    text = "For å vise de næmeste byene trenger Plask tilgang til din posisjon.\n" +
-                            "Hvis du ikke ønsker dette kan du sette posisjon manuelt"
-                )
-            }
-        },
+        text = { Text(text = "Plask trenger tilgang til din posisjon for å vise de næmeste byene") },
         confirmButton = {
             Button(
                 onClick = {
@@ -108,7 +99,6 @@ fun PermissionRationaleDialog(
                 Text("Velg tillatelser")
             }
         },
-
         dismissButton = {
             TextButton(
                 onClick = {
@@ -126,7 +116,6 @@ fun DeniedPermissionDialog(
     onEvent: (HomeEvent) -> Unit,
     context : Context = LocalContext.current
 ){
-
     AlertDialog(
         onDismissRequest = { },
         title = { Text( text = "Mangler posisjons-tilgang")},
@@ -151,7 +140,6 @@ fun DisabledLocationDialog(
     onEvent: (HomeEvent) -> Unit,
     context : Context = LocalContext.current
 ){
-
     AlertDialog(
         onDismissRequest = { onEvent(HomeEvent.HideDeniedPermissionDialog)},
         title = { Text( text = "Lokasjon slått av")},

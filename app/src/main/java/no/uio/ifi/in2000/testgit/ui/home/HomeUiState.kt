@@ -8,7 +8,7 @@ data class HomeUiState(
     val allCities : List<City> = emptyList(),
     val favorites : List<City> = emptyList(),
     val preloaded : List<City> = emptyList(),
-    val nearestCities : Map<City, Double> = emptyMap<City, Double>(),
+    val nearestCities : Map<City, Double> = emptyMap(),
 
     //AddCityDialog
     val cityName: String = "",
@@ -22,7 +22,7 @@ data class HomeUiState(
     val latError : Boolean = false,
     val errorMessage : String = "Not valid input",
 
-    //Add city dialog
+    //AddCity  dialog
     val isAddingCity: Boolean = false,
 
     //LocationDialog

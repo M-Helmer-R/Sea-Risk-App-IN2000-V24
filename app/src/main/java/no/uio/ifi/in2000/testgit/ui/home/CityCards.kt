@@ -92,8 +92,6 @@ fun MainCard(
                     }
                 )
             }
-
-            //Kart
         }
     }
 }
@@ -153,18 +151,17 @@ fun AddCityCard(onEvent: (HomeEvent) -> Unit){
             .padding(12.dp),
         colors = CardDefaults.cardColors(containerColor = LightBlueShade1),
         shape = MaterialTheme.shapes.medium,
-        onClick = {onEvent(HomeEvent.ShowAddCityDialog)}
     ) {
         Box (
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ){
-            Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = "Add city",
-                modifier = Modifier.size(48.dp),
-                tint = Color.White
+            Text(
+                text = "For å legge til favoritter.\n" +
+                        "Gå til aktivitettsiden til en by",
+                style = MaterialTheme.typography.bodySmall.copy(color = White),
             )
+
         }
     }
 }

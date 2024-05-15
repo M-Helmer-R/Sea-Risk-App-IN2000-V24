@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.testgit.ui.home.Dialog
+package no.uio.ifi.in2000.testgit.ui.home.dialog
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import no.uio.ifi.in2000.testgit.ui.home.Dialog.DoubleTextField
+import no.uio.ifi.in2000.testgit.ui.home.Dialog.NameField
+import no.uio.ifi.in2000.testgit.ui.home.Dialog.validateCoordinates
 import no.uio.ifi.in2000.testgit.ui.home.HomeEvent
 import no.uio.ifi.in2000.testgit.ui.home.HomeUiState
 
@@ -53,8 +56,6 @@ fun AddCityDialog(
                         validateInput(homeUiState.cityName, homeUiState.cityLat, homeUiState.cityLon) // Bør denne flyttes?
                         Log.w("ADD_CITY_DIALOG", "Button pressed")
                         if (hasErrors()){
-                            //Log.w("Add_City", "Latitude: $lat , ${lat.toDouble()}, Longitude: $lon , ${lon.toDouble()}")
-                            //onEvent(HomeEvent.saveCity)
                             onEvent(HomeEvent.InsertCity(homeUiState.cityName, homeUiState.cityLat, homeUiState.cityLon))
                         }
                     }
