@@ -64,6 +64,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.testgit.R
 import no.uio.ifi.in2000.testgit.ui.BottomBar
+import no.uio.ifi.in2000.testgit.ui.map.OceanForeCastUIState
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 import no.uio.ifi.in2000.testgit.ui.theme.LightBlue
 
@@ -77,8 +78,8 @@ TO DO
  */
 @Composable
 fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController: NavController, activityScreenViewModel: ActivityScreenViewModel = viewModel()) {
-    //val nowCastUIState = activityScreenViewModel.nowCastUIState.collectAsState()
-    //val metAlertsUIState = activityScreenViewModel.metAlertsUIState.collectAsState()
+    val nowCastUIState = activityScreenViewModel.nowCastUIState.collectAsState()
+    val oceanForeCastUIState = activityScreenViewModel.oceanForeCastUIState.collectAsState()
 
     val activities = listOf("swimming", "sailing","surfing" , "kayaking")
     var selectedButton by remember { mutableStateOf(activities[0]) }
@@ -92,7 +93,7 @@ fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController
         TopBarBy(navController, chosenCity)
         recommendationUIState.value.level?.let { ReccomendationBox(value = it) }
         Row(modifier = Modifier.fillMaxWidth().padding(end = 0.dp)) {
-            GenerellInfo(chosenCity, lat, lon)
+            GenerellInfo(chosenCity, lat, lon, nowCastUIState.value, oceanForeCastUIState.value)
             Spacer(modifier = Modifier.weight(1f))
             recommendationUIState.value.level?.let { ColorBar(value = it) }
         }
@@ -134,7 +135,7 @@ fun ReccomendationBox(value: Int) {
 
 
 @Composable
-fun GenerellInfo(bynavn: String, lat: String?, lon: String?) {
+fun GenerellInfo(bynavn: String, lat: String?, lon: String?, nowCastUIState: NowCastUIState, oceanForeCastUIState: OceanForeCastUIState) {
 
 
     Box(
@@ -149,12 +150,12 @@ fun GenerellInfo(bynavn: String, lat: String?, lon: String?) {
         Column(
             modifier = Modifier.padding(25.dp)
         ) {
-            Text(text = "Valgt aktivitet: ", color = Color.White, fontSize = 20.sp)
-            Text(text = "By: $bynavn", color = Color.White, fontSize = 20.sp)
-            Text(text = "$lat", color = Color.White, fontSize = 20.sp)
-            Text(text = "$lon", color = Color.White, fontSize = 20.sp)
-            Text(text = "Linje 4", color = Color.White, fontSize = 20.sp)
-            Text(text = "Linje 5", color = Color.White, fontSize = 20.sp)
+            Text(text = "Temperatur: ${nowCastUIState.nowCastData?.airTemperature} C ", color = Color.White, fontSize = 20.sp)
+            Text(text = "Vanntemperatur: ${oceanForeCastUIState.oceanDetails?.seaWaterTemperature} C", color = Color.White, fontSize = 20.sp)
+            Text(text = "Bølgehøyde: ${oceanForeCastUIState.oceanDetails?.seaSurfaceWaveHeight} m", color = Color.White, fontSize = 20.sp)
+            Text(text = "Vind: ${nowCastUIState.nowCastData?.windSpeed} m/s", color = Color.White, fontSize = 20.sp)
+            Text(text = "Strøm: ${oceanForeCastUIState.oceanDetails?.seaWaterSpeed} m/s", color = Color.White, fontSize = 20.sp)
+            Text(text = "Regn: ${nowCastUIState.nowCastData?.precipitationRate} mm/h", color = Color.White, fontSize = 20.sp)
         }
     }
 }

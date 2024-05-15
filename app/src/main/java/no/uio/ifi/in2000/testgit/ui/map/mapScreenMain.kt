@@ -48,7 +48,9 @@ fun MapScreenMain(navController: NavController, currentRoute: String, mapScreenV
     val searchBarUIState = mapScreenViewModel.searchBarUIState.collectAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .background(DarkBlue)) {
         TopBar()
         //SearchBar(searchUIState.value, mapScreenViewModel, keyboardController = keyboardController)
         ShowMap(modifier = Modifier.weight(1f), mapScreenViewModel, locationUiState, dialogUIState, searchUIState, oceanForeCastUIState, keyboardController, navController, searchBarUIState)

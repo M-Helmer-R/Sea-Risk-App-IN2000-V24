@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.testgit.ui.map
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -171,9 +172,12 @@ fun Mapscreen(
 
 
 ){
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .background(color = DarkBlue)) {
         val mapViewportState = mapScreenViewModel.mapViewportState
-        Box {
+        Box(modifier = Modifier
+            .background(color = DarkBlue)) {
             MapboxMap(
                 Modifier.fillMaxSize(),
                 /*mapViewportState = MapViewportState().apply {
