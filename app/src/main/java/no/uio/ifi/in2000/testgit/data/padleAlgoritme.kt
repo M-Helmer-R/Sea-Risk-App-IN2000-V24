@@ -55,9 +55,12 @@ suspend fun padleAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUI
     val waveHeightResult = calculateRiskLevel(waveHeightWeight, waveHeight!!, waveHeights)
     val windSpeedResult = calculateRiskLevel(windSpeedWeight, windSpeed!!, windSpeeds)
 
+    /*
     Log.i("padleAlgoritme", "wind: $windSpeedResult\")\n" +
             "\"water: $waterTempResult\")\n" +
             "\"wave: $waveHeightResult\")\n")
+
+     */
 
     // returns 0 if one of the values is outside acceptable parameters
     return if (
