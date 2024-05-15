@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -39,7 +40,7 @@ import no.uio.ifi.in2000.testgit.ui.home.dialog.DisabledLocationDialog
 import no.uio.ifi.in2000.testgit.ui.home.dialog.LocationButton
 import no.uio.ifi.in2000.testgit.ui.home.dialog.LocationStatus
 import no.uio.ifi.in2000.testgit.ui.home.dialog.PermissionRationaleDialog
-import no.uio.ifi.in2000.testgit.ui.home.dialog.getLocation
+import no.uio.ifi.in2000.testgit.ui.home.dialog.getUserLocation
 import no.uio.ifi.in2000.testgit.ui.map.TopBar
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 import no.uio.ifi.in2000.testgit.ui.theme.White
@@ -68,6 +69,19 @@ fun HomeScreen(
         .fillMaxSize()
         .padding(8.dp)
 
+    LaunchedEffect(key1 = true) {
+        if (locationPermissionState.allPermissionsGranted){
+            getUserLocation(context){location ->
+                location?.let{
+                    onEvent(HomeEvent.SetUserPosition(lon = it.longitude, lat = it.latitude))
+                }?: run {
+                    onEvent(HomeEvent.ShowDisabledLocationDialog)
+                }
+            }
+        } else {
+            onEvent(HomeEvent.ShowDeniedPermissionDialog)
+        }
+    }
     Scaffold(
         containerColor = DarkBlue,
         topBar = {
@@ -101,8 +115,8 @@ fun HomeScreen(
                     homeUiState = homeUiState,
                     onEvent = onEvent,
                     modifier = containerModifier,
-                    locationPermissionState = locationPermissionState, context,
-                    navController
+                    locationPermissionState = locationPermissionState,
+                    navController = navController
                 )
             }
             item{
@@ -119,7 +133,6 @@ fun HorizontalContent(
     onEvent: (HomeEvent) -> Unit,
     modifier: Modifier,
     locationPermissionState : MultiplePermissionsState,
-    context : Context,
     navController: NavController
 ){
     Column (
@@ -147,11 +160,6 @@ fun HorizontalContent(
             LocationStatus(
                 locationState = locationPermissionState,
                 homeUiState = homeUiState
-            )
-            LocationButton(
-                locationPermissionState = locationPermissionState,
-                context = context,
-                onEvent = onEvent
             )
         }
     }

@@ -4,9 +4,8 @@
 
 package no.uio.ifi.in2000.testgit.ui.home
 
-import android.content.Context
 import android.util.Log
-import androidx.compose.ui.platform.LocalContext
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -23,11 +22,9 @@ import no.uio.ifi.in2000.testgit.MainApplication
 import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.data.room.DatabaseRepository
 import no.uio.ifi.in2000.testgit.data.room.haversine
-import no.uio.ifi.in2000.testgit.ui.home.dialog.getLocation
 
 class HomeViewModel (
-    private val repository : DatabaseRepository,
-    private val context: Context
+    private val repository : DatabaseRepository
 ) : ViewModel() {
 
     private val _preloaded = repository.getPreLoaded().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
@@ -35,10 +32,6 @@ class HomeViewModel (
     private val _userLat = MutableStateFlow(0.0)
     private val _userLon = MutableStateFlow( 0.0)
     private val _homeUiState = MutableStateFlow(HomeUiState())
-
-    init {
-        //getLocation(context = context, )
-    }
 
     val homeUiState = combine(
         _homeUiState, _favorites, _preloaded, _userLon, _userLat
@@ -71,10 +64,10 @@ class HomeViewModel (
             is HomeEvent.UpdateFavorite -> {
                 viewModelScope.launch(Dispatchers.IO){
                     if (event.city.favorite == 1) {
-                        repository.removeFavorite(event.city)
+                        repository.removeFavoriteById(event.city)
 
                     } else {
-                        repository.setFavorite(event.city)
+                        repository.setFavoriteById(event.city)
                     }
                 }
             }
@@ -88,14 +81,6 @@ class HomeViewModel (
             is HomeEvent.SetUserPosition -> {
                 _userLat.value = event.lat
                 _userLon.value = event.lon
-                /*
-                _homeUiState.update {
-                    it.copy(
-                        userLat = event.lon,
-                        userLon = event.lat)
-                }
-
-                 */
             }
 
             HomeEvent.UpdateNearest ->   {
@@ -128,7 +113,6 @@ class HomeViewModel (
                     )
                 }
             }
-
             is HomeEvent.InsertCity -> {
                 val name = event.name
                 val lat : Double? = event.lat.toDoubleOrNull()
@@ -242,7 +226,6 @@ class HomeViewModel (
                 val application = checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
                 return HomeViewModel(
                     repository = (application as MainApplication).databaseRepository,
-                    context = application
                 ) as T
             }
         }

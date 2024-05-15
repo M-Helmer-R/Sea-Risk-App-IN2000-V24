@@ -5,7 +5,6 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
-import no.uio.ifi.in2000.testgit.data.room.City
 
 @Dao
 interface CityDao {
@@ -28,8 +27,21 @@ interface CityDao {
     fun getPreloaded(): Flow<List<City>>
 
     @Query("UPDATE cities SET favorite = 1 WHERE cityId = :id")
-    fun setFavoriteByID(id: Int)
+    fun setFavoriteById(id: Int)
 
     @Query("UPDATE cities SET favorite = 0 WHERE cityId = :id")
-    fun removeFavoriteByID(id: Int)
+    fun removeFavoriteById(id: Int)
+
+    @Query("UPDATE cities SET favorite = 1 WHERE name = :name")
+    fun setFavoriteByName(name: String)
+
+    @Query("UPDATE cities SET favorite = 0 WHERE cityId = :name")
+    fun removeFavoriteByName(name: String)
+
+    @Query("SELECT * FROM cities WHERE name = :name ORDER BY name ASC LIMIT 1")
+    fun getCityByName(name: String): City?
+
+    @Query("SELECT (favorite = 1) FROM cities WHERE name = :name LIMIT 1")
+    fun isCityFavorite(name: String): Boolean
+
 }
