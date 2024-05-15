@@ -44,11 +44,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.ViewAnnotationAnchor
 import com.mapbox.maps.ViewAnnotationOptions
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
+import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mapbox.maps.extension.compose.annotation.ViewAnnotation
 import com.mapbox.maps.viewannotation.annotationAnchor
 import com.mapbox.maps.viewannotation.geometry
@@ -155,27 +157,37 @@ fun Mapscreen(
     searchUIState: State<SearchUIState>,
     oceanForeCastUIState: State<OceanForeCastUIState>,
     keyboardController: SoftwareKeyboardController?,
-    navController: NavController
+    navController: NavController,
+
+
 ){
     Column(modifier = Modifier.fillMaxSize()) {
+        val mapViewportState = mapScreenViewModel.mapViewportState
         Box {
             MapboxMap(
                 Modifier.fillMaxSize(),
-                mapViewportState = MapViewportState().apply {
+                /*mapViewportState = MapViewportState().apply {
                     setCameraOptions {
                         zoom(3.7)
                         center(Point.fromLngLat(11.49537, 64.01487))
                         pitch(0.0)
                         bearing(0.0)
                     }
-                },
+                },*/
+
+                mapViewportState = mapViewportState,
                 onMapClickListener =  { point ->
                     Log.i("Map Click", "Lat: ${point.latitude()}, Lon: ${point.longitude()}")
                     oceanForeCastUIState.value.loaded = Loaded.LOADING
                     mapScreenViewModel.updateMapClickLocation(point)
                     mapScreenViewModel.loadPlaceName2(point.longitude(), point.latitude() )
                     keyboardController?.hide()
+                    val cameraOptions = CameraOptions.Builder()
+                        .center(Point.fromLngLat(point.longitude(), point.latitude())) // set center
+                        .zoom(14.0)
+                        .build()
 
+                    mapViewportState.flyTo(cameraOptions)
                     true
                 },
             ) {

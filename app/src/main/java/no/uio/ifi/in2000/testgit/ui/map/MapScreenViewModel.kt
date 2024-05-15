@@ -4,6 +4,10 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraState
+import com.mapbox.maps.EdgeInsets
+import com.mapbox.maps.MapboxExperimental
+import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -66,6 +70,18 @@ class MapScreenViewModel: ViewModel() {
     //Locationuistate for search
     private var _searchUIState = MutableStateFlow(SearchUIState(null))
     var searchUIState: StateFlow<SearchUIState> = _searchUIState.asStateFlow()
+
+    @OptIn(MapboxExperimental::class)
+    val mapViewportState = MapViewportState(
+        CameraState(
+            (Point.fromLngLat(11.49537, 64.01487)),
+            EdgeInsets(3.0, 3.0, 3.0, 3.0),
+            3.7,
+             0.0,
+            0.0
+
+        )
+    )
 
     fun unloadSearchUIState(){
         searchUIState.value.geocodingPlacesResponse = null
