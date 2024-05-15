@@ -14,21 +14,22 @@ suspend fun seileAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUI
     val waveHeightWeight = 0.2
     val currentWeight = 0.2
 
-    //Weather variables
-    //how can i cast them from Double? to Double so that i dont get an error further down
-    val oceanTemp = oceanForeCastUIState.oceanDetails?.seaWaterTemperature
-    val airTemp = nowCastUIState.nowCastData?.airTemperature
+
     val windSpeed = nowCastUIState.nowCastData?.windSpeed
     val waveHeight = oceanForeCastUIState.oceanDetails?.seaSurfaceWaveHeight
     val currentSpeed = oceanForeCastUIState.oceanDetails?.seaWaterSpeed
 
     // Create lists of temperature limits using the defined data class
     val windSpeeds = listOf(
-        WeatherLimit(0.0..3.4, 100.0),
-        WeatherLimit(3.4..5.5, 75.0),
-        WeatherLimit(5.5..8.0, 50.0),
-        WeatherLimit(8.0..10.7, 25.0),
-        WeatherLimit(10.7..Double.POSITIVE_INFINITY, 0.0)
+        WeatherLimit(Double.NEGATIVE_INFINITY..1.0, 0.0), // near impossible with sailing
+        WeatherLimit(1.0..2.5, 25.0), // wind struggles to fill sail, bad conditions
+        WeatherLimit(2.5..5.0, 60.0), // possible but not ideal
+        WeatherLimit(5.0..7.0, 85.0), // calm and easy sailing, good for beginners
+        WeatherLimit(7.0..12.0, 100.0), // engaging and fun wind speeds for sailing
+        WeatherLimit(12.0..15.0, 70.0), // only fitting for experienced sailors
+        WeatherLimit(15.0..17.0, 50.0), // careful preparation and caution needed
+        WeatherLimit(17.0..Double.POSITIVE_INFINITY, 0.0) // Possibly dangerous levels of wind
+
     )
 
     val waveHeights = listOf(
