@@ -42,6 +42,10 @@ data class DialogUIState(
     var isVisible: Boolean?,
     var oceanLoaded: Boolean?
 )
+
+data class SearchBarUIState(
+    var expanded: Boolean?
+)
 class MapScreenViewModel: ViewModel() {
     // Holder punktet som ble trykket på
     val mapClickLocation = MutableStateFlow<Point?>(null)
@@ -52,6 +56,10 @@ class MapScreenViewModel: ViewModel() {
 
     private val repository: GeoCodeRepository = GeoCodeRepository()
     private val oceanRepository: OceanForeCastRepository = OceanForeCastRepository()
+
+    //SearchbarUIState
+    private var _searchBarUIState = MutableStateFlow(SearchBarUIState(false))
+    var searchBarUIState: StateFlow<SearchBarUIState> = _searchBarUIState.asStateFlow()
 
     //Locationuistate for clicking a point on map
     private var _locationUIState = MutableStateFlow(LocationUIState(placeName = "Ingen data", lat = "0", lon = "0"))
@@ -83,11 +91,24 @@ class MapScreenViewModel: ViewModel() {
         )
     )
 
+    fun expandSearchBar(){
+        val newSearchBarUIState = _searchBarUIState.value.copy(expanded = true)
+        _searchBarUIState.value = newSearchBarUIState
+    }
+
+    fun collapseSearchBar(){
+        val newSearchBarUIState = _searchBarUIState.value.copy(expanded = false)
+        _searchBarUIState.value = newSearchBarUIState
+    }
+
     fun unloadSearchUIState(){
         searchUIState.value.geocodingPlacesResponse = null
     }
 
-
+    fun unloadOceanForeCastUIState(){
+        oceanForeCastUIState.value.oceanDetails = null
+        oceanForeCastUIState.value.loaded = Loaded.NOTLOADED
+    }
     fun loadSearchUIState(searchString: String){
         viewModelScope.launch {
             val geocodingPlacesResponse = repository.searchGeoCode(searchString)
@@ -113,8 +134,8 @@ class MapScreenViewModel: ViewModel() {
             }
 
             else{
-                val newDialogUiState = _dialogUIState.value.copy(oceanLoaded = false)
-                _dialogUIState.value = newDialogUiState
+                val newOceanForeCastUIState = _oceanForeCastUIState.value.copy(oceanDetails = null, loaded = Loaded.FAILURE)
+                _oceanForeCastUIState.value = newOceanForeCastUIState
             }
 
 
@@ -123,6 +144,13 @@ class MapScreenViewModel: ViewModel() {
 
     }
 
+    fun unloadPlacename(){
+        val newlocationUIState = _locationUIState.value.copy(loaded = Loaded.NOTLOADED)
+        _locationUIState.value = newlocationUIState
+
+        val newOCeanForeCastUIState = _oceanForeCastUIState.value.copy(oceanDetails = null, loaded = Loaded.NOTLOADED)
+        _oceanForeCastUIState.value = newOCeanForeCastUIState
+    }
     fun loadPlaceName2(lon: Double, lat: Double){
         viewModelScope.launch {
 

@@ -45,18 +45,29 @@ fun MapScreenMain(navController: NavController, currentRoute: String, mapScreenV
     val dialogUIState = mapScreenViewModel.dialogUIState.collectAsState()
     val searchUIState = mapScreenViewModel.searchUIState.collectAsState()
     val oceanForeCastUIState = mapScreenViewModel.oceanForeCastUIState.collectAsState()
+    val searchBarUIState = mapScreenViewModel.searchBarUIState.collectAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar()
         //SearchBar(searchUIState.value, mapScreenViewModel, keyboardController = keyboardController)
-        ShowMap(modifier = Modifier.weight(1f), mapScreenViewModel, locationUiState, dialogUIState, searchUIState, oceanForeCastUIState, keyboardController, navController)
+        ShowMap(modifier = Modifier.weight(1f), mapScreenViewModel, locationUiState, dialogUIState, searchUIState, oceanForeCastUIState, keyboardController, navController, searchBarUIState)
         BottomBar(navController, currentRoute)
     }
 }
 @Composable
-fun ShowMap(modifier: Modifier = Modifier, mapScreenViewModel: MapScreenViewModel, locationUIState: State<LocationUIState>, dialogUIState: State<DialogUIState>, searchUIState: State<SearchUIState>, oceanForeCastUIState: State<OceanForeCastUIState>, keyboardController: SoftwareKeyboardController?, navController: NavController) {
-    //Putte kartet frå Kriss her
+fun ShowMap(
+    modifier: Modifier = Modifier,
+    mapScreenViewModel: MapScreenViewModel,
+    locationUIState: State<LocationUIState>,
+    dialogUIState: State<DialogUIState>,
+    searchUIState: State<SearchUIState>,
+    oceanForeCastUIState: State<OceanForeCastUIState>,
+    keyboardController: SoftwareKeyboardController?,
+    navController: NavController,
+    searchBarUIState: State<SearchBarUIState>
+) {
+
     Box(modifier = modifier
         .fillMaxSize()
         .background(Color.Red)) {
@@ -68,7 +79,7 @@ fun ShowMap(modifier: Modifier = Modifier, mapScreenViewModel: MapScreenViewMode
             modifier = Modifier.align(Alignment.TopCenter),
             contentAlignment = Alignment.TopCenter
         ) {
-            SearchBar(searchUIState = searchUIState.value, mapScreenViewModel = mapScreenViewModel, keyboardController = keyboardController, navController, mapScreenViewModel.mapViewportState )
+            SearchBar(searchUIState = searchUIState.value, mapScreenViewModel = mapScreenViewModel, keyboardController = keyboardController, navController, mapScreenViewModel.mapViewportState, searchBarUIState)
         }
     }
 }
