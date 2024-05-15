@@ -2,6 +2,7 @@
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.background
@@ -23,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -70,16 +72,20 @@ fun HomeScreen(
         .padding(8.dp)
 
     LaunchedEffect(key1 = true) {
-        if (locationPermissionState.allPermissionsGranted){
-            getUserLocation(context){location ->
-                location?.let{
-                    onEvent(HomeEvent.SetUserPosition(lon = it.longitude, lat = it.latitude))
-                }?: run {
-                    onEvent(HomeEvent.ShowDisabledLocationDialog)
-                }
-            }
+        if (ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
+            onEvent(HomeEvent.ShowPermissionDialog)
         } else {
-            onEvent(HomeEvent.ShowDeniedPermissionDialog)
+            if (locationPermissionState.allPermissionsGranted) {
+                getUserLocation(context) { location ->
+                    location?.let {
+                        onEvent(HomeEvent.SetUserPosition(lon = it.longitude, lat = it.latitude))
+                    } ?: run {
+                        onEvent(HomeEvent.ShowDisabledLocationDialog)
+                    }
+                }
+            } else {
+                onEvent(HomeEvent.ShowDeniedPermissionDialog)
+            }
         }
     }
     Scaffold(
