@@ -17,12 +17,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.testgit.MainApplication
 import no.uio.ifi.in2000.testgit.data.MainRepository
-import no.uio.ifi.in2000.testgit.data.algorithms.badeAlgoritme
 import no.uio.ifi.in2000.testgit.data.algorithms.padleAlgoritme
 import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.data.room.DatabaseRepository
 import no.uio.ifi.in2000.testgit.data.algorithms.seileAlgoritme
 import no.uio.ifi.in2000.testgit.data.algorithms.surfeAlgoritme
+import no.uio.ifi.in2000.testgit.data.algorithms.swimmingAlgorithm
 import no.uio.ifi.in2000.testgit.model.nowcast.Details
 import no.uio.ifi.in2000.testgit.ui.map.OceanForeCastUIState
 
@@ -100,7 +100,7 @@ class ActivityScreenViewModel(
         val level = if (oceanForeCastUIState.value.oceanDetails != null && nowCastUIState.value.nowCastData != null){
             when(activity){
                 "kayaking" -> padleAlgoritme(oceanForeCastUIState.value, nowCastUIState.value)
-                "swimming" -> badeAlgoritme(oceanForeCastUIState.value, nowCastUIState.value)
+                "swimming" -> swimmingAlgorithm(oceanForeCastUIState.value, nowCastUIState.value)
                 "sailing" -> seileAlgoritme(oceanForeCastUIState.value, nowCastUIState.value)
                 "surfing" -> surfeAlgoritme(oceanForeCastUIState.value, nowCastUIState.value)
                 else -> 0

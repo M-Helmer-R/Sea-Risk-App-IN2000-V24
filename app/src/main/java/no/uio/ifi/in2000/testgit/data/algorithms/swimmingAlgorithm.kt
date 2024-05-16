@@ -8,7 +8,7 @@ import kotlin.math.roundToInt
 // Define a data class to represent temperature limits
 
 
-suspend fun badeAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUIState: NowCastUIState): Int {
+suspend fun swimmingAlgorithm(oceanForeCastUIState: OceanForeCastUIState, nowCastUIState: NowCastUIState): Int {
     // How much weight each variable gives to the end result
     // Sum should be 1.0
     val windSpeedWeight = 0.1
