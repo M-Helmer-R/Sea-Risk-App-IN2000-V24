@@ -32,7 +32,7 @@ import androidx.navigation.NavController
 import no.uio.ifi.in2000.testgit.R
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 import no.uio.ifi.in2000.testgit.ui.theme.LightBlue
-
+//topbar for the entire app
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar() {
@@ -60,6 +60,8 @@ fun TopBar() {
 
     )
 }
+
+//Bottom bar for the entire app
 @Composable
 fun BottomBar(navController: NavController?, currentRoute: String) {
     BottomAppBar(

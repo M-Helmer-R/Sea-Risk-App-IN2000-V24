@@ -38,6 +38,7 @@ fun SettingsScreen(navController: NavController?, currentRoute: String = "settin
     SettingsContent(navController, currentRoute)
 }
 
+// Contains composables for settingscreen, settingscard and permissionscard
 @Composable
 fun SettingsContent(
     navController: NavController?,
