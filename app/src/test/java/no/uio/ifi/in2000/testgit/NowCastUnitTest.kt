@@ -10,7 +10,7 @@ class NowCastUnitTest {
 
     @Test
     fun nowCastDataSourceTest(){
-        val nowCastDataSource: NowCastDataSource = NowCastDataSource()
+        val nowCastDataSource = NowCastDataSource()
         val oslolat = "59.911491"
         val oslolong = "10.7522"
 

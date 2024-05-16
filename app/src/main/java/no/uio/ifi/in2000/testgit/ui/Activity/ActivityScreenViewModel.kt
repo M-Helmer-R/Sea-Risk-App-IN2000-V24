@@ -49,17 +49,13 @@ class ActivityScreenViewModel(savedStateHandle: SavedStateHandle): ViewModel() {
     private val _reccomendationUIState = MutableStateFlow(ReccomendationUIState(0))
     val reccomendationUIState: StateFlow<ReccomendationUIState> = _reccomendationUIState.asStateFlow()
 
-    val cityName = checkNotNull(savedStateHandle["stedsnavn"])
     val lat: String = checkNotNull(savedStateHandle["lat"])
     val lon: String = checkNotNull(savedStateHandle["lon"])
 
 
     init {
         viewModelScope.launch {
-            val loadAllResult = async{ loadAll(lat, lon) }
-            loadAllResult.await()
-            Log.i("ActivityScreenViewModel", "${_oceanForecastUIState.value.oceanDetails}")
-            // should wait with algorithm calculations until apis are done
+            loadAll(lat, lon)
             loadRecommendationBar("swimming")
         }
     }
@@ -110,9 +106,13 @@ class ActivityScreenViewModel(savedStateHandle: SavedStateHandle): ViewModel() {
 
 
     private suspend fun loadAll(lat: String, lon: String){
-        loadNowCast(lat, lon)
-        loadMetAlerts(lat, lon)
-        loadOceanForecast(lat, lon)
+        val nowcastDeffered = viewModelScope.async { loadNowCast(lat, lon) }
+        val metAlertsDeffered = viewModelScope.async { loadMetAlerts(lat, lon) }
+        val oceanForecastDeffered = viewModelScope.async { loadOceanForecast(lat, lon) }
+
+        nowcastDeffered.await()
+        metAlertsDeffered.await()
+        oceanForecastDeffered.await()
 
 
 
