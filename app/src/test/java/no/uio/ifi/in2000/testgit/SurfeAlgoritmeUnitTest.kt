@@ -39,7 +39,7 @@ class SurfeAlgoritmeUnitTest {
 
     @Test
     fun testSurfeAlgoritmeOutOfRangeWindSpeed() {
-        // creating dummy data for tests, with wind speed over max limit of 17.0 ms
+        // creating dummy data for tests, with wind speed over max limit of 11.1 ms
         val oceanForeCastUIState =
             OceanForeCastUIState(oceanDetails = OceanDetails(2.0, 2.0, 2.0, 12.0, 0.0))
         val nowCastUIState =
@@ -47,7 +47,7 @@ class SurfeAlgoritmeUnitTest {
 
 
         val result = runBlocking {
-            padleAlgoritme(oceanForeCastUIState, nowCastUIState)
+            surfeAlgoritme(oceanForeCastUIState, nowCastUIState)
         }
 
         // Verifying the expected result, result should return 0 as wind speed is
@@ -65,7 +65,7 @@ class SurfeAlgoritmeUnitTest {
 
 
         val result = runBlocking {
-            padleAlgoritme(oceanForeCastUIState, nowCastUIState)
+            surfeAlgoritme(oceanForeCastUIState, nowCastUIState)
         }
 
         // Verifying the expected result, result should return 0 as wave height is
@@ -83,11 +83,11 @@ class SurfeAlgoritmeUnitTest {
 
 
         val result = runBlocking {
-            padleAlgoritme(oceanForeCastUIState, nowCastUIState)
+            surfeAlgoritme(oceanForeCastUIState, nowCastUIState)
         }
 
-        // Verifying the expected result, result should return 0 as wave height is
-        // dangerous and out of range from our limits
+        // Verifying the expected result, result should return 0 as water temperature is
+        // out of range from our limits
         Assert.assertEquals(0, result)
     }
 

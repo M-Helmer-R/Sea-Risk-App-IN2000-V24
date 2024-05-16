@@ -74,7 +74,7 @@ suspend fun surfeAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUI
 
     // Return the risk level, if any are out of range --> return 0.0
     return if (
-        windSpeedResult == 100.0 ||
+        windSpeedResult == 30.0 ||
         waveHeightResult == 0.0 ||
         waterTempResult == 0.0
     ){

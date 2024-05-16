@@ -39,14 +39,12 @@ class MetAlertsDataSource {
             dataMetalerts = Metalerts(features = emptyList(), lang = null, lastChange = null, type = null)
         }
 
-        // depending on metalertsobject,
         if(dataMetalerts.features?.isEmpty() == false) {
             return dataMetalerts.features[0]
         } else {
             return null
 
         }
-        //val currentMetAlerts = dataMetAlerts.features.get(0)
 
 
     }

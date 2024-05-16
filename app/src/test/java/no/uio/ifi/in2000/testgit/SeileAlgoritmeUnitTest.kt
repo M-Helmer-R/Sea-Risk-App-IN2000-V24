@@ -46,7 +46,7 @@ class SeileAlgoritmeUnitTest {
 
 
         val result = runBlocking {
-            padleAlgoritme(oceanForeCastUIState, nowCastUIState)
+            seileAlgoritme(oceanForeCastUIState, nowCastUIState)
         }
 
         // Verifying the expected result, result should return 0 as wind speed is
@@ -64,7 +64,7 @@ class SeileAlgoritmeUnitTest {
 
 
         val result = runBlocking {
-            padleAlgoritme(oceanForeCastUIState, nowCastUIState)
+            seileAlgoritme(oceanForeCastUIState, nowCastUIState)
         }
 
         // Verifying the expected result, result should return 0 as wave height is
