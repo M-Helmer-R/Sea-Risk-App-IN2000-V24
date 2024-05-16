@@ -324,7 +324,6 @@ fun TopBarBy(
             IconButton(
                 onClick = {
                     if (!acitivityUIState.favorite) {
-                        Log.w("ActivityScreenViewModel", "adding")
                         onEvent(
                             ActivityEvent.AddFavorite(
                                 name = bynavn,
