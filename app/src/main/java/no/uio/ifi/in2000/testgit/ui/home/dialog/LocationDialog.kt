@@ -1,3 +1,4 @@
+/*
 package no.uio.ifi.in2000.testgit.ui.home.dialog
 import android.Manifest
 import android.content.Context
@@ -154,4 +155,4 @@ fun DisabledLocationDialog(
         }
     )
 }
-
+*/

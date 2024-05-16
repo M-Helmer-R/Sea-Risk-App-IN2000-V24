@@ -30,6 +30,7 @@ import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.ui.home.AddCityCard
 import no.uio.ifi.in2000.testgit.ui.BottomBar
 import no.uio.ifi.in2000.testgit.ui.home.HomeEvent
@@ -54,7 +55,6 @@ fun HomeScreen(
     currentRoute : String,
     context : Context,
     homeViewModel : HomeViewModel = viewModel(factory = HomeViewModel.Factory),
-
 ) {
     val onEvent = homeViewModel :: onEvent
     val homeUiState: HomeUiState by homeViewModel.homeUiState.collectAsState()
@@ -118,14 +118,18 @@ fun HomeScreen(
             item{
                 HorizontalContent(
                     homeUiState = homeUiState,
-                    onEvent = onEvent,
                     modifier = containerModifier,
                     locationPermissionState = locationPermissionState,
                     navController = navController
                 )
             }
             item{
-                FavoriteContent(homeUiState, onEvent, containerModifier, navController)
+                FavoriteContent(
+                    favorites = homeUiState.favorites,
+                    onEvent = onEvent,
+                    modifier = containerModifier,
+                    navController = navController
+                )
             }
         }
     }
@@ -135,10 +139,12 @@ fun HomeScreen(
 @Composable
 fun HorizontalContent(
     homeUiState: HomeUiState,
-    onEvent: (HomeEvent) -> Unit,
     modifier: Modifier,
     locationPermissionState : MultiplePermissionsState,
-    navController: NavController
+    navController: NavController,
+    nearestCities : Map<City, Double> = homeUiState.nearestCities,
+    userLat : Double = homeUiState.userLat,
+    userLon : Double = homeUiState.userLon
 ){
     Column (
         modifier = modifier,
@@ -152,8 +158,8 @@ fun HorizontalContent(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
 
-            items(homeUiState.nearestCities.keys.toList()) { city ->
-                HorizontalCard(city, homeUiState.nearestCities.getValue(city), navController)
+            items(nearestCities.keys.toList()) { city ->
+                HorizontalCard(city, nearestCities.getValue(city), navController)
             }
         }
         Row(
@@ -164,15 +170,16 @@ fun HorizontalContent(
 
             LocationStatus(
                 locationState = locationPermissionState,
-                homeUiState = homeUiState
-            )
+                userLat = userLat,
+                userLon = userLon,
+                )
         }
     }
 }
 
 @Composable
 fun FavoriteContent(
-    homeUiState : HomeUiState,
+    favorites : List<City>,
     onEvent: (HomeEvent) -> Unit,
     modifier: Modifier,
     navController: NavController
@@ -185,8 +192,7 @@ fun FavoriteContent(
             text = "Favoritter",
             style = MaterialTheme.typography.headlineSmall.copy(color = White)
         )
-
-        homeUiState.favorites.map { city ->
+        favorites.map { city ->
             MainCard(
                 city = city,
                 onEvent = onEvent,

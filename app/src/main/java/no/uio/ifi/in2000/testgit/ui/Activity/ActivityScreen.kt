@@ -157,7 +157,6 @@ fun ReccomendationBox(value: Int) {
 @Composable
 fun GenerellInfo(bynavn: String, lat: String?, lon: String?, nowCastUIState: NowCastUIState, oceanForeCastUIState: OceanForeCastUIState) {
 
-
     Box(
         modifier = Modifier
             .padding(start = 30.dp, top = 35.dp)

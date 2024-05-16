@@ -54,7 +54,7 @@ fun MainCard(
     ) {
         Row (
             modifier = Modifier
-                .padding(6.dp),
+                .padding(6.dp).fillMaxSize(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ){
@@ -95,28 +95,10 @@ fun MainCard(
                     }
                 )
             }
-            Button(
-                onClick = {
-                    Log.w("SCREEN", "City: ${city.favorite}")
-                    onEvent(HomeEvent.UpdateFavorite(city))
-                    Log.w("SCREEN", "City: ${city.favorite}")
-                }
-            ) {
-                if (city.favorite == 1) {
-                    Icon(
-                        imageVector = Icons.Filled.Star,
-                        contentDescription = "is favorite",
-                        tint = Color.Yellow
-                    )
-                    Log.w("CITY_SCREEN", "is favorite")
-                } else {
-                    Icon(
-                        imageVector = Icons.Outlined.Star,
-                        contentDescription = "not favorite",
-                    )
-                    Log.w("CITY_SCREEN", "is not favorite")
-                }
-            }
+            FavoriteButton(
+                city = city,
+                onEvent = onEvent,
+            )
         }
     }
 }
@@ -184,6 +166,35 @@ fun AddCityCard(){
                         "Gå til aktivitettsiden til en by",
                 style = MaterialTheme.typography.bodySmall.copy(color = White),
             )
+        }
+    }
+}
+
+@Composable
+fun FavoriteButton(
+    city: City,
+    onEvent: (HomeEvent) -> Unit
+){
+    Button(
+        onClick = {
+            Log.w("SCREEN", "City: ${city.favorite}")
+            onEvent(HomeEvent.UpdateFavorite(city))
+            Log.w("SCREEN", "City: ${city.favorite}")
+        }
+    ) {
+        if (city.favorite == 1) {
+            Icon(
+                imageVector = Icons.Filled.Star,
+                contentDescription = "is favorite",
+                tint = Color.Yellow
+            )
+            Log.w("CITY_SCREEN", "is favorite")
+        } else {
+            Icon(
+                imageVector = Icons.Outlined.Star,
+                contentDescription = "not favorite",
+            )
+            Log.w("CITY_SCREEN", "is not favorite")
         }
     }
 }

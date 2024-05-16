@@ -10,21 +10,6 @@ data class HomeUiState(
     val preloaded : List<City> = emptyList(),
     val nearestCities : Map<City, Double> = emptyMap(),
 
-    //AddCityDialog
-    val cityName: String = "",
-    val cityLon: String = "",
-    val cityLat: String = "",
-    val fave: Int = 1,
-    val custom : Int = 1,
-
-    val nameError : Boolean = false,
-    val lonError : Boolean = false,
-    val latError : Boolean = false,
-    val errorMessage : String = "Not valid input",
-
-    //AddCity  dialog
-    val isAddingCity: Boolean = false,
-
     //LocationDialog
     val permissionDialog : Boolean = false,
     val deniedLocationDialog : Boolean = false,
@@ -33,4 +18,5 @@ data class HomeUiState(
     //Positon dialogs
     var userLat : Double = 59.56374,
     var userLon : Double = 10.43067,
+
     )
