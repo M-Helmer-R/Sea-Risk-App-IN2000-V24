@@ -16,10 +16,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-interface ReverseGeocodeCallback {
-    fun onSuccess(placeName: String)
-    fun onFailure(placeName: String)
-}
+
 class GeoCodeDataSource {
     val client = HttpClient() {
         install(ContentNegotiation) {
@@ -28,7 +25,7 @@ class GeoCodeDataSource {
 
 
     }
-
+    // Calls the mapbox api with lat lon coordinates and gets back a locationname
     suspend fun reverseGeoCode2(lon: Double, lat: Double): Properties? {
 
         try{
@@ -44,7 +41,7 @@ class GeoCodeDataSource {
         return null
 
     }
-
+    // Calls the mapbox api with a search string and gets back a list of locationnames
     suspend fun searchGeoCode(searchString: String): GeocodingPlacesResponse? {
         try{
             val searchURL = "https://api.mapbox.com/search/geocode/v6/forward?q=$searchString&country=no&proximity=ip&access_token=sk.eyJ1IjoiYmpvaG9sbW0iLCJhIjoiY2x0eWVwZHp5MGRmaTJrcGpueG8zcTR1MCJ9.zal9bJ3fdxMij0MJB-GvUQ"

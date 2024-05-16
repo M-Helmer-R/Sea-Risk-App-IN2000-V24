@@ -26,7 +26,7 @@ class NowCastDataSource {
 
     }
 
-
+    // Gets NowCast data from api
     suspend fun getData(lat: String, lon: String): Details? {
         try{
             val nowcastOslo = "weatherapi/nowcast/2.0/complete?lat=$lat&lon=$lon"

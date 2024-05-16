@@ -14,11 +14,14 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.mapbox.maps.MapboxExperimental
 import no.uio.ifi.in2000.testgit.data.map.GeocodingPlacesResponse
 import no.uio.ifi.in2000.testgit.ui.BottomBar
 import no.uio.ifi.in2000.testgit.ui.TopBar
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 
+
+//Mapscreen with the topbar, searchbar and bottombar
 @Composable
 fun MapScreenMain(navController: NavController, currentRoute: String, mapScreenViewModel: MapScreenViewModel = viewModel()) {
 
@@ -38,6 +41,7 @@ fun MapScreenMain(navController: NavController, currentRoute: String, mapScreenV
         BottomBar(navController, currentRoute)
     }
 }
+@OptIn(MapboxExperimental::class)
 @Composable
 fun ShowMap(
     modifier: Modifier = Modifier,
@@ -56,7 +60,7 @@ fun ShowMap(
         .background(Color.Red)) {
 
         //SearchBar(searchUIState.value, mapScreenViewModel, keyboardController = keyboardController)
-        Mapscreen(mapScreenViewModel = mapScreenViewModel, locationUIState = locationUIState, dialogUIState = dialogUIState, searchUIState = searchUIState, oceanForeCastUIState = oceanForeCastUIState, keyboardController, navController )
+        Mapscreen(mapScreenViewModel = mapScreenViewModel, locationUIState = locationUIState,  oceanForeCastUIState = oceanForeCastUIState, keyboardController, navController )
 
         Box(
             modifier = Modifier.align(Alignment.TopCenter),

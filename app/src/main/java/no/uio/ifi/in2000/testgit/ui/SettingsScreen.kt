@@ -34,7 +34,7 @@ import no.uio.ifi.in2000.testgit.ui.theme.White
 
 //Settings screen
 @Composable
-fun SettingsScreen(navController: NavController?, currentRoute: String = "innstillinger") {
+fun SettingsScreen(navController: NavController?, currentRoute: String = "settings") {
     SettingsContent(navController, currentRoute)
 }
 
@@ -57,7 +57,7 @@ fun SettingsContent(
                 .background(DarkBlue),
 
         ) {
-            Text(text = "Innstillinger",
+            Text(text = "settings",
                 modifier = Modifier.padding(12.dp),
                 style = MaterialTheme.typography.titleLarge.copy(color = White)
             )
@@ -129,7 +129,7 @@ fun PermissionsCard(
                 modifier = Modifier.padding(8.dp),
                 style = MaterialTheme.typography.titleMedium.copy(color = White)
             )
-            Icon(Icons.Filled.Settings, "Innstillinger",
+            Icon(Icons.Filled.Settings, "settings",
                 modifier = Modifier.padding(8.dp).size(32.dp),
                 tint = Color.White,
             )

@@ -13,10 +13,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.testgit.data.map.GeoCodeRepository
-import no.uio.ifi.in2000.testgit.data.map.ReverseGeocodeCallback
 import no.uio.ifi.in2000.testgit.data.oceanforecast.OceanForeCastRepository
 import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanDetails
-import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanTimeseries
 import kotlin.math.roundToInt
 
 data class LocationUIState(
@@ -90,12 +88,13 @@ class MapScreenViewModel: ViewModel() {
 
         )
     )
-
+    // Expands dropdown of cities from searchbar
     fun expandSearchBar(){
         val newSearchBarUIState = _searchBarUIState.value.copy(expanded = true)
         _searchBarUIState.value = newSearchBarUIState
     }
 
+    // Collapses dropdown of cities from searchbar
     fun collapseSearchBar(){
         val newSearchBarUIState = _searchBarUIState.value.copy(expanded = false)
         _searchBarUIState.value = newSearchBarUIState
@@ -109,6 +108,8 @@ class MapScreenViewModel: ViewModel() {
         oceanForeCastUIState.value.oceanDetails = null
         oceanForeCastUIState.value.loaded = Loaded.NOTLOADED
     }
+
+    //Loads the locationnames for the searchbox
     fun loadSearchUIState(searchString: String){
         viewModelScope.launch {
             val geocodingPlacesResponse = repository.searchGeoCode(searchString)
@@ -120,6 +121,8 @@ class MapScreenViewModel: ViewModel() {
             }
         }
     }
+
+    //Loads oceanforecast to check if a location has ocean data
     fun loadOceanForeCast(lat: String, lon: String){
         viewModelScope.launch {
             val oceanDetails = oceanRepository.fetchOceanForeCast(lat, lon)
@@ -144,6 +147,7 @@ class MapScreenViewModel: ViewModel() {
 
     }
 
+    //Unloads locationname
     fun unloadPlacename(){
         val newlocationUIState = _locationUIState.value.copy(loaded = Loaded.NOTLOADED)
         _locationUIState.value = newlocationUIState
@@ -151,6 +155,8 @@ class MapScreenViewModel: ViewModel() {
         val newOCeanForeCastUIState = _oceanForeCastUIState.value.copy(oceanDetails = null, loaded = Loaded.NOTLOADED)
         _oceanForeCastUIState.value = newOCeanForeCastUIState
     }
+
+    //Loads locationname from coordinates
     fun loadPlaceName2(lon: Double, lat: Double){
         viewModelScope.launch {
 
@@ -178,38 +184,9 @@ class MapScreenViewModel: ViewModel() {
 
 
 
-    private fun showDialog(){
-        val newdialogUIState = _dialogUIState.value.copy(isVisible = true)
-        _dialogUIState.value = newdialogUIState
-        println(newdialogUIState)
-    }
-
-    fun hideDialog(){
-        val newdialogUIState = _dialogUIState.value.copy(isVisible = false)
-        _dialogUIState.value = newdialogUIState
-
-        dialogUIState.value.oceanLoaded = null
-
-        println("Dialog hidden")
-    }
-
-
-
-
-
-    // Oppdaterer punktet som ble trykket på og viser popup
+    // Updates the map click location
     fun updateMapClickLocation(point: Point) {
         mapClickLocation.value = point
-    }
-
-    // Viser popup ved å sette showPopup til true
-    fun showPopup() {
-        showPopup.value = true
-    }
-
-    // Lukker popup ved å sette showPopup til false
-    fun hidePopup() {
-        showPopup.value = false
     }
 
 

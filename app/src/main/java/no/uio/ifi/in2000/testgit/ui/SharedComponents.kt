@@ -69,7 +69,7 @@ fun BottomBar(navController: NavController?, currentRoute: String) {
         Row(modifier = Modifier
             .fillMaxWidth()
             .height(32.dp)) {
-            val routes = listOf("home" to Icons.Filled.Home, "kart" to Icons.Filled.Place, "innstillinger" to Icons.Filled.Settings)
+            val routes = listOf("home" to Icons.Filled.Home, "map" to Icons.Filled.Place, "settings" to Icons.Filled.Settings)
             routes.forEach { (route, icon) ->
                 Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
                     val iconColor = if (currentRoute == route) LightBlue else Color.White

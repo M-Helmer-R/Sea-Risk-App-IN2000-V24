@@ -109,7 +109,7 @@ fun DeniedPermissionDialog(
                     context.startActivity(intent)
                 },
             ) {
-                Text("Gå til innstillinger")
+                Text("Gå til settings")
             }
         },
         dismissButton = {
@@ -143,7 +143,7 @@ fun DisabledLocationDialog(
                     onEvent(HomeEvent.HideDisabledLocationDialog)
                     context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) },
                 ) {
-                Text("Gå til innstillinger")
+                Text("Gå til settings")
             }
         },
         dismissButton = {

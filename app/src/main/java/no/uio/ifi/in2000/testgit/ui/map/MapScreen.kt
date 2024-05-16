@@ -49,7 +49,7 @@ import com.mapbox.maps.viewannotation.geometry
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 import no.uio.ifi.in2000.testgit.ui.theme.LightBlue
 
-
+//Searchbar for mapscreen
 @OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class, MapboxExperimental::class)
 @Composable
 fun SearchBar(
@@ -131,6 +131,7 @@ fun SearchBar(
     }
 }
 
+//Location card part of the dropdown from the searchbar, clicking will zoom in on map and show locationname and allow for navigation
 @OptIn(MapboxExperimental::class)
 @Composable
 fun LocationSuggestionCardClickable(lat: Double, lon: Double, place: String, navController: NavController, mapScreenViewModel: MapScreenViewModel, mapViewportState: MapViewportState) {
@@ -159,13 +160,12 @@ fun LocationSuggestionCardClickable(lat: Double, lon: Double, place: String, nav
 
 
 
+//Main composable for the map
 @OptIn(MapboxExperimental::class)
 @Composable
 fun Mapscreen(
     mapScreenViewModel: MapScreenViewModel,
     locationUIState: State<LocationUIState>,
-    dialogUIState: State<DialogUIState>,
-    searchUIState: State<SearchUIState>,
     oceanForeCastUIState: State<OceanForeCastUIState>,
     keyboardController: SoftwareKeyboardController?,
     navController: NavController,

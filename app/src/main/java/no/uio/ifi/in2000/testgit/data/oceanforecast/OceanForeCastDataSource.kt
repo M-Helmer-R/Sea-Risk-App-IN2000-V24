@@ -30,7 +30,7 @@ class OceanForeCastDataSource {
         }
 
     }
-
+    //Gets oceanforecast data from API
     suspend fun getData(lat: String, lon: String): OceanDetails? {
         try {
             val oceanforecastOslo = "weatherapi/oceanforecast/2.0/complete?lat=$lat&lon=$lon"

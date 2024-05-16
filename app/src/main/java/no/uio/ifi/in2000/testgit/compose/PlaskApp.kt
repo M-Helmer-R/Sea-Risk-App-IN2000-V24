@@ -34,17 +34,17 @@ fun PlaskAppHost(
         composable("home") {
             HomeScreen(navController, "home", context)
         }
-        composable("kart") {
-            MapScreenMain(navController, "kart")
+        composable("map") {
+            MapScreenMain(navController, "map")
         }
-        composable("innstillinger") {
-            SettingsScreen(navController, "innstillinger")
+        composable("settings") {
+            SettingsScreen(navController, "settings")
         }
-        composable("ActivityScreen/{stedsnavn}/{lat}/{lon}") { backStackEntry ->
-            val stedsnavn = backStackEntry.arguments?.getString("stedsnavn")
+        composable("ActivityScreen/{placename}/{lat}/{lon}") { backStackEntry ->
+            val placename = backStackEntry.arguments?.getString("placename")
             val lat = backStackEntry.arguments?.getString("lat")
             val lon = backStackEntry.arguments?.getString("lon")
-            stedsnavn ?.let { ActivityScreen(chosenCity = stedsnavn, lat, lon, navController = navController)}
+            placename ?.let { ActivityScreen(chosenCity = placename, lat, lon, navController = navController)}
         }
     }
 }
@@ -56,16 +56,16 @@ fun PlaskAppHost(
                     val state by viewModel.homeUiState.collectAsState()
                     no.uio.ifi.in2000.testgit.ui.home.HomeScreen(navController, "home", viewModel, onEvent = viewModel::onEvent)
                 }
-                composable("kart") {
-                    MapScreenMain(navController, "kart")
+                composable("map") {
+                    MapScreenMain(navController, "map")
                 }
-                composable("innstillinger") {
+                composable("settings") {
                 }
-                composable("ActivityScreen/{stedsnavn}/{lat}/{lon}") { backStackEntry ->
-                    val stedsnavn = backStackEntry.arguments?.getString("stedsnavn")
+                composable("ActivityScreen/{placename}/{lat}/{lon}") { backStackEntry ->
+                    val placename = backStackEntry.arguments?.getString("placename")
                     val lat = backStackEntry.arguments?.getString("lat")
                     val lon = backStackEntry.arguments?.getString("lon")
-                    stedsnavn ?.let { ActivityScreen(chosenCity = stedsnavn, lat, lon, navController = navController)}
+                    placename ?.let { ActivityScreen(chosenCity = placename, lat, lon, navController = navController)}
                 }
             }
 

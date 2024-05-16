@@ -73,7 +73,7 @@ class ActivityScreenViewModel(
 
     val acitivityUIState : StateFlow<AcitivityUIState> = _activityUIState.asStateFlow()
 
-    val cityName = checkNotNull(savedStateHandle["stedsnavn"])
+    val cityName = checkNotNull(savedStateHandle["placename"])
 
     val lat: String = checkNotNull(savedStateHandle["lat"])
     val lon: String = checkNotNull(savedStateHandle["lon"])
@@ -82,25 +82,30 @@ class ActivityScreenViewModel(
     init {
         viewModelScope.launch {
             loadAll(lat, lon)
-            loadRecommendationBar("swimming")
+            loadRecommendationBar("bading")
         }
     }
+
+    //Updates the UI state of the selectedactivity
 
     fun changeActivity(activity: String){
         selectedActivityUIState.value.selectedactivity = (activity)
     }
+
+    //Updates the UI state of the reccomendation bar
     fun changeReccomendationBar(activity: String){
         viewModelScope.launch {
             loadRecommendationBar(activity)
         }
     }
 
+    //Loads the recommendationbar with the score  selectedactivity
     suspend fun loadRecommendationBar(activity: String) {
 
         val level = if (oceanForeCastUIState.value.oceanDetails != null && nowCastUIState.value.nowCastData != null){
             when(activity){
                 "kayaking" -> padleAlgoritme(oceanForeCastUIState.value, nowCastUIState.value)
-                "swimming" -> swimmingAlgorithm(oceanForeCastUIState.value, nowCastUIState.value)
+                "bading" -> swimmingAlgorithm(oceanForeCastUIState.value, nowCastUIState.value)
                 "sailing" -> seileAlgoritme(oceanForeCastUIState.value, nowCastUIState.value)
                 "surfing" -> surfeAlgoritme(oceanForeCastUIState.value, nowCastUIState.value)
                 else -> 0
@@ -113,11 +118,14 @@ class ActivityScreenViewModel(
         _reccomendationUIState.value = newRecommendationUIState
     }
 
+    //Loads nowcast API
     private suspend fun loadNowCast(lat: String, lon: String){
         val nowCastData = repository.fetchNowCast(lat,lon)
         val newNowCastUIState = _nowCastUIState.value.copy(nowCastData = nowCastData)
         _nowCastUIState.value = newNowCastUIState
     }
+
+    //Loads oceanforecast API
 
     private suspend fun loadOceanForecast(lat: String, lon: String) {
         val oceanForecastData = repository.fetchOceanForecast(lat, lon)
@@ -125,6 +133,7 @@ class ActivityScreenViewModel(
         _oceanForecastUIState.value = newOceanForecastUIState
     }
 
+    //Loads metalerts API
     private suspend fun loadMetAlerts(lat: String, lon: String) {
         val metAlertsData = repository.fetchMetAlerts(lat, lon)
         val newMetAlertsUIState = _metAlertsUIState.value.copy(metAlertsData = metAlertsData)
@@ -132,7 +141,7 @@ class ActivityScreenViewModel(
     }
 
 
-
+    //Loads metAlerts, oceanforecast and nowcast API
     private suspend fun loadAll(lat: String, lon: String){
         val nowcastDeffered = viewModelScope.async { loadNowCast(lat, lon) }
         val metAlertsDeffered = viewModelScope.async { loadMetAlerts(lat, lon) }
@@ -144,6 +153,7 @@ class ActivityScreenViewModel(
 
     }
 
+    //Adds location to favourites
     fun onEvent(event: ActivityEvent){
          when (event) {
 

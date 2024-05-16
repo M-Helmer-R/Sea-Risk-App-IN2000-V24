@@ -23,7 +23,7 @@ class MetAlertsDataSource {
 
     }
 
-
+    //Gets MetAlerts from the API
     suspend fun getMetAlerts(lat: String, lon: String): AlertFeatures? {
         try {
             val metAlerts = "weatherapi/metalerts/2.0/current.json?lat=$lat&lon=$lon"

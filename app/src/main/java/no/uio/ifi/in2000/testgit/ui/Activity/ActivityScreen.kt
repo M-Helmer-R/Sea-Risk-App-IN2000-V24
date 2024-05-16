@@ -67,14 +67,8 @@ import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 import no.uio.ifi.in2000.testgit.ui.theme.LightBlue
 
 
-/*
-TO DO
-- navigasjon logikk mellom activities og visningstype
-- home navigasjon med topbar backbutton (er popbackstack feil hvis vi kan ha
-  mer navigasjon mellom
-- avrundet bar over bottombar
- */
 
+//Activityscreen, displays weather data and recommends activities
 @Composable
 fun ActivityScreen(
     chosenCity: String,
@@ -89,7 +83,7 @@ fun ActivityScreen(
 
     val selectedActivityUIState = activityScreenViewModel.selectedActivityUIState.collectAsState()
 
-    val activities = listOf("swimming", "sailing","surfing" , "kayaking")
+    val activities = listOf("bading", "sailing","surfing" , "kayaking")
     var selectedButton by remember { mutableStateOf(activities[0]) }
     val recommendationUIState = activityScreenViewModel.reccomendationUIState.collectAsState()
     val onEvent = activityScreenViewModel :: onEvent
@@ -100,9 +94,9 @@ fun ActivityScreen(
     Column(modifier = Modifier
         .fillMaxSize()
         .background(DarkBlue)) {
-        TopBarBy(
+        TopBarCity(
             navController = navController,
-            bynavn = chosenCity,
+            CityName = chosenCity,
             lat = lat,
             lon = lon,
             onEvent = onEvent,
@@ -122,7 +116,7 @@ fun ActivityScreen(
     }
 }
 
-
+//Displays the recommendation percent of a chosen activity
 @Composable
 fun ReccomendationBox(value: Int, selectedActivityUIState: selectedActivityUIState) {
     val prosent = value * 10
@@ -152,7 +146,7 @@ fun ReccomendationBox(value: Int, selectedActivityUIState: selectedActivityUISta
     }
 }
 
-
+// Displays weather data
 @Composable
 fun GeneralInfo(nowCastUIState: NowCastUIState, oceanForeCastUIState: OceanForeCastUIState, metAlertsUIState: MetAlertsUIState) {
     var showPopup by remember { mutableStateOf(false) }
@@ -284,12 +278,12 @@ fun GeneralInfo(nowCastUIState: NowCastUIState, oceanForeCastUIState: OceanForeC
     }
 }
 
-
+//Top bar for activityscreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBarBy(
+fun TopBarCity(
     navController: NavController,
-    bynavn: String,
+    CityName: String,
     lat: String?,
     lon: String?,
     onEvent : (ActivityEvent) -> Unit,
@@ -297,7 +291,7 @@ fun TopBarBy(
 ) {
     TopAppBar(
         title = {
-            Text(text = bynavn, color = Color.White, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+            Text(text = CityName, color = Color.White, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
         },
         navigationIcon = {
             IconButton(onClick = { navController.popBackStack() }) {
@@ -305,13 +299,13 @@ fun TopBarBy(
             }
         },
         actions = {
-            onEvent(ActivityEvent.CheckFavorite(name = bynavn))
+            onEvent(ActivityEvent.CheckFavorite(name = CityName))
             IconButton(
                 onClick = {
                     if (!acitivityUIState.favorite) {
                         onEvent(
                             ActivityEvent.AddFavorite(
-                                name = bynavn,
+                                name = CityName,
                                 lat =  lat ?: "",
                                 lon = lon ?: "")
                         )
@@ -522,7 +516,7 @@ fun getResourceId(activityName: String): Int {
     return when (activityName) {
         "sailing" ->  R.drawable.sailboaticon
         "surfing" -> R.drawable.surfingicon
-        "swimming" -> R.drawable.swimmingicon
+        "bading" -> R.drawable.swimmingicon
         "kayaking" -> R.drawable.kayakicon
         else -> 0
     }
