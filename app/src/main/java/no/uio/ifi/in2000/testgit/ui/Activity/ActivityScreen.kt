@@ -279,14 +279,16 @@ fun GeneralInfo(bynavn: String, lat: String?, lon: String?, nowCastUIState: NowC
 
                 Button(
                     onClick = {
-                        if(metAlertsUIState.metAlertsData == null) {
-                            popupContent = "Ingen"
-                            showPopup = true
-                        } else {
+                        if(metAlertsUIState.metAlertsData?.alertProperties?.geographicDomain == "marine") {
                             popupContent = "Varsel: ${metAlertsUIState.metAlertsData?.alertProperties?.event}\n" +
                                     "Instrukser: ${metAlertsUIState.metAlertsData?.alertProperties?.instruction}"
                             showPopup = true
+                        } else {
+                            popupContent = "Ingen havvarsel"
+                            showPopup = true
                         }
+
+
                 },
                     colors = ButtonDefaults.buttonColors(containerColor = DarkBlue, contentColor = Color.White),
 
