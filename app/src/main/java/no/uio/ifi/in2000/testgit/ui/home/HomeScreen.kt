@@ -25,6 +25,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -41,6 +43,7 @@ import no.uio.ifi.in2000.testgit.ui.home.MainCard
 import no.uio.ifi.in2000.testgit.ui.home.DeniedPermissionDialog
 import no.uio.ifi.in2000.testgit.ui.home.DisabledLocationDialog
 import no.uio.ifi.in2000.testgit.ui.home.LocationStatus
+import no.uio.ifi.in2000.testgit.ui.home.LocationViewModel
 import no.uio.ifi.in2000.testgit.ui.home.PermissionRationaleDialog
 import no.uio.ifi.in2000.testgit.ui.home.getUserLocation
 import no.uio.ifi.in2000.testgit.ui.map.TopBar
@@ -55,7 +58,9 @@ fun HomeScreen(
     currentRoute : String,
     context : Context,
     homeViewModel : HomeViewModel = viewModel(factory = HomeViewModel.Factory),
+    locationViewModel : LocationViewModel = viewModel(factory = LocationViewModel.Factory),
 ) {
+
     val onEvent = homeViewModel :: onEvent
     val homeUiState: HomeUiState by homeViewModel.homeUiState.collectAsState()
     val locationPermissionState = rememberMultiplePermissionsState(
@@ -70,21 +75,20 @@ fun HomeScreen(
         .fillMaxSize()
         .padding(8.dp)
 
-    LaunchedEffect(key1 = true) {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
-            onEvent(HomeEvent.ShowPermissionDialog)
-        } else {
-            if (locationPermissionState.allPermissionsGranted) {
-                getUserLocation(context) { location ->
-                    location?.let {
-                        onEvent(HomeEvent.SetUserPosition(lon = it.longitude, lat = it.latitude))
-                    } ?: run {
-                        onEvent(HomeEvent.ShowDisabledLocationDialog)
-                    }
+    if (ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
+        onEvent(HomeEvent.ShowDeniedPermissionDialog)
+    } else {
+        if (locationPermissionState.allPermissionsGranted) {
+            locationViewModel.location.observe(context as LifecycleOwner, Observer{ location ->
+                location?.let {
+                    onEvent(HomeEvent.SetUserPosition(lon = it.longitude, lat = it.latitude))
+                } ?: run {
+                    onEvent(HomeEvent.ShowDisabledLocationDialog)
                 }
-            } else {
-                onEvent(HomeEvent.ShowDeniedPermissionDialog)
-            }
+            })
+            locationViewModel.fetchLocation()
+        } else {
+            onEvent(HomeEvent.ShowPermissionDialog)
         }
     }
     Scaffold(
