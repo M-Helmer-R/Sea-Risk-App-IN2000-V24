@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 
@@ -36,17 +35,18 @@ fun PermissionRationaleDialog(
     locationPermissionState: MultiplePermissionsState,
     locationViewModel: LocationViewModel
 ) {
+
     val locationPermissionResultLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
+    ) { _ ->
         if (locationPermissionState.allPermissionsGranted) {
-            locationViewModel.location.observe(context as LifecycleOwner, Observer { location ->
+            locationViewModel.location.observe(context as LifecycleOwner) { location ->
                 location?.let {
                     onEvent(HomeEvent.SetUserPosition(lon = it.longitude, lat = it.latitude))
                 } ?: run {
                     onEvent(HomeEvent.ShowDisabledLocationDialog)
                 }
-            })
+            }
             locationViewModel.fetchLocation()
         } else if (ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
             onEvent(HomeEvent.ShowPermissionDialog)
