@@ -46,7 +46,7 @@ data class AcitivityUIState(
 )
 
 // this viewmodel handles api calls depending on city chosen
-// this viewmodel will be created by user interaction with locations in HomeScreen and mapscreen
+// this viewmodel will be created by user interaction with locations in no.uio.ifi.in2000.testgit.ui.home.HomeScreen and mapscreen
 class ActivityScreenViewModel(
     savedStateHandle: SavedStateHandle,
     private val dbRepository : DatabaseRepository

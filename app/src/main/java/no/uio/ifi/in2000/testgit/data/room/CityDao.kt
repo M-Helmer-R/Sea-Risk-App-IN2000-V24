@@ -6,6 +6,7 @@ import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
+//Direct access object for cities table
 @Dao
 interface CityDao {
     @Upsert

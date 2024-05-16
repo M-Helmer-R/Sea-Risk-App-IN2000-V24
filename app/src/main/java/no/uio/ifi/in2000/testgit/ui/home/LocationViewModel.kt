@@ -9,6 +9,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import no.uio.ifi.in2000.testgit.MainApplication
 import no.uio.ifi.in2000.testgit.data.location.LocationRepository
 
+//Location view model
 data class LocationViewModel(
     private val locationRepository: LocationRepository
 ) : ViewModel() {
@@ -20,6 +21,8 @@ data class LocationViewModel(
             _location.postValue(loc)
         }
     }
+
+    //Location view model factory
     @Suppress("UNCHECKED_CAST")
     companion object{
         val Factory : ViewModelProvider.Factory = object  : ViewModelProvider.Factory {

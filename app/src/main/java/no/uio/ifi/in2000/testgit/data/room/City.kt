@@ -3,7 +3,7 @@ package no.uio.ifi.in2000.testgit.data.room
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-
+//City entity for database
 @Entity(tableName = "cities")
 data class City (
     @PrimaryKey(autoGenerate = true) // Default is true

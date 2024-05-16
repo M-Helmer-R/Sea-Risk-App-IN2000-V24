@@ -28,11 +28,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import no.uio.ifi.in2000.testgit.ui.map.TopBar
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 import no.uio.ifi.in2000.testgit.ui.theme.LightBlue
 import no.uio.ifi.in2000.testgit.ui.theme.White
 
+//Settings screen
 @Composable
 fun SettingsScreen(navController: NavController?, currentRoute: String = "innstillinger") {
     SettingsContent(navController, currentRoute)
@@ -66,6 +66,7 @@ fun SettingsContent(
         }
     }
 }
+//Card to navigate to location settings to device
 @Composable
 fun SettingsCard(
     context : Context = LocalContext.current
@@ -99,6 +100,7 @@ fun SettingsCard(
     }
 }
 
+//Card to navigate to app permissions
 @Composable
 fun PermissionsCard(
     context : Context = LocalContext.current

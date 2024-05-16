@@ -35,7 +35,6 @@ import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Thermostat
 import androidx.compose.material.icons.filled.Tsunami
-import androidx.compose.material.icons.filled.Water
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material.icons.filled.Waves
 import androidx.compose.material3.Button
@@ -307,13 +306,6 @@ fun TopBarBy(
                                 name = bynavn,
                                 lat =  lat ?: "",
                                 lon = lon ?: "")
-                        )
-                    } else {
-                        Log.w("ActivityScreenViewModel", "removing")
-                        onEvent(
-                            ActivityEvent.RemoveFavorite(
-                                name = bynavn
-                            )
                         )
                     }
                 }

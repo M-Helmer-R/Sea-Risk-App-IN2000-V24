@@ -1,5 +1,7 @@
 @file:OptIn(ExperimentalPermissionsApi::class)
 
+package no.uio.ifi.in2000.testgit.ui.home
+
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -8,7 +10,6 @@ import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
@@ -29,22 +29,10 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.ui.BottomBar
-import no.uio.ifi.in2000.testgit.ui.home.AddCityCard
-import no.uio.ifi.in2000.testgit.ui.home.DeniedPermissionDialog
-import no.uio.ifi.in2000.testgit.ui.home.DisabledLocationDialog
-import no.uio.ifi.in2000.testgit.ui.home.HomeEvent
-import no.uio.ifi.in2000.testgit.ui.home.HomeUiState
-import no.uio.ifi.in2000.testgit.ui.home.HomeViewModel
-import no.uio.ifi.in2000.testgit.ui.home.HorizontalCard
-import no.uio.ifi.in2000.testgit.ui.home.LocationStatus
-import no.uio.ifi.in2000.testgit.ui.home.LocationViewModel
-import no.uio.ifi.in2000.testgit.ui.home.MainCard
-import no.uio.ifi.in2000.testgit.ui.home.PermissionRationaleDialog
-import no.uio.ifi.in2000.testgit.ui.map.TopBar
+import no.uio.ifi.in2000.testgit.ui.TopBar
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 import no.uio.ifi.in2000.testgit.ui.theme.White
 
@@ -74,43 +62,9 @@ fun HomeScreen(
         .fillMaxSize()
         .padding(8.dp)
 
-    /*
-    LaunchedEffect(key1 = true) {
-        val activity = context as Activity
-        val fineLocationPermission = Manifest.permission.ACCESS_FINE_LOCATION
-        val coarseLocationPermission = Manifest.permission.ACCESS_COARSE_LOCATION
-
-        // Function to check if a specific permission is granted
-        fun isPermissionGranted(permission: String): Boolean {
-            return ActivityCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED
-        }
-
-        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, fineLocationPermission) ||
-            ActivityCompat.shouldShowRequestPermissionRationale(activity, coarseLocationPermission)
-        ) {
-            onEvent(HomeEvent.ShowPermissionDialog)
-        } else {
-            // Check if either location permission is granted
-            if (isPermissionGranted(fineLocationPermission) || isPermissionGranted(coarseLocationPermission)) {
-                getUserLocation(context) { location ->
-                    location?.let {
-                        onEvent(HomeEvent.SetUserPosition(lon = it.longitude, lat = it.latitude))
-                    } ?: run {
-                        onEvent(HomeEvent.ShowDisabledLocationDialog)
-                    }
-                }
-            } else {
-                onEvent(HomeEvent.ShowDeniedPermissionDialog)
-            }
-        }
-    }
-
-
-
-     */
     LaunchedEffect(key1 = locationPermissionState.allPermissionsGranted) {
-        onEvent(HomeEvent.UpdateNearest)
         if (locationPermissionState.allPermissionsGranted) {
+            onEvent(HomeEvent.UpdateNearest)
             locationViewModel.location.observe(context as LifecycleOwner) { location ->
                 location?.let {
                     onEvent(HomeEvent.SetUserPosition(lon = it.longitude, lat = it.latitude))
@@ -121,9 +75,9 @@ fun HomeScreen(
             }
             locationViewModel.fetchLocation()
         } else if (ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
-            onEvent(HomeEvent.ShowPermissionDialog)
-        } else {
             onEvent(HomeEvent.ShowDeniedPermissionDialog)
+        } else {
+            onEvent(HomeEvent.ShowPermissionDialog)
         }
     }
 
@@ -162,10 +116,7 @@ fun HomeScreen(
             item{
                 HorizontalContent(
                     nearestCities = homeUiState.nearestCities,
-                    userLat = homeUiState.userLat,
-                    userLon = homeUiState.userLon,
                     modifier = containerModifier,
-                    locationPermissionState = locationPermissionState,
                     navController = navController
                 )
             }
@@ -185,39 +136,23 @@ fun HomeScreen(
 @Composable
 fun HorizontalContent(
     modifier: Modifier,
-    locationPermissionState : MultiplePermissionsState,
     navController: NavController,
     nearestCities : Map<City, Double>,
-    userLat : Double,
-    userLon : Double,
 ){
     Column (
         modifier = modifier,
     ){
         Text(
             modifier = Modifier.padding(8.dp),
-            text = "Nærmeste aktivitetsplasser:",
+            text = "Nærmeste aktivitetsplasser",
             style = MaterialTheme.typography.headlineSmall.copy(color = White)
         )
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-
             items(nearestCities.keys.toList()) { city ->
                 HorizontalCard(city, nearestCities.getValue(city), navController)
             }
-        }
-        Row(
-            modifier = modifier,
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-
-            LocationStatus(
-                locationState = locationPermissionState,
-                userLat = userLat,
-                userLon = userLon,
-                )
         }
     }
 }
@@ -245,7 +180,6 @@ fun FavoriteContent(
             )
         }
         AddCityCard()
-
     }
 }
 
