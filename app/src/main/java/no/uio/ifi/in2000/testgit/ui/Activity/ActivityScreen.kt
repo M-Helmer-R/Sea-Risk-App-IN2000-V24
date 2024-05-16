@@ -130,7 +130,7 @@ fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController
 fun ReccomendationBox(value: Int, selectedActivityUIState: selectedActivityUIState) {
     val prosent = value * 10
     val activityRecommendation = when {
-        prosent in 0..30 -> "Lav anbefaling. Det kan være best å velge en annen aktivitet, sted eller dag."
+        prosent in 0..30 -> "Lav anbefaling. Det kan være best å velge en annen aktivitet eller dag."
         prosent in 31..50 -> "Dårlig anbefaling. Forholdene er akseptable, men vær forsiktig."
         prosent in 51..70 -> "OK anbefaling. Forholdene ser OK ut for denne aktiviteten."
         prosent in 71..100 -> "Sterk anbefaling. Dette er et flott tidspunkt for aktiviteten!"
