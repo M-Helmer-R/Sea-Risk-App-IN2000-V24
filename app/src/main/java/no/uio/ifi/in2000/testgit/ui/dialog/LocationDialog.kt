@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.testgit.ui.home.dialog
+package no.uio.ifi.in2000.testgit.ui.dialog
 import android.Manifest
 import android.content.Context
 import android.content.Intent

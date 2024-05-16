@@ -37,12 +37,12 @@ import no.uio.ifi.in2000.testgit.ui.home.HomeUiState
 import no.uio.ifi.in2000.testgit.ui.home.HomeViewModel
 import no.uio.ifi.in2000.testgit.ui.home.HorizontalCard
 import no.uio.ifi.in2000.testgit.ui.home.MainCard
-import no.uio.ifi.in2000.testgit.ui.home.dialog.DeniedPermissionDialog
-import no.uio.ifi.in2000.testgit.ui.home.dialog.DisabledLocationDialog
-import no.uio.ifi.in2000.testgit.ui.home.dialog.LocationButton
-import no.uio.ifi.in2000.testgit.ui.home.dialog.LocationStatus
-import no.uio.ifi.in2000.testgit.ui.home.dialog.PermissionRationaleDialog
-import no.uio.ifi.in2000.testgit.ui.home.dialog.getUserLocation
+import no.uio.ifi.in2000.testgit.ui.dialog.DeniedPermissionDialog
+import no.uio.ifi.in2000.testgit.ui.dialog.DisabledLocationDialog
+import no.uio.ifi.in2000.testgit.ui.dialog.LocationStatus
+import no.uio.ifi.in2000.testgit.ui.dialog.PermissionRationaleDialog
+import no.uio.ifi.in2000.testgit.ui.dialog.getUserLocation
+
 import no.uio.ifi.in2000.testgit.ui.map.TopBar
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 import no.uio.ifi.in2000.testgit.ui.theme.White
