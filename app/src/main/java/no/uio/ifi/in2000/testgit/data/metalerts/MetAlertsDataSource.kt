@@ -26,29 +26,33 @@ class MetAlertsDataSource {
 
 
     suspend fun getMetAlerts(lat: String, lon: String): AlertFeatures? {
-        val metAlerts = "weatherapi/metalerts/2.0/current.json?lat=$lat&lon=$lon"
-        val callMetAlerts = client.get(metAlerts)
-        val dataMetalerts: Metalerts
-        // if response is successful, complete the apicall and create metalerts objects
+        try {
+            val metAlerts = "weatherapi/metalerts/2.0/current.json?lat=$lat&lon=$lon"
+            val callMetAlerts = client.get(metAlerts)
+            val dataMetalerts: Metalerts
+            // if response is successful, complete the apicall and create metalerts objects
 
 
 
-        if(callMetAlerts.status.isSuccess()) {
-            dataMetalerts = callMetAlerts.body<Metalerts>()
-        } else {
-            dataMetalerts = Metalerts(features = emptyList(), lang = null, lastChange = null, type = null)
-        }
+            if(callMetAlerts.status.isSuccess()) {
+                dataMetalerts = callMetAlerts.body<Metalerts>()
+            } else {
+                dataMetalerts = Metalerts(features = emptyList(), lang = null, lastChange = null, type = null)
+            }
 
-        // depending on metalertsobject,
-        if(dataMetalerts.features?.isEmpty() == false) {
-            return dataMetalerts.features[0]
-        } else {
+            // depending on metalertsobject,
+            if(dataMetalerts.features?.isEmpty() == false) {
+                return dataMetalerts.features[0]
+            } else {
+                return null
+
+            }
+            //val currentMetAlerts = dataMetAlerts.features.get(0)
+
+
+        } catch( e: Exception){
             return null
-
         }
-        //val currentMetAlerts = dataMetAlerts.features.get(0)
-
-
-    }
+        }
 
 }
