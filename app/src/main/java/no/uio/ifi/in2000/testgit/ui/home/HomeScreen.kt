@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
 import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -75,22 +76,62 @@ fun HomeScreen(
         .fillMaxSize()
         .padding(8.dp)
 
-    if (ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
-        onEvent(HomeEvent.ShowDeniedPermissionDialog)
-    } else {
-        if (locationPermissionState.allPermissionsGranted) {
-            locationViewModel.location.observe(context as LifecycleOwner, Observer{ location ->
-                location?.let {
-                    onEvent(HomeEvent.SetUserPosition(lon = it.longitude, lat = it.latitude))
-                } ?: run {
-                    onEvent(HomeEvent.ShowDisabledLocationDialog)
-                }
-            })
-            locationViewModel.fetchLocation()
-        } else {
+    /*
+    LaunchedEffect(key1 = true) {
+        val activity = context as Activity
+        val fineLocationPermission = Manifest.permission.ACCESS_FINE_LOCATION
+        val coarseLocationPermission = Manifest.permission.ACCESS_COARSE_LOCATION
+
+        // Function to check if a specific permission is granted
+        fun isPermissionGranted(permission: String): Boolean {
+            return ActivityCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED
+        }
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, fineLocationPermission) ||
+            ActivityCompat.shouldShowRequestPermissionRationale(activity, coarseLocationPermission)
+        ) {
             onEvent(HomeEvent.ShowPermissionDialog)
+        } else {
+            // Check if either location permission is granted
+            if (isPermissionGranted(fineLocationPermission) || isPermissionGranted(coarseLocationPermission)) {
+                getUserLocation(context) { location ->
+                    location?.let {
+                        onEvent(HomeEvent.SetUserPosition(lon = it.longitude, lat = it.latitude))
+                    } ?: run {
+                        onEvent(HomeEvent.ShowDisabledLocationDialog)
+                    }
+                }
+            } else {
+                onEvent(HomeEvent.ShowDeniedPermissionDialog)
+            }
         }
     }
+
+
+
+     */
+    LaunchedEffect(key1 = true) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(
+                context as Activity,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        ) {
+            onEvent(HomeEvent.ShowPermissionDialog)
+        } else {
+            if (locationPermissionState.allPermissionsGranted) {
+                getUserLocation(context) { location ->
+                    location?.let {
+                        onEvent(HomeEvent.SetUserPosition(lon = it.longitude, lat = it.latitude))
+                    } ?: run {
+                        onEvent(HomeEvent.ShowDisabledLocationDialog)
+                    }
+                }
+            } else {
+                onEvent(HomeEvent.ShowDeniedPermissionDialog)
+            }
+        }
+    }
+
     Scaffold(
         containerColor = DarkBlue,
         topBar = {
