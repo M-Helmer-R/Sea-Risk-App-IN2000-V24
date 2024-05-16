@@ -28,7 +28,7 @@ suspend fun badeAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUIS
         WeatherLimit(2.0..7.0, 30.0),
         WeatherLimit(7.0..12.0, 55.0),
         WeatherLimit(12.0..15.0, 80.0),
-        WeatherLimit(15.0..30.0, 100.0),
+        WeatherLimit(20.0..30.0, 100.0),
         WeatherLimit(30.0..33.0, 85.0), // higher risk of dehydration
         WeatherLimit(33.0..Double.POSITIVE_INFINITY, 75.0) // higher risk of dehydration
     )
@@ -54,9 +54,7 @@ suspend fun badeAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUIS
     val waterTempResult = calculateRiskLevel(waterTempWeight, oceanTemp!!, oceanTemps)
     val windSpeedResult = calculateRiskLevel(windSpeedWeight, windSpeed!!, windSpeeds)
 
-    Log.i("badeAlgoritme", "wind: $windSpeedResult\")\n" +
-            "\"water: $waterTempResult\"\n" +
-            "\"air: $airTempResult\"")
+
     // returns 0 if one of the values is outside acceptable parameters
     return if (
         windSpeedResult == 0.0 ||
