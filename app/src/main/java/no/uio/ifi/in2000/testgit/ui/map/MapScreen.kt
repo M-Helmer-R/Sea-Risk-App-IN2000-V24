@@ -217,29 +217,29 @@ fun Mapscreen(
                             }
                             .build()
                     ) {
-                        if( true){ //Få inn testene til Kriss
-                            Card(
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .width(200.dp),
-                                colors = CardDefaults.cardColors(containerColor = DarkBlue),
-                                shape = RoundedCornerShape(18.dp)
-                            ) {
-                                Column(modifier = Modifier.padding(8.dp)) {
-                                    Text(locationUIState.value.placeName, color = Color.White)
-                                    Button(
-                                        onClick = { navController.navigate("ActivityScreen/${locationUIState.value.placeName}/${point.latitude()}/${point.longitude()}") }, //Få inn navn på kommune Kriss, tror ikke point.l() ikke funker
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = LightBlue,
-                                            contentColor = Color.White
-                                        )
-                                    ) {
-                                        Text("Naviger", color = Color.White)
-                                    }
-                                    //Opprette en nei knapp som closer
+                         //Få inn testene til Kriss
+                        Card(
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .width(200.dp),
+                            colors = CardDefaults.cardColors(containerColor = DarkBlue),
+                            shape = RoundedCornerShape(18.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(8.dp)) {
+                                Text(locationUIState.value.placeName, color = Color.White)
+                                Button(
+                                    onClick = { navController.navigate("ActivityScreen/${locationUIState.value.placeName}/${point.latitude()}/${point.longitude()}") }, //Få inn navn på kommune Kriss, tror ikke point.l() ikke funker
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = LightBlue,
+                                        contentColor = Color.White
+                                    )
+                                ) {
+                                    Text("Naviger", color = Color.White)
                                 }
+                                //Opprette en nei knapp som closer
                             }
                         }
+
 
                     }
                 }
