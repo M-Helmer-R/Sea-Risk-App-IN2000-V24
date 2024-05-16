@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.testgit.ui.home
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Star
@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -35,6 +36,7 @@ import no.uio.ifi.in2000.testgit.ui.theme.LightBlue
 import no.uio.ifi.in2000.testgit.ui.theme.LightBlueShade1
 import no.uio.ifi.in2000.testgit.ui.theme.White
 
+//Cards for cities in favorites
 @Composable
 fun MainCard(
     city: City,
@@ -102,6 +104,7 @@ fun MainCard(
     }
 }
 
+//Cards for nearest cities
 @SuppressLint("DefaultLocale")
 @Composable
 fun HorizontalCard(
@@ -110,8 +113,7 @@ fun HorizontalCard(
     navController: NavController
 ) {
     Card(
-        modifier = Modifier
-            //.width(196.dp)
+        modifier = Modifier.width(164.dp)
             .fillMaxSize()
             .padding(8.dp),
         colors = CardDefaults.cardColors(containerColor = LightBlue),
@@ -147,6 +149,7 @@ fun HorizontalCard(
     }
 }
 
+//Card to display info on how to add cards
 @Composable
 fun AddCityCard(){
     Card(
@@ -157,18 +160,20 @@ fun AddCityCard(){
         shape = MaterialTheme.shapes.medium,
     ) {
         Box (
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            modifier = Modifier.fillMaxSize().padding(8.dp),
+            contentAlignment = Alignment.Center,
         ){
             Text(
-                text = "For å legge til favoritter.\n" +
-                        "Gå til aktivitettsiden til en by",
+                text = "For å legge til favoritter: \n" +
+                        "Gå til aktivitetsiden til en by",
                 style = MaterialTheme.typography.bodySmall.copy(color = White),
+                textAlign = TextAlign.Center
             )
         }
     }
 }
 
+//Button to indicate if city is favorite and to remove city from favorites
 @Composable
 fun FavoriteButton(
     city: City,
@@ -176,9 +181,7 @@ fun FavoriteButton(
 ){
     Button(
         onClick = {
-            Log.w("SCREEN", "City: ${city.favorite}")
             onEvent(HomeEvent.UpdateFavorite(city))
-            Log.w("SCREEN", "City: ${city.favorite}")
         }
     ) {
         if (city.favorite == 1) {
@@ -187,13 +190,11 @@ fun FavoriteButton(
                 contentDescription = "is favorite",
                 tint = Color.Yellow
             )
-            Log.w("CITY_SCREEN", "is favorite")
         } else {
             Icon(
                 imageVector = Icons.Outlined.Star,
                 contentDescription = "not favorite",
             )
-            Log.w("CITY_SCREEN", "is not favorite")
         }
     }
 }

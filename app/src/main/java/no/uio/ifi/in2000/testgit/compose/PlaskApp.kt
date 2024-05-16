@@ -1,6 +1,6 @@
 package no.uio.ifi.in2000.testgit.compose
 
-import HomeScreen
+import no.uio.ifi.in2000.testgit.ui.home.HomeScreen
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.runtime.Composable
@@ -54,7 +54,7 @@ fun PlaskAppHost(
 /*NavHost(navController = navController, startDestination = "home") {
                 composable("home") {
                     val state by viewModel.homeUiState.collectAsState()
-                    HomeScreen(navController, "home", viewModel, onEvent = viewModel::onEvent)
+                    no.uio.ifi.in2000.testgit.ui.home.HomeScreen(navController, "home", viewModel, onEvent = viewModel::onEvent)
                 }
                 composable("kart") {
                     MapScreenMain(navController, "kart")

@@ -1,8 +1,3 @@
-@file:OptIn(ExperimentalPermissionsApi::class, ExperimentalPermissionsApi::class,
-    ExperimentalPermissionsApi::class, ExperimentalPermissionsApi::class,
-    ExperimentalPermissionsApi::class
-)
-
 package no.uio.ifi.in2000.testgit.ui.home
 
 import android.util.Log
@@ -10,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -32,6 +26,7 @@ class HomeViewModel (
     private val _userLon = MutableStateFlow( 10.7522)
     private val _homeUiState = MutableStateFlow(HomeUiState())
 
+    //Creates state flow for HomeUiState
     val homeUiState = combine(
         _homeUiState, _favorites, _preloaded, _userLon, _userLat
     ) { state , favorites, preloaded, userLon, userLat ->
@@ -48,6 +43,7 @@ class HomeViewModel (
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeUiState())
 
+    //Creates event flow for HomeEvent
     fun onEvent( event : HomeEvent){
         when (event) {
 
@@ -159,17 +155,7 @@ class HomeViewModel (
         }
     }
 
-    private fun getNearestCities(cities : List<City>, lon : Double, lat : Double) : Map<City, Double> {
-        val citiesDist : MutableMap<City, Double> = mutableMapOf()
-        cities.map { city -> citiesDist.put(city, haversine(city.lat, city.lon, lat, lon))
-            Log.w("VIEW_MODEL", "User location: ${lat}, ${lon}" )
-            Log.w("VIEW_MODEL", "City: ${city.lat} ${city.lon}" )
-            Log.w("VIEW_MODEL", "Distance: ${haversine(city.lat, city.lon, lat, lon)}" )
-        }
-        Log.w("VIEW_MODEL", "----END---." )
-        return citiesDist.toList().sortedBy { it.second }.take(5).toMap()
-    }
-    /*
+    //Calculates the distance between two cities
     private fun getNearestCities(
         cities: List<City>,
         lat: Double,
@@ -178,12 +164,11 @@ class HomeViewModel (
         return cities
             .map { city -> city to haversine(city.lat, city.lon, lat, lon) }
             .sortedBy { it.second }
-            .take(79)
+            .take(5)
             .toMap()
     }
 
-     */
-
+    //Companion object for ViewModelFactory
     @Suppress("UNCHECKED_CAST")
     companion object{
         val Factory : ViewModelProvider.Factory = object  : ViewModelProvider.Factory {

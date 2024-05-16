@@ -3,6 +3,7 @@ package no.uio.ifi.in2000.testgit.data.room
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
 
+//Repository for database operations
 interface DatabaseRepository{
      fun getAll() : Flow<List<City>>
      fun getPreLoaded() : Flow<List<City>>
@@ -61,11 +62,7 @@ class DatabaseRepositoryImpl (
     }
 
     override fun isInDatabase(name : String) : Boolean {
-        return if (cityDao.getCityByName(name) == null) {
-            false
-        } else {
-            true
-        }
+        return (cityDao.getCityByName(name) != null)
     }
 
     override fun isFavorite(name: String) : Boolean {

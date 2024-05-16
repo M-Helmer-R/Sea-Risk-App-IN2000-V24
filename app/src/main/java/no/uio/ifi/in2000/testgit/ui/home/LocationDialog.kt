@@ -4,7 +4,6 @@
 
 package no.uio.ifi.in2000.testgit.ui.home
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -16,7 +15,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -26,7 +24,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
-import no.uio.ifi.in2000.testgit.ui.theme.White
 
 //Permission dialog. If user does not give permission, app defaults to Oslo.
 @RequiresPermission(
@@ -39,7 +36,6 @@ fun PermissionRationaleDialog(
     locationPermissionState: MultiplePermissionsState,
     locationViewModel: LocationViewModel
 ) {
-
     val locationPermissionResultLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -58,12 +54,13 @@ fun PermissionRationaleDialog(
             onEvent(HomeEvent.ShowDeniedPermissionDialog)
         }
     }
-
-
     AlertDialog(
         onDismissRequest = { onEvent(HomeEvent.HidePermissionDialog)},
-        title = { Text( text = "Tilgang til posisjon")},
-        text = { Text(text = "Plask trenger tilgang til din posisjon for å vise de næmeste byene") },
+        title = { Text( text = "Tillatelse til posisjon")},
+        text = { Text(
+            text = "Plask trenger din poisjon. " +
+                    "For best brukeropplevelse gi Plask din tillatelse for å hente din posisjon")
+               },
         confirmButton = {
             Button(
                 onClick = {
@@ -77,7 +74,7 @@ fun PermissionRationaleDialog(
                     )
                 },
             ) {
-                Text("Gi tillatelser")
+                Text("Vis tillatelser")
             }
         },
         dismissButton = {
@@ -93,18 +90,18 @@ fun PermissionRationaleDialog(
 }
 
 //Dialog if user has denied permission on device. Show button to navigate to app settings
-
 @Composable
 fun DeniedPermissionDialog(
     onEvent: (HomeEvent) -> Unit,
     context : Context = LocalContext.current
 ){
     AlertDialog(
-        onDismissRequest = { },
-        title = { Text( text = "Mangler posisjons-tilgang")},
-        text = { Text( text = "Plask trenger tilgang til din posisjon for å vise de næmeste byene")},
+        onDismissRequest = { onEvent(HomeEvent.HideDeniedPermissionDialog) },
+        title = { Text( text = "Tillatelse avvist")},
+        text = { Text( text = "For den best brukeropplevelse anbefaler vi å slå på precise location ")
+               },
         confirmButton = {
-            TextButton(
+            Button(
                 onClick = {
                     onEvent(HomeEvent.HideDeniedPermissionDialog)
                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
@@ -112,9 +109,18 @@ fun DeniedPermissionDialog(
                     context.startActivity(intent)
                 },
             ) {
-                Text("Gå til applikasjonsinnstillinger")
+                Text("Gå til innstillinger")
             }
         },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onEvent(HomeEvent.HidePermissionDialog)
+                }
+            ) {
+                Text("Avvis")
+            }
+        }
     )
 }
 
@@ -127,51 +133,27 @@ fun DisabledLocationDialog(
 ){
     AlertDialog(
         onDismissRequest = { onEvent(HomeEvent.HideDeniedPermissionDialog)},
-        title = { Text( text = "Lokasjon slått av")},
-        text = { Text( text = "Gå til innstillinger og slå på lokasjon") },
+        title = { Text( text = "Posisjon slått av")},
+        text = { Text( text = "Din posisjon er slått av på enheten din. " +
+                "For best brukeropplevelse slå på posisjon.")
+        },
         confirmButton = {
-            TextButton(
+            Button(
                 onClick = {
                     onEvent(HomeEvent.HideDisabledLocationDialog)
                     context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) },
                 ) {
                 Text("Gå til innstillinger")
             }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onEvent(HomeEvent.HideDisabledLocationDialog)
+                }
+            ) {
+                Text("Avvis")
+            }
         }
     )
-}
-
-//Shows permission status on HomeScreen
-@SuppressLint("DefaultLocale")
-@Composable
-fun LocationStatus(
-    locationState: MultiplePermissionsState,
-    userLat : Double,
-    userLon: Double
-){
-    Text(
-        text = "Din posisjon: ${String.format("%.2f",userLat)}, ${String.format("%.2f",userLon)}",
-        style = MaterialTheme.typography.bodySmall.copy(color = White),
-    )
-    /*
-    if (locationState.allPermissionsGranted){
-        Text(
-            text = "Din posisjon: ${String.format("%.2f",userLat)}, ${String.format("%.2f",userLon)}",
-            style = MaterialTheme.typography.bodySmall.copy(color = White),
-        )
-    } else {
-        Row {
-            Text(
-                text = "Lokasjonsstilltelse: ",
-                style = MaterialTheme.typography.bodySmall.copy(color = White),
-            )
-            Icon(
-                imageVector = Icons.Filled.Clear,
-                contentDescription ="Location",
-                tint = Color.Red
-            )
-        }
-    }
-
-     */
 }
