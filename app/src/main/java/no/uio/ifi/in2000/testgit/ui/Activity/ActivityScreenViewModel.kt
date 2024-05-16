@@ -26,7 +26,9 @@ import no.uio.ifi.in2000.testgit.data.surfeAlgoritme
 import no.uio.ifi.in2000.testgit.model.nowcast.Details
 import no.uio.ifi.in2000.testgit.ui.map.OceanForeCastUIState
 
-
+data class selectedActivityUIState(
+    val selectedactivity: String?
+)
 data class NowCastUIState(
     val nowCastData: Details?
 )
@@ -47,6 +49,9 @@ class ActivityScreenViewModel(
     private val dbRepository : DatabaseRepository
 ): ViewModel() {
     private val repository: MainRepository = MainRepository()
+
+    val _selectedActivityUIState = MutableStateFlow(selectedActivityUIState("bading"))
+    val selectedActivityUIState: StateFlow<selectedActivityUIState> = _selectedActivityUIState.asStateFlow()
 
     private val _nowCastUIState = MutableStateFlow(NowCastUIState(null))
     val nowCastUIState: StateFlow<NowCastUIState> = _nowCastUIState.asStateFlow()

@@ -62,6 +62,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.selects.select
 import no.uio.ifi.in2000.testgit.R
 import no.uio.ifi.in2000.testgit.ui.BottomBar
 import no.uio.ifi.in2000.testgit.ui.map.OceanForeCastUIState
@@ -83,6 +84,7 @@ fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController
     val oceanForeCastUIState =activityScreenViewModel.oceanForeCastUIState.collectAsState()
     //val metAlertsUIState = activityScreenViewModel.metAlertsUIState.collectAsState()
 
+    val selectedActivityUIState = activityScreenViewModel.selectedActivityUIState.collectAsState()
 
     val activities = listOf("swimming", "sailing","surfing" , "kayaking")
     var selectedButton by remember { mutableStateOf(activities[0]) }
@@ -99,13 +101,13 @@ fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController
             lon = lon,
             onEvent = onEvent,
         )
-        recommendationUIState.value.level?.let { ReccomendationBox(value = it) }
+        recommendationUIState.value.level?.let { ReccomendationBox(value = it, selectedActivityUIState.value) }
         Row(modifier = Modifier
             .fillMaxWidth()
             .padding(end = 0.dp)) {
             GenerellInfo(chosenCity, lat, lon, nowCastUIState.value, oceanForeCastUIState.value)
             Spacer(modifier = Modifier.weight(1f))
-            recommendationUIState.value.level?.let { ColorBar(value = it) }
+            recommendationUIState.value.level?.let { ColorBar(value = it, selectedActivityUIState.value) }
         }
         Spacer(Modifier.weight(1f))
         ExpandableIconButton(activities, selectedButton, activityScreenViewModel) { selectedButton = it }
@@ -115,7 +117,7 @@ fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController
 
 
 @Composable
-fun ReccomendationBox(value: Int) {
+fun ReccomendationBox(value: Int, selectedActivityUIState: selectedActivityUIState) {
     val prosent = value * 10
     val activityRecommendation = when {
         prosent in 0..30 -> "Lav anbefaling. Det kan være best å velge en annen aktivitet, sted eller dag."
@@ -134,7 +136,7 @@ fun ReccomendationBox(value: Int) {
             .height(110.dp)
     ) {
         Text(
-            text = "Anbefaling for aktivitet: $prosent %   - $activityRecommendation",
+            text = "Anbefaling for ${selectedActivityUIState.selectedactivity }: $prosent %   - $activityRecommendation",
             color = Color.White,
             fontSize = 20.sp,
             modifier = Modifier.padding(16.dp),
@@ -223,7 +225,7 @@ fun TopBarBy(
     )
 }
 @Composable
-fun ColorBar(value: Int) {
+fun ColorBar(value: Int, selectedActivityUIState: selectedActivityUIState) {
     var showDialog by remember { mutableStateOf(false) }
     require(value in 0..10) { "Verdien må være mellom 0 og 10" }
     val prosent = value * 10
@@ -245,7 +247,7 @@ fun ColorBar(value: Int) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Vi anbefaler (Aktivitet): $prosent % ",
+            text = "Vi anbefaler ${selectedActivityUIState.selectedactivity}: $prosent % ",
             color = Color.White,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
