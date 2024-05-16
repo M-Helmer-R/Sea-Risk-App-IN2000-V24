@@ -1,6 +1,6 @@
-package no.uio.ifi.in2000.testgit.data
+package no.uio.ifi.in2000.testgit.data.algorithms
 
-import android.util.Log
+import no.uio.ifi.in2000.testgit.data.WeatherLimit
 import no.uio.ifi.in2000.testgit.ui.Activity.NowCastUIState
 import no.uio.ifi.in2000.testgit.ui.map.OceanForeCastUIState
 import kotlin.math.roundToInt

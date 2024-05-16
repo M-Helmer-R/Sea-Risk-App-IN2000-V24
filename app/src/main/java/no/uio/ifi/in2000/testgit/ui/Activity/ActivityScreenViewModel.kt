@@ -17,12 +17,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.testgit.MainApplication
 import no.uio.ifi.in2000.testgit.data.MainRepository
-import no.uio.ifi.in2000.testgit.data.badeAlgoritme
-import no.uio.ifi.in2000.testgit.data.padleAlgoritme
+import no.uio.ifi.in2000.testgit.data.algorithms.badeAlgoritme
+import no.uio.ifi.in2000.testgit.data.algorithms.padleAlgoritme
 import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.data.room.DatabaseRepository
-import no.uio.ifi.in2000.testgit.data.seileAlgoritme
-import no.uio.ifi.in2000.testgit.data.surfeAlgoritme
+import no.uio.ifi.in2000.testgit.data.algorithms.seileAlgoritme
+import no.uio.ifi.in2000.testgit.data.algorithms.surfeAlgoritme
 import no.uio.ifi.in2000.testgit.model.nowcast.Details
 import no.uio.ifi.in2000.testgit.ui.map.OceanForeCastUIState
 

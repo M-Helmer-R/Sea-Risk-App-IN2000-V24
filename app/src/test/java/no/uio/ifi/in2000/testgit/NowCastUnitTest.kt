@@ -2,7 +2,6 @@ package no.uio.ifi.in2000.testgit
 
 import kotlinx.coroutines.runBlocking
 import no.uio.ifi.in2000.testgit.data.nowcast.NowCastDataSource
-import no.uio.ifi.in2000.testgit.data.seileAlgoritme
 import org.junit.Assert
 import org.junit.Test
 

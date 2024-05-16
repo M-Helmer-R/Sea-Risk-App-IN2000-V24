@@ -1,9 +1,7 @@
 package no.uio.ifi.in2000.testgit
 
-import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.runBlocking
-import no.uio.ifi.in2000.testgit.data.padleAlgoritme
-import no.uio.ifi.in2000.testgit.data.seileAlgoritme
+import no.uio.ifi.in2000.testgit.data.algorithms.seileAlgoritme
 import no.uio.ifi.in2000.testgit.model.nowcast.Details
 import no.uio.ifi.in2000.testgit.model.oceanforecast.OceanDetails
 import no.uio.ifi.in2000.testgit.ui.Activity.NowCastUIState
