@@ -21,7 +21,6 @@ import no.uio.ifi.in2000.testgit.data.badeAlgoritme
 import no.uio.ifi.in2000.testgit.data.padleAlgoritme
 import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.data.room.DatabaseRepository
-import no.uio.ifi.in2000.testgit.data.room.DatabaseRepositoryImpl
 import no.uio.ifi.in2000.testgit.data.seileAlgoritme
 import no.uio.ifi.in2000.testgit.data.surfeAlgoritme
 import no.uio.ifi.in2000.testgit.model.nowcast.Details
@@ -145,9 +144,13 @@ class ActivityScreenViewModel(
                         Log.w("ActivityScreenViewModel", "Added old city as favorite")
                     } else {
                         val newCity = City(
-                            name = event.name,
+                            name = if ( event.name.first().isWhitespace()) {
+                                event.name.replaceFirstChar {""}
+                            } else {
+                                event.name
+                            },
                             lat = event.lat.toDoubleOrNull() ?: 0.0,
-                            lon = event.lat.toDoubleOrNull() ?: 0.0,
+                            lon = event.lon.toDoubleOrNull() ?: 0.0,
                             customized = 1,
                             favorite = 1
                         )
@@ -158,7 +161,11 @@ class ActivityScreenViewModel(
             }
             is ActivityEvent.RemoveFavorite -> {
                 viewModelScope.launch (Dispatchers.IO){
-                    dbRepository.removeFavoriteByName(event.name)
+                    if (dbRepository.isCustom(event.name)){
+                        dbRepository.deleteCityByName(event.name)
+                    } else {
+                        dbRepository.removeFavoriteByName(event.name)
+                    }
                 }
             }
 

@@ -6,7 +6,6 @@
 package no.uio.ifi.in2000.testgit.ui.home
 
 import android.util.Log
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -22,7 +21,6 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.testgit.MainApplication
 import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.data.room.DatabaseRepository
-import no.uio.ifi.in2000.testgit.data.room.haversine
 
 class HomeViewModel (
     private val repository : DatabaseRepository
@@ -30,8 +28,8 @@ class HomeViewModel (
 
     private val _preloaded = repository.getPreLoaded().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     private val _favorites = repository.getFavorites().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
-    private val _userLat = MutableStateFlow(59.56374)
-    private val _userLon = MutableStateFlow( 10.43067)
+    private val _userLat = MutableStateFlow(59.9139)
+    private val _userLon = MutableStateFlow( 10.7522)
     private val _homeUiState = MutableStateFlow(HomeUiState())
 
     val homeUiState = combine(
@@ -42,7 +40,11 @@ class HomeViewModel (
             preloaded = preloaded,
             userLon = userLon,
             userLat = userLat,
-            nearestCities = getNearestCities(preloaded, userLon, userLat)
+            nearestCities = getNearestCities(
+                cities = preloaded,
+                lat = userLat,
+                lon = userLon
+            )
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeUiState())
 
@@ -159,9 +161,28 @@ class HomeViewModel (
 
     private fun getNearestCities(cities : List<City>, lon : Double, lat : Double) : Map<City, Double> {
         val citiesDist : MutableMap<City, Double> = mutableMapOf()
-        cities.map { city -> citiesDist.put(city, haversine(city.lat, city.lon, lat, lon)) }
+        cities.map { city -> citiesDist.put(city, haversine(city.lat, city.lon, lat, lon))
+            Log.w("VIEW_MODEL", "User location: ${lat}, ${lon}" )
+            Log.w("VIEW_MODEL", "City: ${city.lat} ${city.lon}" )
+            Log.w("VIEW_MODEL", "Distance: ${haversine(city.lat, city.lon, lat, lon)}" )
+        }
+        Log.w("VIEW_MODEL", "----END---." )
         return citiesDist.toList().sortedBy { it.second }.take(5).toMap()
     }
+    /*
+    private fun getNearestCities(
+        cities: List<City>,
+        lat: Double,
+        lon: Double
+    ): Map<City, Double> {
+        return cities
+            .map { city -> city to haversine(city.lat, city.lon, lat, lon) }
+            .sortedBy { it.second }
+            .take(79)
+            .toMap()
+    }
+
+     */
 
     @Suppress("UNCHECKED_CAST")
     companion object{

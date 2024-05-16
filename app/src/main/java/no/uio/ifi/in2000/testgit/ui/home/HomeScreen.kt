@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.content.pm.PackageManager
 import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,29 +26,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import no.uio.ifi.in2000.testgit.data.room.City
-import no.uio.ifi.in2000.testgit.ui.home.AddCityCard
 import no.uio.ifi.in2000.testgit.ui.BottomBar
+import no.uio.ifi.in2000.testgit.ui.home.AddCityCard
+import no.uio.ifi.in2000.testgit.ui.home.DeniedPermissionDialog
+import no.uio.ifi.in2000.testgit.ui.home.DisabledLocationDialog
 import no.uio.ifi.in2000.testgit.ui.home.HomeEvent
 import no.uio.ifi.in2000.testgit.ui.home.HomeUiState
 import no.uio.ifi.in2000.testgit.ui.home.HomeViewModel
 import no.uio.ifi.in2000.testgit.ui.home.HorizontalCard
-import no.uio.ifi.in2000.testgit.ui.home.MainCard
-import no.uio.ifi.in2000.testgit.ui.home.DeniedPermissionDialog
-import no.uio.ifi.in2000.testgit.ui.home.DisabledLocationDialog
 import no.uio.ifi.in2000.testgit.ui.home.LocationStatus
 import no.uio.ifi.in2000.testgit.ui.home.LocationViewModel
+import no.uio.ifi.in2000.testgit.ui.home.MainCard
 import no.uio.ifi.in2000.testgit.ui.home.PermissionRationaleDialog
-import no.uio.ifi.in2000.testgit.ui.home.getUserLocation
 import no.uio.ifi.in2000.testgit.ui.map.TopBar
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 import no.uio.ifi.in2000.testgit.ui.theme.White
+
 @RequiresPermission(
     anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION]
 )
@@ -110,25 +108,22 @@ fun HomeScreen(
 
 
      */
-    LaunchedEffect(key1 = true) {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(
-                context as Activity,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
-        ) {
+    LaunchedEffect(key1 = locationPermissionState.allPermissionsGranted) {
+        onEvent(HomeEvent.UpdateNearest)
+        if (locationPermissionState.allPermissionsGranted) {
+            locationViewModel.location.observe(context as LifecycleOwner) { location ->
+                location?.let {
+                    onEvent(HomeEvent.SetUserPosition(lon = it.longitude, lat = it.latitude))
+                    onEvent(HomeEvent.UpdateNearest)
+                } ?: run {
+                    onEvent(HomeEvent.ShowDisabledLocationDialog)
+                }
+            }
+            locationViewModel.fetchLocation()
+        } else if (ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
             onEvent(HomeEvent.ShowPermissionDialog)
         } else {
-            if (locationPermissionState.allPermissionsGranted) {
-                getUserLocation(context) { location ->
-                    location?.let {
-                        onEvent(HomeEvent.SetUserPosition(lon = it.longitude, lat = it.latitude))
-                    } ?: run {
-                        onEvent(HomeEvent.ShowDisabledLocationDialog)
-                    }
-                }
-            } else {
-                onEvent(HomeEvent.ShowDeniedPermissionDialog)
-            }
+            onEvent(HomeEvent.ShowDeniedPermissionDialog)
         }
     }
 
@@ -151,7 +146,11 @@ fun HomeScreen(
         ) {
             item{
                 if (homeUiState.permissionDialog){
-                    PermissionRationaleDialog(onEvent = onEvent)
+                    PermissionRationaleDialog(
+                        locationPermissionState = locationPermissionState,
+                        locationViewModel = locationViewModel,
+                        onEvent = onEvent
+                    )
                 }
                 if (homeUiState.deniedLocationDialog){
                     DeniedPermissionDialog(onEvent)
@@ -162,7 +161,9 @@ fun HomeScreen(
             }
             item{
                 HorizontalContent(
-                    homeUiState = homeUiState,
+                    nearestCities = homeUiState.nearestCities,
+                    userLat = homeUiState.userLat,
+                    userLon = homeUiState.userLon,
                     modifier = containerModifier,
                     locationPermissionState = locationPermissionState,
                     navController = navController
@@ -183,13 +184,12 @@ fun HomeScreen(
 @SuppressLint("MissingPermission")
 @Composable
 fun HorizontalContent(
-    homeUiState: HomeUiState,
     modifier: Modifier,
     locationPermissionState : MultiplePermissionsState,
     navController: NavController,
-    nearestCities : Map<City, Double> = homeUiState.nearestCities,
-    userLat : Double = homeUiState.userLat,
-    userLon : Double = homeUiState.userLon
+    nearestCities : Map<City, Double>,
+    userLat : Double,
+    userLon : Double,
 ){
     Column (
         modifier = modifier,

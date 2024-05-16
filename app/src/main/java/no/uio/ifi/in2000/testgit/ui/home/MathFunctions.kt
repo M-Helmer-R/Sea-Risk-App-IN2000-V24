@@ -1,6 +1,9 @@
-package no.uio.ifi.in2000.testgit.data.room
+package no.uio.ifi.in2000.testgit.ui.home
 
-import kotlin.math.*
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 fun haversine(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
     val R = 6371 // Radius of the Earth in kilometers

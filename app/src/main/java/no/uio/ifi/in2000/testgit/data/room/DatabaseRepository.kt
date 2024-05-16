@@ -15,6 +15,9 @@ interface DatabaseRepository{
      suspend fun removeFavoriteByName(name: String)
      fun isInDatabase(name : String) : Boolean
      fun isFavorite(name: String) : Boolean
+     fun isCustom(name: String) : Boolean
+
+     suspend fun deleteCityByName(name: String)
 }
 
 class DatabaseRepositoryImpl (
@@ -69,4 +72,11 @@ class DatabaseRepositoryImpl (
         return cityDao.isCityFavorite(name)
     }
 
+    override fun isCustom(name: String) : Boolean {
+        return cityDao.isCityCustom(name)
+    }
+
+    override suspend fun deleteCityByName(name: String) {
+        cityDao.deleteCityByName(name)
+    }
 }

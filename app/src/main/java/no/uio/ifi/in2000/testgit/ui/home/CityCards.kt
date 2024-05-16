@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
@@ -83,15 +82,15 @@ fun MainCard(
                     buildAnnotatedString {
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, color = Color.White)
                         ) {
-                            append("Lon: ")
+                            append("Lat: ")
                         }
-                        append("${city.lon} ")
+                        append(String.format("%.2f", city.lat))
                         append("   ")
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, color = Color.White)
                         ) {
-                            append("Lat: ")
+                            append("Lon: ")
                         }
-                        append("${city.lat} ")
+                        append(String.format("%.2f", city.lon))
                     }
                 )
             }

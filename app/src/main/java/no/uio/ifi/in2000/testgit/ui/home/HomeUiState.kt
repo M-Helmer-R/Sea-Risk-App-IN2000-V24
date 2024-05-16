@@ -16,7 +16,7 @@ data class HomeUiState(
     val disabledLocationDialog : Boolean = false,
 
     //Positon dialogs
-    var userLat : Double = 59.56374,
-    var userLon : Double = 10.43067,
+    var userLat : Double = 59.9139,
+    var userLon : Double = 10.7522,
 
     )
