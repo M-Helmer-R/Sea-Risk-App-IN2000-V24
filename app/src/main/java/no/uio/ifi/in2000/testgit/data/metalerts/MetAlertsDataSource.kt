@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.testgit.data.metalerts
 
-import android.util.Log
 import com.example.example.AlertFeatures
 import com.example.example.Metalerts
 import io.ktor.client.HttpClient
@@ -34,10 +33,11 @@ class MetAlertsDataSource {
             return metAlertsData.features?.get(0)
 
 
+
         } catch( e: Exception){
-            Log.i("MetAlertsDataSource", "FAILED")
             return null
         }
+
     }
 
 }

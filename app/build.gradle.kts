@@ -52,7 +52,8 @@ android {
 }
 
 dependencies {
-
+    // navigation test implementation
+    androidTestImplementation("androidx.navigation:navigation-testing:2.5.3")
     // Android Core
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")

@@ -39,13 +39,13 @@ class OceanForeCastDataSource {
             val oceanForecastData = oceanForecastResponse.body<OceanForeCastData>()
             //val instantNowcastData = dataNowcastOslo.timeseries[0]
 
-            Log.i("Oceanforecastdatasource", "Api call success")
+
             return oceanForecastData.properties?.timeseries?.get(0)?.data?.instant?.details
 
         }
 
         catch (e: Exception){
-            Log.i("OceanForecastDataSource", "ApiCall failed")
+
             return null
         }
 

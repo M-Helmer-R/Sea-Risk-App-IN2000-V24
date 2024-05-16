@@ -12,7 +12,6 @@ class GeoCodeRepository {
 
 
     suspend fun searchGeoCode(searchString: String): GeocodingPlacesResponse? {
-        Log.i("GeoCodeRepository", "searchGeoCode called")
         return geoCodeDataSource.searchGeoCode(searchString)
 
     }

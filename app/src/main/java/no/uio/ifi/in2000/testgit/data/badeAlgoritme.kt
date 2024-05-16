@@ -54,9 +54,7 @@ suspend fun badeAlgoritme(oceanForeCastUIState: OceanForeCastUIState, nowCastUIS
     val waterTempResult = calculateRiskLevel(waterTempWeight, oceanTemp!!, oceanTemps)
     val windSpeedResult = calculateRiskLevel(windSpeedWeight, windSpeed!!, windSpeeds)
 
-    Log.i("badeAlgoritme", "wind: $windSpeedResult\")\n" +
-            "\"water: $waterTempResult\"\n" +
-            "\"air: $airTempResult\"")
+
     // returns 0 if one of the values is outside acceptable parameters
     return if (
         windSpeedResult == 0.0 ||
