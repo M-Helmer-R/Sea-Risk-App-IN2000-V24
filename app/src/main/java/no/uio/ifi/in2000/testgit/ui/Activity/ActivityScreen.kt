@@ -10,6 +10,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,11 +24,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Air
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.InvertColors
+import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Thermostat
+import androidx.compose.material.icons.filled.Tsunami
+import androidx.compose.material.icons.filled.Water
+import androidx.compose.material.icons.filled.WaterDrop
+import androidx.compose.material.icons.filled.Waves
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -105,7 +115,7 @@ fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController
         Row(modifier = Modifier
             .fillMaxWidth()
             .padding(end = 0.dp)) {
-            GenerellInfo(chosenCity, lat, lon, nowCastUIState.value, oceanForeCastUIState.value)
+            GeneralInfo(chosenCity, lat, lon, nowCastUIState.value, oceanForeCastUIState.value)
             Spacer(modifier = Modifier.weight(1f))
             recommendationUIState.value.level?.let { ColorBar(value = it, selectedActivityUIState.value) }
         }
@@ -147,8 +157,9 @@ fun ReccomendationBox(value: Int, selectedActivityUIState: selectedActivityUISta
 
 
 @Composable
-fun GenerellInfo(bynavn: String, lat: String?, lon: String?, nowCastUIState: NowCastUIState, oceanForeCastUIState: OceanForeCastUIState) {
-
+fun GeneralInfo(bynavn: String, lat: String?, lon: String?, nowCastUIState: NowCastUIState, oceanForeCastUIState: OceanForeCastUIState) {
+    var showPopup by remember { mutableStateOf(false) }
+    var popupContent by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier
@@ -162,15 +173,98 @@ fun GenerellInfo(bynavn: String, lat: String?, lon: String?, nowCastUIState: Now
         Column(
             modifier = Modifier.padding(25.dp)
         ) {
-            Text(text = "Temperatur: ${nowCastUIState.nowCastData?.airTemperature} C ", color = Color.White, fontSize = 20.sp)
-            Text(text = "Vanntemperatur: ${oceanForeCastUIState.oceanDetails?.seaWaterTemperature} C", color = Color.White, fontSize = 20.sp)
-            Text(text = "Bølgehøyde: ${oceanForeCastUIState.oceanDetails?.seaSurfaceWaveHeight} m", color = Color.White, fontSize = 20.sp)
-            Text(text = "Vind: ${nowCastUIState.nowCastData?.windSpeed} m/s", color = Color.White, fontSize = 20.sp)
-            Text(text = "Strøm: ${oceanForeCastUIState.oceanDetails?.seaWaterSpeed} m/s", color = Color.White, fontSize = 20.sp)
-            Text(text = "Regn: ${nowCastUIState.nowCastData?.precipitationRate} mm/h", color = Color.White, fontSize = 20.sp)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "Værinformasjon:", color = Color.White, fontSize = 20.sp)
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Thermostat,
+                    contentDescription = "Air Temperature",
+                    tint = Color.White,
+                    modifier = Modifier.clickable {
+                        popupContent = "Temperatur: ${nowCastUIState.nowCastData?.airTemperature} C"
+                        showPopup = true
+                    }
+                )
+                Text(text = "${nowCastUIState.nowCastData?.airTemperature} C", color = Color.White, fontSize = 30.sp)
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    painter = painterResource(id = R.drawable.rainy),
+                    contentDescription = "Precipitation Rate",
+                    tint = Color.White,
+                    modifier = Modifier.clickable {
+                        popupContent = "Nedbør: ${nowCastUIState.nowCastData?.precipitationRate} mm/h"
+                        showPopup = true
+                    }
+                )
+                Text(text = "${nowCastUIState.nowCastData?.precipitationRate} mm/h", color = Color.White, fontSize = 20.sp)
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Air,
+                    contentDescription = "Wind Speed",
+                    tint = Color.White,
+                    modifier = Modifier.clickable {
+                        popupContent = "Vindhastighet: ${nowCastUIState.nowCastData?.windSpeed} m/s"
+                        showPopup = true
+                    }
+                )
+                Text(text = "${nowCastUIState.nowCastData?.windSpeed} m/s", color = Color.White, fontSize = 20.sp)
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "", color = Color.White, fontSize = 20.sp)
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "Vanninformasjon:", color = Color.White, fontSize = 20.sp)
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.WaterDrop,
+                    contentDescription = "Sea Water Temperature",
+                    tint = Color.White,
+                    modifier = Modifier.clickable {
+                        popupContent = "Vanntemperatur: ${oceanForeCastUIState.oceanDetails?.seaWaterTemperature} C"
+                        showPopup = true
+                    }
+                )
+                Text(text = "${oceanForeCastUIState.oceanDetails?.seaWaterTemperature} C", color = Color.White, fontSize = 30.sp)
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Tsunami,
+                    contentDescription = "Sea Surface Wave Height",
+                    tint = Color.White,
+                    modifier = Modifier.clickable {
+                        popupContent = "Bølgehøyde: ${oceanForeCastUIState.oceanDetails?.seaSurfaceWaveHeight} m"
+                        showPopup = true
+                    }
+                )
+                Text(text = "${oceanForeCastUIState.oceanDetails?.seaSurfaceWaveHeight} m", color = Color.White, fontSize = 20.sp)
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Waves,
+                    contentDescription = "Sea Water Speed",
+                    tint = Color.White,
+                    modifier = Modifier.clickable {
+                        popupContent = "Strøm:: ${oceanForeCastUIState.oceanDetails?.seaWaterSpeed} m/s"
+                        showPopup = true
+                    }
+                )
+                Text(text = "${oceanForeCastUIState.oceanDetails?.seaWaterSpeed} m/s", color = Color.White, fontSize = 20.sp)
+            }
         }
     }
+
+    if (showPopup) {
+        InfoPopUpWithString(content = popupContent, onDismissRequest = { showPopup = false })
+    }
 }
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBarBy(
@@ -247,7 +341,7 @@ fun ColorBar(value: Int, selectedActivityUIState: selectedActivityUIState) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Vi anbefaler ${selectedActivityUIState.selectedactivity}: $prosent % ",
+            text = "Vi anbefaler ${selectedActivityUIState.selectedactivity}:      $prosent % ",
             color = Color.White,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
@@ -403,6 +497,7 @@ fun ExpandableIconButton(
     }
 }
 
+
 fun getResourceId(activityName: String): Int {
     return when (activityName) {
         "sailing" ->  R.drawable.sailboaticon
@@ -412,4 +507,37 @@ fun getResourceId(activityName: String): Int {
         else -> 0
     }
 }
+
+@Composable
+fun InfoPopUpWithString(content: String, onDismissRequest: () -> Unit) {
+    Dialog(onDismissRequest = onDismissRequest) {
+        Surface(
+            shape = RoundedCornerShape(20.dp),
+            color = DarkBlue,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Text(
+                    text = content,
+                    color = Color.White
+                )
+                Button(
+                    onClick = onDismissRequest,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = LightBlue,
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    Text("Lukk")
+                }
+            }
+        }
+    }
+}
+
+
 
