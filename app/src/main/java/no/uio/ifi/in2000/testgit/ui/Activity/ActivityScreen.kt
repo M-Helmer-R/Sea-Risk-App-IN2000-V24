@@ -39,6 +39,7 @@ import androidx.compose.material.icons.filled.Water
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material.icons.filled.Waves
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -61,6 +62,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -99,7 +101,7 @@ fun ActivityScreen(
 ) {
     val nowCastUIState = activityScreenViewModel.nowCastUIState.collectAsState()
     val oceanForeCastUIState =activityScreenViewModel.oceanForeCastUIState.collectAsState()
-    //val metAlertsUIState = activityScreenViewModel.metAlertsUIState.collectAsState()
+    val metAlertsUIState = activityScreenViewModel.metAlertsUIState.collectAsState()
 
     val selectedActivityUIState = activityScreenViewModel.selectedActivityUIState.collectAsState()
 
@@ -126,7 +128,7 @@ fun ActivityScreen(
         Row(modifier = Modifier
             .fillMaxWidth()
             .padding(end = 0.dp)) {
-            GeneralInfo(chosenCity, lat, lon, nowCastUIState.value, oceanForeCastUIState.value)
+            GeneralInfo(chosenCity, lat, lon, nowCastUIState.value, oceanForeCastUIState.value, metAlertsUIState.value)
             Spacer(modifier = Modifier.weight(1f))
             recommendationUIState.value.level?.let { ColorBar(value = it, selectedActivityUIState.value) }
         }
@@ -168,7 +170,7 @@ fun ReccomendationBox(value: Int, selectedActivityUIState: selectedActivityUISta
 
 
 @Composable
-fun GeneralInfo(bynavn: String, lat: String?, lon: String?, nowCastUIState: NowCastUIState, oceanForeCastUIState: OceanForeCastUIState) {
+fun GeneralInfo(bynavn: String, lat: String?, lon: String?, nowCastUIState: NowCastUIState, oceanForeCastUIState: OceanForeCastUIState, metAlertsUIState: MetAlertsUIState) {
     var showPopup by remember { mutableStateOf(false) }
     var popupContent by remember { mutableStateOf("") }
 
@@ -268,6 +270,31 @@ fun GeneralInfo(bynavn: String, lat: String?, lon: String?, nowCastUIState: NowC
                 )
                 Text(text = "${oceanForeCastUIState.oceanDetails?.seaWaterSpeed} m/s", color = Color.White, fontSize = 20.sp)
             }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "", color = Color.White, fontSize = 20.sp)
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+
+                Button(
+                    onClick = {
+                        if(metAlertsUIState.metAlertsData == null) {
+                            popupContent = "Ingen"
+                            showPopup = true
+                        } else {
+                            popupContent = "Varsel: ${metAlertsUIState.metAlertsData?.alertProperties?.event}\n" +
+                                    "Instrukser: ${metAlertsUIState.metAlertsData?.alertProperties?.instruction}"
+                            showPopup = true
+                        }
+                },
+                    colors = ButtonDefaults.buttonColors(containerColor = DarkBlue, contentColor = Color.White),
+
+
+                ) {
+                    Text(text = "Varsel")
+                }
+            }
         }
     }
 
@@ -275,6 +302,7 @@ fun GeneralInfo(bynavn: String, lat: String?, lon: String?, nowCastUIState: NowC
         InfoPopUpWithString(content = popupContent, onDismissRequest = { showPopup = false })
     }
 }
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -365,7 +393,7 @@ fun ColorBar(value: Int, selectedActivityUIState: selectedActivityUIState) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Vi anbefaler ${selectedActivityUIState.selectedactivity}:      $prosent % ",
+            text = "Anbefaling\n$prosent % ",
             color = Color.White,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
@@ -419,10 +447,6 @@ fun InfoPopUp(onDismissRequest: () -> Unit) {
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text(
-                    text = "Her kan vi pumpe ut noe om hvorofr den er nede/oppe, ekstra info osv",
-                    color = Color.White
-                )
                 Text(
                     text = "Vær oppmerksom på at anbefalinger er basert på værdata og egne algoritmer, og disse kan inneholde feil. Vi oppfordrer deg til å stole på dine egne observasjoner når du planlegger aktiviteter.",
                     color = Color.White
