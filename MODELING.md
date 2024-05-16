@@ -22,6 +22,8 @@ som use case 1. Altså vil kartet zoome inn og vise et kort som enten lar deg na
 
 ## USE CASE 3: ActivityScreen etter navigasjon 
 ![image](https://media.github.uio.no/user/9127/files/f7561e15-cfd9-4442-a5b0-a82fa814098a)
+![image](https://media.github.uio.no/user/9127/files/07be87b5-3354-4959-8e5f-3408696caf68)
+
 
 ActivityScreen har hovedsakelig en funksjon, dette er å bytte mellom aktiviteter som oppdaterer UIStaten til anbefalingsbaren.
 Når brukeren navigerer til activityscreen lastes inn alle API'ene og blir oppdatert i UIstates til activityviewmodel.
