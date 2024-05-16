@@ -36,6 +36,7 @@ import no.uio.ifi.in2000.testgit.ui.TopBar
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 import no.uio.ifi.in2000.testgit.ui.theme.White
 
+@OptIn(ExperimentalPermissionsApi::class)
 @RequiresPermission(
     anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION]
 )

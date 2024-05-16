@@ -57,9 +57,7 @@ fun TopBar() {
                   Box(modifier = Modifier.size(50.dp))
         } ,
         colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = DarkBlue),
-        modifier = Modifier
-            .zIndex(1f)
-            .padding(4.dp)
+
     )
 }
 @Composable
