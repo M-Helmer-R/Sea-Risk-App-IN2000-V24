@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.testgit.data.room
 
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 
 interface DatabaseRepository{
@@ -10,15 +11,13 @@ interface DatabaseRepository{
      suspend fun deleteCity(city: City)
      fun setFavoriteById(city: City)
      fun removeFavoriteById(city: City)
-     fun setFavoriteByName(name: String)
-     fun removeFavoriteByName(name: String)
+     suspend fun setFavoriteByName(name: String)
+     suspend fun removeFavoriteByName(name: String)
      fun isInDatabase(name : String) : Boolean
      fun isFavorite(name: String) : Boolean
-     fun upsertCity(city: City)
-     fun getPreloaded(): List<City>
-     fun getFavourites(): Flow<List<City>>
-     fun isCityFavorite(name: String): Boolean
-     fun getCityByName(name: String): Any
+     fun isCustom(name: String) : Boolean
+
+     suspend fun deleteCityByName(name: String)
 }
 
 class DatabaseRepositoryImpl (
@@ -51,11 +50,13 @@ class DatabaseRepositoryImpl (
     override fun removeFavoriteById(city: City){
         cityDao.removeFavoriteById(city.cityId)
     }
-    override fun setFavoriteByName(name: String){
+    override suspend fun setFavoriteByName(name: String){
+        Log.w("DatabaseRepositoryImpl", "setFavoriteByName:${name}")
         cityDao.setFavoriteByName(name)
     }
 
-    override fun removeFavoriteByName(name: String){
+    override suspend fun removeFavoriteByName(name: String){
+        Log.w("DatabaseRepositoryImpl", "remove favorite by name:${name}")
         cityDao.removeFavoriteByName(name)
     }
 
@@ -71,24 +72,11 @@ class DatabaseRepositoryImpl (
         return cityDao.isCityFavorite(name)
     }
 
-    override fun upsertCity(city: City) {
-        TODO("Not yet implemented")
+    override fun isCustom(name: String) : Boolean {
+        return cityDao.isCityCustom(name)
     }
 
-    override fun getPreloaded(): List<City> {
-        TODO("Not yet implemented")
+    override suspend fun deleteCityByName(name: String) {
+        cityDao.deleteCityByName(name)
     }
-
-    override fun getFavourites(): Flow<List<City>> {
-        TODO("Not yet implemented")
-    }
-
-    override fun isCityFavorite(name: String): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun getCityByName(name: String): Any {
-        TODO("Not yet implemented")
-    }
-
 }

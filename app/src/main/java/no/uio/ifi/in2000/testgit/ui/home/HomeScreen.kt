@@ -25,27 +25,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import no.uio.ifi.in2000.testgit.ui.home.AddCityCard
+import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.ui.BottomBar
+import no.uio.ifi.in2000.testgit.ui.home.AddCityCard
+import no.uio.ifi.in2000.testgit.ui.home.DeniedPermissionDialog
+import no.uio.ifi.in2000.testgit.ui.home.DisabledLocationDialog
 import no.uio.ifi.in2000.testgit.ui.home.HomeEvent
 import no.uio.ifi.in2000.testgit.ui.home.HomeUiState
 import no.uio.ifi.in2000.testgit.ui.home.HomeViewModel
 import no.uio.ifi.in2000.testgit.ui.home.HorizontalCard
+import no.uio.ifi.in2000.testgit.ui.home.LocationStatus
+import no.uio.ifi.in2000.testgit.ui.home.LocationViewModel
 import no.uio.ifi.in2000.testgit.ui.home.MainCard
-import no.uio.ifi.in2000.testgit.ui.dialog.DeniedPermissionDialog
-import no.uio.ifi.in2000.testgit.ui.dialog.DisabledLocationDialog
-import no.uio.ifi.in2000.testgit.ui.dialog.LocationStatus
-import no.uio.ifi.in2000.testgit.ui.dialog.PermissionRationaleDialog
-import no.uio.ifi.in2000.testgit.ui.dialog.getUserLocation
-
+import no.uio.ifi.in2000.testgit.ui.home.PermissionRationaleDialog
 import no.uio.ifi.in2000.testgit.ui.map.TopBar
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 import no.uio.ifi.in2000.testgit.ui.theme.White
+
 @RequiresPermission(
     anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION]
 )
@@ -55,8 +57,9 @@ fun HomeScreen(
     currentRoute : String,
     context : Context,
     homeViewModel : HomeViewModel = viewModel(factory = HomeViewModel.Factory),
-
+    locationViewModel : LocationViewModel = viewModel(factory = LocationViewModel.Factory),
 ) {
+
     val onEvent = homeViewModel :: onEvent
     val homeUiState: HomeUiState by homeViewModel.homeUiState.collectAsState()
     val locationPermissionState = rememberMultiplePermissionsState(
@@ -71,11 +74,24 @@ fun HomeScreen(
         .fillMaxSize()
         .padding(8.dp)
 
+    /*
     LaunchedEffect(key1 = true) {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
+        val activity = context as Activity
+        val fineLocationPermission = Manifest.permission.ACCESS_FINE_LOCATION
+        val coarseLocationPermission = Manifest.permission.ACCESS_COARSE_LOCATION
+
+        // Function to check if a specific permission is granted
+        fun isPermissionGranted(permission: String): Boolean {
+            return ActivityCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED
+        }
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, fineLocationPermission) ||
+            ActivityCompat.shouldShowRequestPermissionRationale(activity, coarseLocationPermission)
+        ) {
             onEvent(HomeEvent.ShowPermissionDialog)
         } else {
-            if (locationPermissionState.allPermissionsGranted) {
+            // Check if either location permission is granted
+            if (isPermissionGranted(fineLocationPermission) || isPermissionGranted(coarseLocationPermission)) {
                 getUserLocation(context) { location ->
                     location?.let {
                         onEvent(HomeEvent.SetUserPosition(lon = it.longitude, lat = it.latitude))
@@ -88,6 +104,29 @@ fun HomeScreen(
             }
         }
     }
+
+
+
+     */
+    LaunchedEffect(key1 = locationPermissionState.allPermissionsGranted) {
+        onEvent(HomeEvent.UpdateNearest)
+        if (locationPermissionState.allPermissionsGranted) {
+            locationViewModel.location.observe(context as LifecycleOwner) { location ->
+                location?.let {
+                    onEvent(HomeEvent.SetUserPosition(lon = it.longitude, lat = it.latitude))
+                    onEvent(HomeEvent.UpdateNearest)
+                } ?: run {
+                    onEvent(HomeEvent.ShowDisabledLocationDialog)
+                }
+            }
+            locationViewModel.fetchLocation()
+        } else if (ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
+            onEvent(HomeEvent.ShowPermissionDialog)
+        } else {
+            onEvent(HomeEvent.ShowDeniedPermissionDialog)
+        }
+    }
+
     Scaffold(
         containerColor = DarkBlue,
         topBar = {
@@ -107,7 +146,11 @@ fun HomeScreen(
         ) {
             item{
                 if (homeUiState.permissionDialog){
-                    PermissionRationaleDialog(onEvent = onEvent)
+                    PermissionRationaleDialog(
+                        locationPermissionState = locationPermissionState,
+                        locationViewModel = locationViewModel,
+                        onEvent = onEvent
+                    )
                 }
                 if (homeUiState.deniedLocationDialog){
                     DeniedPermissionDialog(onEvent)
@@ -118,15 +161,21 @@ fun HomeScreen(
             }
             item{
                 HorizontalContent(
-                    homeUiState = homeUiState,
-                    onEvent = onEvent,
+                    nearestCities = homeUiState.nearestCities,
+                    userLat = homeUiState.userLat,
+                    userLon = homeUiState.userLon,
                     modifier = containerModifier,
                     locationPermissionState = locationPermissionState,
                     navController = navController
                 )
             }
             item{
-                FavoriteContent(homeUiState, onEvent, containerModifier)
+                FavoriteContent(
+                    favorites = homeUiState.favorites,
+                    onEvent = onEvent,
+                    modifier = containerModifier,
+                    navController = navController
+                )
             }
         }
     }
@@ -135,11 +184,12 @@ fun HomeScreen(
 @SuppressLint("MissingPermission")
 @Composable
 fun HorizontalContent(
-    homeUiState: HomeUiState,
-    onEvent: (HomeEvent) -> Unit,
     modifier: Modifier,
     locationPermissionState : MultiplePermissionsState,
-    navController: NavController
+    navController: NavController,
+    nearestCities : Map<City, Double>,
+    userLat : Double,
+    userLon : Double,
 ){
     Column (
         modifier = modifier,
@@ -153,8 +203,8 @@ fun HorizontalContent(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
 
-            items(homeUiState.nearestCities.keys.toList()) { city ->
-                HorizontalCard(city, homeUiState.nearestCities.getValue(city), onEvent, navController)
+            items(nearestCities.keys.toList()) { city ->
+                HorizontalCard(city, nearestCities.getValue(city), navController)
             }
         }
         Row(
@@ -165,17 +215,19 @@ fun HorizontalContent(
 
             LocationStatus(
                 locationState = locationPermissionState,
-                homeUiState = homeUiState
-            )
+                userLat = userLat,
+                userLon = userLon,
+                )
         }
     }
 }
 
 @Composable
 fun FavoriteContent(
-    homeUiState : HomeUiState,
+    favorites : List<City>,
     onEvent: (HomeEvent) -> Unit,
     modifier: Modifier,
+    navController: NavController
 ) {
     Column (
         modifier = modifier
@@ -185,14 +237,14 @@ fun FavoriteContent(
             text = "Favoritter",
             style = MaterialTheme.typography.headlineSmall.copy(color = White)
         )
-
-        homeUiState.favorites.map { city ->
+        favorites.map { city ->
             MainCard(
                 city = city,
-                onEvent = onEvent
+                onEvent = onEvent,
+                navController = navController
             )
         }
-        AddCityCard(onEvent = onEvent)
+        AddCityCard()
 
     }
 }

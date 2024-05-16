@@ -13,6 +13,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.testgit.MainApplication
 import no.uio.ifi.in2000.testgit.data.MainRepository
@@ -20,7 +21,6 @@ import no.uio.ifi.in2000.testgit.data.badeAlgoritme
 import no.uio.ifi.in2000.testgit.data.padleAlgoritme
 import no.uio.ifi.in2000.testgit.data.room.City
 import no.uio.ifi.in2000.testgit.data.room.DatabaseRepository
-import no.uio.ifi.in2000.testgit.data.room.DatabaseRepositoryImpl
 import no.uio.ifi.in2000.testgit.data.seileAlgoritme
 import no.uio.ifi.in2000.testgit.data.surfeAlgoritme
 import no.uio.ifi.in2000.testgit.model.nowcast.Details
@@ -41,6 +41,9 @@ data class ReccomendationUIState(
     val level: Int?
 )
 
+data class AcitivityUIState(
+    val favorite : Boolean
+)
 
 // this viewmodel handles api calls depending on city chosen
 // this viewmodel will be created by user interaction with locations in HomeScreen and mapscreen
@@ -64,6 +67,10 @@ class ActivityScreenViewModel(
 
     private val _reccomendationUIState = MutableStateFlow(ReccomendationUIState(0))
     val reccomendationUIState: StateFlow<ReccomendationUIState> = _reccomendationUIState.asStateFlow()
+
+    private val _activityUIState = MutableStateFlow(AcitivityUIState(false))
+
+    val acitivityUIState : StateFlow<AcitivityUIState> = _activityUIState.asStateFlow()
 
     val cityName = checkNotNull(savedStateHandle["stedsnavn"])
     val lat: String = checkNotNull(savedStateHandle["lat"])
@@ -135,31 +142,50 @@ class ActivityScreenViewModel(
     }
 
     fun onEvent(event: ActivityEvent){
-        viewModelScope.launch(Dispatchers.IO) {  when (event) {
+         when (event) {
 
             is ActivityEvent.AddFavorite -> {
-                if (dbRepository.isInDatabase(event.name)){
-                    dbRepository.setFavoriteByName(event.name)
-                } else {
-
-                    val newCity = City(
-                        name = event.name,
-                        lat = event.lat.toDoubleOrNull() ?: 0.0,
-                        lon = event.lat.toDoubleOrNull() ?: 0.0,
-                        customized = 1,
-                        favorite = 1
-                    )
+                viewModelScope.launch(Dispatchers.IO) {
+                    if (dbRepository.isInDatabase(event.name)) {
+                        dbRepository.setFavoriteByName(event.name)
+                        Log.w("ActivityScreenViewModel", "Added old city as favorite")
+                    } else {
+                        val newCity = City(
+                            name = if ( event.name.first().isWhitespace()) {
+                                event.name.replaceFirstChar {""}
+                            } else {
+                                event.name
+                            },
+                            lat = event.lat.toDoubleOrNull() ?: 0.0,
+                            lon = event.lon.toDoubleOrNull() ?: 0.0,
+                            customized = 1,
+                            favorite = 1
+                        )
+                        Log.w("ActivityScreenViewModel", "Added new city as favorite")
+                        dbRepository.saveCity(city = newCity)
+                    }
                 }
             }
             is ActivityEvent.RemoveFavorite -> {
-                dbRepository.removeFavoriteByName(event.name)
+                viewModelScope.launch (Dispatchers.IO){
+                    if (dbRepository.isCustom(event.name)){
+                        dbRepository.deleteCityByName(event.name)
+                    } else {
+                        dbRepository.removeFavoriteByName(event.name)
+                    }
+                }
             }
 
             is ActivityEvent.CheckFavorite -> {
-                dbRepository.isFavorite(name = event.name)
+                viewModelScope.launch (Dispatchers.IO) {
+                    if (dbRepository.isFavorite(name = event.name)) {
+                        _activityUIState.update {
+                            it.copy(favorite = true)
+                        }
+                    }
+                }
             }
-        }}
-
+        }
     }
     @Suppress("UNCHECKED_CAST")
     companion object{

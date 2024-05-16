@@ -75,6 +75,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.selects.select
 import no.uio.ifi.in2000.testgit.R
 import no.uio.ifi.in2000.testgit.ui.BottomBar
+import no.uio.ifi.in2000.testgit.ui.home.HomeUiState
 import no.uio.ifi.in2000.testgit.ui.map.OceanForeCastUIState
 import no.uio.ifi.in2000.testgit.ui.theme.DarkBlue
 import no.uio.ifi.in2000.testgit.ui.theme.LightBlue
@@ -87,9 +88,15 @@ TO DO
   mer navigasjon mellom
 - avrundet bar over bottombar
  */
-@Composable
 
-fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController: NavController, activityScreenViewModel: ActivityScreenViewModel = viewModel(factory = ActivityScreenViewModel.Factory)) {
+@Composable
+fun ActivityScreen(
+    chosenCity: String,
+    lat: String?,
+    lon: String?,
+    navController: NavController,
+    activityScreenViewModel: ActivityScreenViewModel = viewModel(factory = ActivityScreenViewModel.Factory)
+) {
     val nowCastUIState = activityScreenViewModel.nowCastUIState.collectAsState()
     val oceanForeCastUIState =activityScreenViewModel.oceanForeCastUIState.collectAsState()
     //val metAlertsUIState = activityScreenViewModel.metAlertsUIState.collectAsState()
@@ -101,6 +108,9 @@ fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController
     val recommendationUIState = activityScreenViewModel.reccomendationUIState.collectAsState()
     val onEvent = activityScreenViewModel :: onEvent
 
+    val acitivityUIState: AcitivityUIState by activityScreenViewModel.acitivityUIState.collectAsState()
+
+
     Column(modifier = Modifier
         .fillMaxSize()
         .background(DarkBlue)) {
@@ -110,6 +120,7 @@ fun ActivityScreen(chosenCity: String, lat: String?, lon: String?, navController
             lat = lat,
             lon = lon,
             onEvent = onEvent,
+            acitivityUIState = acitivityUIState,
         )
         recommendationUIState.value.level?.let { ReccomendationBox(value = it, selectedActivityUIState.value) }
         Row(modifier = Modifier
@@ -160,6 +171,7 @@ fun ReccomendationBox(value: Int, selectedActivityUIState: selectedActivityUISta
 fun GeneralInfo(bynavn: String, lat: String?, lon: String?, nowCastUIState: NowCastUIState, oceanForeCastUIState: OceanForeCastUIState) {
     var showPopup by remember { mutableStateOf(false) }
     var popupContent by remember { mutableStateOf("") }
+
 
     Box(
         modifier = Modifier
@@ -272,7 +284,8 @@ fun TopBarBy(
     bynavn: String,
     lat: String?,
     lon: String?,
-    onEvent : (ActivityEvent) -> Unit
+    onEvent : (ActivityEvent) -> Unit,
+    acitivityUIState: AcitivityUIState,
 ) {
     TopAppBar(
         title = {
@@ -284,30 +297,41 @@ fun TopBarBy(
             }
         },
         actions = {
+            onEvent(ActivityEvent.CheckFavorite(name = bynavn))
             IconButton(
                 onClick = {
-                    onEvent(
-                        ActivityEvent.AddFavorite(
-                            name = bynavn,
-                            lat =  lat ?: "",
-                            lon = lon ?: "")
-                    )
+                    if (!acitivityUIState.favorite) {
+                        Log.w("ActivityScreenViewModel", "adding")
+                        onEvent(
+                            ActivityEvent.AddFavorite(
+                                name = bynavn,
+                                lat =  lat ?: "",
+                                lon = lon ?: "")
+                        )
+                    } else {
+                        Log.w("ActivityScreenViewModel", "removing")
+                        onEvent(
+                            ActivityEvent.RemoveFavorite(
+                                name = bynavn
+                            )
+                        )
+                    }
                 }
             ) {
-                if (false) {
+                if (acitivityUIState.favorite){
                     Icon(
                         Icons.Filled.Star,
                         contentDescription = "Favoritt",
                         modifier = Modifier
                             .size(50.dp),
-                        tint = Color.White
+                        tint = Color.Yellow
                     )
                 } else {
                     Icon(
                         Icons.Filled.Star,
                         contentDescription = "Favoritt",
                         modifier = Modifier.size(50.dp),
-                        tint = Color.Yellow
+                        tint = Color.White
                     )
                 }
             }

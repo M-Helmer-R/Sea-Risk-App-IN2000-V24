@@ -43,5 +43,10 @@ interface CityDao {
 
     @Query("SELECT (favorite = 1) FROM cities WHERE name = :name LIMIT 1")
     fun isCityFavorite(name: String): Boolean
+    @Query("SELECT (customized = 1) FROM cities WHERE name = :name LIMIT 1")
+    fun isCityCustom(name: String): Boolean
+
+    @Query("DELETE FROM cities WHERE name = :name")
+    suspend fun deleteCityByName(name: String)
 
 }
