@@ -377,6 +377,7 @@ fun ExpandableIconButton(
                     IconButton(
                         onClick = {
                             onSelectedActivityChanged(activity)
+                            activityScreenViewModel.changeActivity(activity)
                             activityScreenViewModel.changeReccomendationBar(activity)
                             Log.i("ActivityScreen", "Activity selected: $activity")
                             expanded = false

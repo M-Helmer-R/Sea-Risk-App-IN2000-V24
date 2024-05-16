@@ -27,7 +27,7 @@ import no.uio.ifi.in2000.testgit.model.nowcast.Details
 import no.uio.ifi.in2000.testgit.ui.map.OceanForeCastUIState
 
 data class selectedActivityUIState(
-    val selectedactivity: String?
+    var selectedactivity: String?
 )
 data class NowCastUIState(
     val nowCastData: Details?
@@ -80,7 +80,9 @@ class ActivityScreenViewModel(
         }
     }
 
-
+    fun changeActivity(activity: String){
+        selectedActivityUIState.value.selectedactivity = (activity)
+    }
     fun changeReccomendationBar(activity: String){
         viewModelScope.launch {
             loadRecommendationBar(activity)
