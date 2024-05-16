@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.testgit.data.metalerts
 
+import android.util.Log
 import com.example.example.AlertFeatures
 import com.example.example.Metalerts
 import io.ktor.client.HttpClient
@@ -8,7 +9,6 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.client.request.header
-import io.ktor.http.isSuccess
 import io.ktor.serialization.gson.gson
 
 class MetAlertsDataSource {
@@ -28,31 +28,16 @@ class MetAlertsDataSource {
     suspend fun getMetAlerts(lat: String, lon: String): AlertFeatures? {
         try {
             val metAlerts = "weatherapi/metalerts/2.0/current.json?lat=$lat&lon=$lon"
-            val callMetAlerts = client.get(metAlerts)
-            val dataMetalerts: Metalerts
-            // if response is successful, complete the apicall and create metalerts objects
+            val metAlertsResponse = client.get(metAlerts)
 
-
-
-            if(callMetAlerts.status.isSuccess()) {
-                dataMetalerts = callMetAlerts.body<Metalerts>()
-            } else {
-                dataMetalerts = Metalerts(features = emptyList(), lang = null, lastChange = null, type = null)
-            }
-
-            // depending on metalertsobject,
-            if(dataMetalerts.features?.isEmpty() == false) {
-                return dataMetalerts.features[0]
-            } else {
-                return null
-
-            }
-            //val currentMetAlerts = dataMetAlerts.features.get(0)
+            val metAlertsData = metAlertsResponse.body<Metalerts>()
+            return metAlertsData.features?.get(0)
 
 
         } catch( e: Exception){
+            Log.i("MetAlertsDataSource", "FAILED")
             return null
         }
-        }
+    }
 
 }
